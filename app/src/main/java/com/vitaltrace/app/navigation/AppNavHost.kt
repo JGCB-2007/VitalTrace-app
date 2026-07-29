@@ -10,6 +10,7 @@ import com.vitaltrace.app.feature.appointments.presentation.AppointmentsScreen
 import com.vitaltrace.app.feature.home.presentation.HomeScreen
 import com.vitaltrace.app.feature.measurements.presentation.MeasurementsScreen
 import com.vitaltrace.app.feature.measurements.presentation.form.MeasurementFormScreen
+import com.vitaltrace.app.feature.profile.presentation.ProfileScreen
 import com.vitaltrace.app.feature.splash.presentation.SplashScreen
 
 @Composable
@@ -74,6 +75,11 @@ fun AppNavHost(
                     navController.navigate(AppRoute.Appointments.route) {
                         launchSingleTop = true
                     }
+                },
+                onProfileClick = {
+                    navController.navigate(AppRoute.Profile.route) {
+                        launchSingleTop = true
+                    }
                 }
             )
         }
@@ -92,6 +98,11 @@ fun AppNavHost(
                     navController.navigate(AppRoute.Appointments.route) {
                         launchSingleTop = true
                     }
+                },
+                onProfileClick = {
+                    navController.navigate(AppRoute.Profile.route) {
+                        launchSingleTop = true
+                    }
                 }
             )
         }
@@ -106,6 +117,34 @@ fun AppNavHost(
                 },
                 onMeasurementsClick = {
                     navController.navigate(AppRoute.Measurements.route) {
+                        popUpTo(AppRoute.Home.route)
+                        launchSingleTop = true
+                    }
+                },
+                onProfileClick = {
+                    navController.navigate(AppRoute.Profile.route) {
+                        launchSingleTop = true
+                    }
+                }
+            )
+        }
+
+        composable(AppRoute.Profile.route) {
+            ProfileScreen(
+                onHomeClick = {
+                    navController.navigate(AppRoute.Home.route) {
+                        popUpTo(AppRoute.Home.route)
+                        launchSingleTop = true
+                    }
+                },
+                onMeasurementsClick = {
+                    navController.navigate(AppRoute.Measurements.route) {
+                        popUpTo(AppRoute.Home.route)
+                        launchSingleTop = true
+                    }
+                },
+                onAppointmentsClick = {
+                    navController.navigate(AppRoute.Appointments.route) {
                         popUpTo(AppRoute.Home.route)
                         launchSingleTop = true
                     }

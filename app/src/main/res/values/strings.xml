@@ -95,4 +95,17 @@
     <string name="appointment_detail_reschedule_notice">Para reprogramar, comunícate con tu centro de atención.</string>
     <string name="appointment_detail_close">Cerrar</string>
     <string name="appointment_detail_professional_description">Profesional: %1$s, %2$s</string>
+    <string name="profile_title">Mi perfil</string>
+    <string name="profile_role_patient">Paciente</string>
+    <string name="profile_identifier">Identificador</string>
+    <string name="profile_email">Correo</string>
+    <string name="profile_phone">Teléfono</string>
+    <string name="profile_notifications">NOTIFICACIONES</string>
+    <string name="profile_measurement_reminders">Recordatorios de medición</string>
+    <string name="profile_appointment_notifications">Avisos de citas</string>
+    <string name="profile_email_updates">Actualizaciones por correo</string>
+    <string name="profile_loading">Cargando perfil</string>
+    <string name="profile_error">No se pudo cargar el perfil</string>
+    <string name="profile_retry">Intentar de nuevo</string>
+    <string name="profile_identity_description">%1$s, %2$s</string>
 </resources>
