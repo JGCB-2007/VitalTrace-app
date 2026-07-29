@@ -7,6 +7,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.vitaltrace.app.feature.auth.presentation.LoginScreen
 import com.vitaltrace.app.feature.home.presentation.HomeScreen
+import com.vitaltrace.app.feature.measurements.presentation.MeasurementsScreen
 import com.vitaltrace.app.feature.splash.presentation.SplashScreen
 
 @Composable
@@ -56,6 +57,19 @@ fun AppNavHost(
                             inclusive = true
                         }
                     }
+                },
+                onMeasurementsClick = {
+                    navController.navigate(AppRoute.Measurements.route) {
+                        launchSingleTop = true
+                    }
+                }
+            )
+        }
+
+        composable(AppRoute.Measurements.route) {
+            MeasurementsScreen(
+                onHomeClick = {
+                    navController.popBackStack()
                 }
             )
         }

@@ -32,4 +32,22 @@
     <string name="home_bottom_measurements">Mediciones</string>
     <string name="home_bottom_appointments">Citas</string>
     <string name="home_bottom_profile">Perfil</string>
+    <string name="measurements_title">Mis mediciones</string>
+    <string name="measurements_add">Registrar medición</string>
+    <string name="measurements_filter_all">Todas</string>
+    <string name="measurements_filter_pending">Pendientes</string>
+    <string name="measurements_filter_reviewed">Revisadas</string>
+    <string name="measurements_latest">MÁS RECIENTE</string>
+    <string name="measurements_status_registered">Registrada</string>
+    <string name="measurements_status_pending">Pendiente</string>
+    <string name="measurements_status_in_review">En revisión</string>
+    <string name="measurements_status_reviewed">Revisada</string>
+    <string name="measurements_pressure_unit">mmHg</string>
+    <string name="measurements_item_description">Medición de presión arterial: %1$s %2$s, %3$s, estado %4$s</string>
+    <string name="measurements_loading">Cargando mediciones</string>
+    <string name="measurements_error">No se pudieron cargar las mediciones</string>
+    <string name="measurements_retry">Intentar de nuevo</string>
+    <string name="measurements_empty_title">No hay mediciones en este estado</string>
+    <string name="measurements_empty_description">Cuando registres una medición, podrás consultar aquí su seguimiento.</string>
+    <string name="measurements_empty_action">Registrar medición</string>
 </resources>
