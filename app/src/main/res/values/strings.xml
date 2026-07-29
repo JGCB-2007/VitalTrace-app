@@ -75,4 +75,16 @@
     <string name="measurement_detail_follow_up">SEGUIMIENTO REGISTRADO</string>
     <string name="measurement_detail_close">Cerrar</string>
     <string name="measurement_detail_value_description">Presión arterial: %1$s %2$s</string>
+    <string name="appointments_title">Mis citas</string>
+    <string name="appointments_next">PRÓXIMA CITA</string>
+    <string name="appointments_upcoming">PRÓXIMAS</string>
+    <string name="appointments_previous">ANTERIORES</string>
+    <string name="appointments_status_scheduled">Programada</string>
+    <string name="appointments_status_completed">Realizada</string>
+    <string name="appointments_item_description">Cita con %1$s, %2$s, %3$s, estado %4$s</string>
+    <string name="appointments_loading">Cargando citas</string>
+    <string name="appointments_error">No se pudieron cargar las citas</string>
+    <string name="appointments_retry">Intentar de nuevo</string>
+    <string name="appointments_empty_upcoming">No hay citas próximas</string>
+    <string name="appointments_empty_previous">No hay citas anteriores</string>
 </resources>

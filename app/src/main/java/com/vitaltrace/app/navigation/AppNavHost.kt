@@ -6,6 +6,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.vitaltrace.app.feature.auth.presentation.LoginScreen
+import com.vitaltrace.app.feature.appointments.presentation.AppointmentsScreen
 import com.vitaltrace.app.feature.home.presentation.HomeScreen
 import com.vitaltrace.app.feature.measurements.presentation.MeasurementsScreen
 import com.vitaltrace.app.feature.measurements.presentation.form.MeasurementFormScreen
@@ -68,6 +69,11 @@ fun AppNavHost(
                     navController.navigate(AppRoute.MeasurementForm.route) {
                         launchSingleTop = true
                     }
+                },
+                onAppointmentsClick = {
+                    navController.navigate(AppRoute.Appointments.route) {
+                        launchSingleTop = true
+                    }
                 }
             )
         }
@@ -79,6 +85,28 @@ fun AppNavHost(
                 },
                 onAddMeasurementClick = {
                     navController.navigate(AppRoute.MeasurementForm.route) {
+                        launchSingleTop = true
+                    }
+                },
+                onAppointmentsClick = {
+                    navController.navigate(AppRoute.Appointments.route) {
+                        launchSingleTop = true
+                    }
+                }
+            )
+        }
+
+        composable(AppRoute.Appointments.route) {
+            AppointmentsScreen(
+                onHomeClick = {
+                    navController.navigate(AppRoute.Home.route) {
+                        popUpTo(AppRoute.Home.route)
+                        launchSingleTop = true
+                    }
+                },
+                onMeasurementsClick = {
+                    navController.navigate(AppRoute.Measurements.route) {
+                        popUpTo(AppRoute.Home.route)
                         launchSingleTop = true
                     }
                 }
