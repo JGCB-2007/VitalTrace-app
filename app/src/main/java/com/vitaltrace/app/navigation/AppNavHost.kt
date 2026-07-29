@@ -1,6 +1,7 @@
 package com.vitaltrace.app.navigation
 
 import androidx.compose.runtime.Composable
+import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
@@ -9,9 +10,9 @@ import com.vitaltrace.app.feature.home.presentation.HomeScreen
 import com.vitaltrace.app.feature.splash.presentation.SplashScreen
 
 @Composable
-fun AppNavHost() {
-    val navController = rememberNavController()
-
+fun AppNavHost(
+    navController: NavHostController = rememberNavController()
+) {
     NavHost(
         navController = navController,
         startDestination = AppRoute.Splash.route
@@ -20,6 +21,13 @@ fun AppNavHost() {
             SplashScreen(
                 onNavigateToLogin = {
                     navController.navigate(AppRoute.Login.route) {
+                        popUpTo(AppRoute.Splash.route) {
+                            inclusive = true
+                        }
+                    }
+                },
+                onNavigateToHome = {
+                    navController.navigate(AppRoute.Home.route) {
                         popUpTo(AppRoute.Splash.route) {
                             inclusive = true
                         }

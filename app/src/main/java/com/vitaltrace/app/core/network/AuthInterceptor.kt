@@ -11,25 +11,25 @@ class AuthInterceptor @Inject constructor() : Interceptor {
     @Volatile
     private var token: String? = null
 
-    fun updateToken(newToken: String?) {
-        token = newToken
+    fun updateToken(token: String?) {
+        this.token = token
     }
 
     override fun intercept(chain: Interceptor.Chain): Response {
+        val currentToken = token
 
         val request = chain.request()
-
-        if (token == null) {
-            return chain.proceed(request)
-        }
-
-        val authenticatedRequest = request.newBuilder()
-            .addHeader(
-                "Authorization",
-                "Bearer $token"
-            )
+            .newBuilder()
+            .apply {
+                if (!currentToken.isNullOrBlank()) {
+                    addHeader(
+                        "Authorization",
+                        "Bearer $currentToken"
+                    )
+                }
+            }
             .build()
 
-        return chain.proceed(authenticatedRequest)
+        return chain.proceed(request)
     }
 }
