@@ -49,7 +49,15 @@ fun AppNavHost(
         }
 
         composable(AppRoute.Home.route) {
-            HomeScreen()
+            HomeScreen(
+                onLogoutSuccess = {
+                    navController.navigate(AppRoute.Login.route) {
+                        popUpTo(AppRoute.Home.route) {
+                            inclusive = true
+                        }
+                    }
+                }
+            )
         }
     }
 }

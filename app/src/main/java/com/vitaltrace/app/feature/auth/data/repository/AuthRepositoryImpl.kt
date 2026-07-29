@@ -29,9 +29,14 @@ class AuthRepositoryImpl @Inject constructor(
             )
 
             val token = response.data?.token
-                ?: return Result.failure(
-                    AuthException("Authentication token was not received.")
+
+            if (token.isNullOrBlank()) {
+                return Result.failure(
+                    AuthException(
+                        message = "Authentication token was not received."
+                    )
                 )
+            }
 
             tokenDataStore.saveToken(token)
             authInterceptor.updateToken(token)
@@ -69,7 +74,9 @@ class AuthRepositoryImpl @Inject constructor(
 
             if (token.isNullOrBlank()) {
                 return Result.failure(
-                    AuthException("No active session was found.")
+                    AuthException(
+                        message = "No active session was found."
+                    )
                 )
             }
 
@@ -111,38 +118,24 @@ class AuthRepositoryImpl @Inject constructor(
     override suspend fun logout(): Result<Unit> {
         return try {
             authApiService.logout()
-            clearLocalSession()
-
             Result.success(Unit)
         } catch (exception: HttpException) {
-            clearLocalSession()
-
-            Result.failure(
-                AuthException(
-                    message = getHttpErrorMessage(exception),
-                    cause = exception
+            if (exception.code() != 401) {
+                return Result.failure(
+                    AuthException(
+                        message = getHttpErrorMessage(exception),
+                        cause = exception
+                    )
                 )
-            )
+            }
+
+            Result.success(Unit)
         } catch (exception: IOException) {
-            clearLocalSession()
-
-            Result.failure(
-                AuthException(
-                    message = exception.message
-                        ?: "Could not connect to the server.",
-                    cause = exception
-                )
-            )
+            Result.success(Unit)
         } catch (exception: Exception) {
+            Result.success(Unit)
+        } finally {
             clearLocalSession()
-
-            Result.failure(
-                AuthException(
-                    message = exception.message
-                        ?: "Could not close the session.",
-                    cause = exception
-                )
-            )
         }
     }
 
@@ -155,12 +148,18 @@ class AuthRepositoryImpl @Inject constructor(
         exception: HttpException
     ): String {
         return when (exception.code()) {
-            401 -> "Your session is invalid or has expired."
+            400 -> "The request could not be processed."
+            401 -> "Your email or password is incorrect, or your session has expired."
             403 -> "You do not have permission to perform this action."
             404 -> "The requested resource was not found."
+            408 -> "The server took too long to respond."
+            409 -> "The request conflicts with the current server state."
             422 -> "The information provided is invalid."
+            429 -> "Too many requests. Please try again later."
             500 -> "The server encountered an internal error."
-            else -> "Authentication request failed."
+            502 -> "The server is temporarily unavailable."
+            503 -> "The service is temporarily unavailable."
+            else -> "The authentication request failed."
         }
     }
 }
