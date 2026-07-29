@@ -1,3 +1,22 @@
 <resources>
     <string name="app_name">VitalTrace</string>
+    <string name="home_account_options">Opciones de cuenta</string>
+    <string name="home_logout">Cerrar sesión</string>
+    <string name="home_loading">Cargando información</string>
+    <string name="home_retry">Intentar de nuevo</string>
+    <string name="home_follow_up_label">ESTADO DE SEGUIMIENTO</string>
+    <string name="home_register_measurement">+ Registrar medición</string>
+    <string name="home_next_appointment">PRÓXIMA CITA</string>
+    <string name="home_view_detail">Ver detalle</string>
+    <string name="home_recent_pressure">PRESIÓN RECIENTE</string>
+    <string name="home_history">Historial</string>
+    <string name="home_no_follow_up">No hay información de seguimiento</string>
+    <string name="home_no_appointments">No hay citas próximas</string>
+    <string name="home_no_measurements">No hay mediciones registradas</string>
+    <string name="home_appointment_summary">%1$s · %2$s,%3$s%4$s</string>
+    <string name="home_measurement_summary">%1$s · %2$s</string>
+    <string name="home_bottom_home">Inicio</string>
+    <string name="home_bottom_measurements">Mediciones</string>
+    <string name="home_bottom_appointments">Citas</string>
+    <string name="home_bottom_profile">Perfil</string>
 </resources>
