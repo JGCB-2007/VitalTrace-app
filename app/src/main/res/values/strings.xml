@@ -50,4 +50,22 @@
     <string name="measurements_empty_title">No hay mediciones en este estado</string>
     <string name="measurements_empty_description">Cuando registres una medición, podrás consultar aquí su seguimiento.</string>
     <string name="measurements_empty_action">Registrar medición</string>
+    <string name="measurement_form_title">Registrar medición</string>
+    <string name="measurement_form_subtitle">Presión arterial</string>
+    <string name="measurement_form_back">Volver</string>
+    <string name="measurement_form_systolic">Sistólica</string>
+    <string name="measurement_form_diastolic">Diastólica</string>
+    <string name="measurement_form_unit">Unidad</string>
+    <string name="measurement_form_pressure_unit">mmHg</string>
+    <string name="measurement_form_date">Fecha</string>
+    <string name="measurement_form_time">Hora</string>
+    <string name="measurement_form_note">Observación (opcional)</string>
+    <string name="measurement_form_note_placeholder">Ej. Medición tomada en reposo…</string>
+    <string name="measurement_form_information">VitalTrace registra la información y no interpreta ni diagnostica los valores.</string>
+    <string name="measurement_form_save">Guardar medición</string>
+    <string name="measurement_form_cancel">Cancelar</string>
+    <string name="measurement_form_required_error">Ingresa un valor</string>
+    <string name="measurement_form_invalid_error">Ingresa un valor válido</string>
+    <string name="measurement_form_date_description">Seleccionar fecha: %1$s</string>
+    <string name="measurement_form_time_description">Seleccionar hora: %1$s</string>
 </resources>

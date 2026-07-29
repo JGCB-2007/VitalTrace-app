@@ -5,4 +5,5 @@ sealed class AppRoute(val route: String) {
     data object Login : AppRoute("login")
     data object Home : AppRoute("home")
     data object Measurements : AppRoute("measurements")
+    data object MeasurementForm : AppRoute("measurement_form")
 }
