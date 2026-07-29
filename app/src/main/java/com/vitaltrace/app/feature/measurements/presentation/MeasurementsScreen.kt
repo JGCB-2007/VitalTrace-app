@@ -90,7 +90,11 @@ private fun MeasurementsContent(
             )
         },
         floatingActionButton = {
-            if (!uiState.isLoading && uiState.errorMessage == null) {
+            if (
+                !uiState.isLoading &&
+                uiState.errorMessage == null &&
+                uiState.selectedFilter != MeasurementFilter.PENDING
+            ) {
                 FloatingActionButton(
                     onClick = onAddMeasurementClick,
                     containerColor = VitalTraceNavy,
@@ -155,12 +159,14 @@ private fun MeasurementsBody(
                 onFilterSelected = onFilterSelected
             )
         }
-        uiState.latestMeasurement?.let { latestMeasurement ->
-            item {
-                LatestMeasurementCard(
-                    measurement = latestMeasurement,
-                    onClick = { onMeasurementClick(latestMeasurement.id) }
-                )
+        if (uiState.selectedFilter == MeasurementFilter.ALL) {
+            uiState.latestMeasurement?.let { latestMeasurement ->
+                item {
+                    LatestMeasurementCard(
+                        measurement = latestMeasurement,
+                        onClick = { onMeasurementClick(latestMeasurement.id) }
+                    )
+                }
             }
         }
         if (uiState.filteredMeasurements.isEmpty()) {
@@ -215,4 +221,24 @@ private fun previewMeasurementsState(): MeasurementsUiState {
             )
         )
     )
+}
+
+@Preview(showBackground = true, showSystemUi = true)
+@Composable
+private fun MeasurementsEmptyScreenPreview() {
+    VitalTraceTheme(dynamicColor = false) {
+        MeasurementsContent(
+            uiState = previewMeasurementsState().copy(
+                selectedFilter = MeasurementFilter.PENDING
+            ),
+            onFilterSelected = {},
+            onRetryClick = {},
+            onMeasurementClick = {},
+            onDismissMeasurementDetail = {},
+            onHomeClick = {},
+            onAddMeasurementClick = {},
+            onAppointmentsClick = {},
+            onProfileClick = {}
+        )
+    }
 }

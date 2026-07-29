@@ -47,8 +47,8 @@
     <string name="measurements_loading">Cargando mediciones</string>
     <string name="measurements_error">No se pudieron cargar las mediciones</string>
     <string name="measurements_retry">Intentar de nuevo</string>
-    <string name="measurements_empty_title">No hay mediciones en este estado</string>
-    <string name="measurements_empty_description">Cuando registres una medición, podrás consultar aquí su seguimiento.</string>
+    <string name="measurements_empty_title">Nada pendiente por ahora</string>
+    <string name="measurements_empty_description">No tienes mediciones esperando revisión. Registra una nueva para empezar tu seguimiento.</string>
     <string name="measurements_empty_action">Registrar medición</string>
     <string name="measurement_form_title">Registrar medición</string>
     <string name="measurement_form_subtitle">Presión arterial</string>
