@@ -108,4 +108,7 @@
     <string name="profile_error">No se pudo cargar el perfil</string>
     <string name="profile_retry">Intentar de nuevo</string>
     <string name="profile_identity_description">%1$s, %2$s</string>
+    <string name="splash_logo_description">Logo de VitalTrace</string>
+    <string name="splash_tagline">Seguimiento clínico continuo</string>
+    <string name="splash_loading">Validando tu sesión</string>
 </resources>
