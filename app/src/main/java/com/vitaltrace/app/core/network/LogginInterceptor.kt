@@ -6,6 +6,9 @@ object LoggingInterceptor {
 
     fun create(): HttpLoggingInterceptor {
         return HttpLoggingInterceptor().apply {
+            redactHeader("Authorization")
+            redactHeader("Cookie")
+            redactHeader("Set-Cookie")
             level = HttpLoggingInterceptor.Level.BODY
         }
     }
