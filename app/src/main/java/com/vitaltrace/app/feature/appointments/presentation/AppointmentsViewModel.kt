@@ -3,6 +3,7 @@ package com.vitaltrace.app.feature.appointments.presentation
 import androidx.lifecycle.ViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 
 class AppointmentsViewModel : ViewModel() {
 
@@ -12,6 +13,29 @@ class AppointmentsViewModel : ViewModel() {
     fun retry() {
         _uiState.value = sampleAppointmentsState()
     }
+
+    fun showAppointmentDetail(appointmentId: String) {
+        _uiState.update { state ->
+            state.copy(selectedAppointmentDetail = sampleAppointmentDetail(appointmentId))
+        }
+    }
+
+    fun dismissAppointmentDetail() {
+        _uiState.update { state -> state.copy(selectedAppointmentDetail = null) }
+    }
+}
+
+private fun sampleAppointmentDetail(appointmentId: String): AppointmentDetailUiModel {
+    return AppointmentDetailUiModel(
+        id = appointmentId,
+        professionalName = "Dr. Carlos Ruiz",
+        professionalInitials = "CR",
+        specialty = "Medicina interna",
+        reason = "Control de presión",
+        date = "23 jul 2026",
+        time = "10:30 a. m.",
+        status = AppointmentStatus.SCHEDULED
+    )
 }
 
 private fun sampleAppointmentsState(): AppointmentsUiState {

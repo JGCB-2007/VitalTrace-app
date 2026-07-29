@@ -23,6 +23,7 @@ import com.vitaltrace.app.feature.appointments.presentation.components.Appointme
 import com.vitaltrace.app.feature.appointments.presentation.components.AppointmentsErrorState
 import com.vitaltrace.app.feature.appointments.presentation.components.AppointmentsLoadingState
 import com.vitaltrace.app.feature.appointments.presentation.components.FeaturedAppointmentCard
+import com.vitaltrace.app.feature.appointments.presentation.detail.AppointmentDetailSheet
 import com.vitaltrace.app.feature.home.presentation.HomeBottomDestination
 import com.vitaltrace.app.feature.home.presentation.components.HomeBottomBar
 import com.vitaltrace.app.ui.theme.VitalTraceNavy
@@ -33,7 +34,6 @@ import com.vitaltrace.app.ui.theme.VitalTraceWarmBackground
 fun AppointmentsScreen(
     onHomeClick: () -> Unit,
     onMeasurementsClick: () -> Unit,
-    onAppointmentClick: (String) -> Unit = {},
     onProfileClick: () -> Unit = {},
     viewModel: AppointmentsViewModel = viewModel()
 ) {
@@ -44,7 +44,8 @@ fun AppointmentsScreen(
         onRetryClick = viewModel::retry,
         onHomeClick = onHomeClick,
         onMeasurementsClick = onMeasurementsClick,
-        onAppointmentClick = onAppointmentClick,
+        onAppointmentClick = viewModel::showAppointmentDetail,
+        onDismissAppointmentDetail = viewModel::dismissAppointmentDetail,
         onProfileClick = onProfileClick
     )
 }
@@ -56,8 +57,16 @@ private fun AppointmentsContent(
     onHomeClick: () -> Unit,
     onMeasurementsClick: () -> Unit,
     onAppointmentClick: (String) -> Unit,
+    onDismissAppointmentDetail: () -> Unit,
     onProfileClick: () -> Unit
 ) {
+    uiState.selectedAppointmentDetail?.let { detail ->
+        AppointmentDetailSheet(
+            detail = detail,
+            onDismiss = onDismissAppointmentDetail
+        )
+    }
+
     Scaffold(
         containerColor = VitalTraceWarmBackground,
         bottomBar = {
@@ -150,6 +159,7 @@ private fun AppointmentsScreenPreview() {
             onHomeClick = {},
             onMeasurementsClick = {},
             onAppointmentClick = {},
+            onDismissAppointmentDetail = {},
             onProfileClick = {}
         )
     }
