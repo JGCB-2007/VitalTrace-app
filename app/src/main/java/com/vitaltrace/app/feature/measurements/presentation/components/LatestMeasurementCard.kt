@@ -28,9 +28,11 @@ import com.vitaltrace.app.ui.theme.VitalTraceTeal
 @Composable
 fun LatestMeasurementCard(
     measurement: MeasurementUiModel,
+    onClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     Card(
+        onClick = onClick,
         modifier = modifier.fillMaxWidth(),
         shape = RoundedCornerShape(26.dp),
         colors = CardDefaults.cardColors(containerColor = Color.White),

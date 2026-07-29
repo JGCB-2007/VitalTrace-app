@@ -4,6 +4,7 @@ data class MeasurementsUiState(
     val selectedFilter: MeasurementFilter = MeasurementFilter.ALL,
     val latestMeasurement: MeasurementUiModel? = null,
     val measurements: List<MeasurementUiModel> = emptyList(),
+    val selectedMeasurementDetail: MeasurementDetailUiModel? = null,
     val isLoading: Boolean = false,
     val errorMessage: String? = null
 ) {
@@ -16,6 +17,22 @@ data class MeasurementsUiState(
             }
         }
 }
+
+data class MeasurementDetailUiModel(
+    val id: String,
+    val value: String,
+    val date: String,
+    val time: String,
+    val observation: String,
+    val status: MeasurementStatus,
+    val followUp: MeasurementFollowUpUiModel?
+)
+
+data class MeasurementFollowUpUiModel(
+    val message: String,
+    val date: String,
+    val time: String
+)
 
 data class MeasurementUiModel(
     val id: String,

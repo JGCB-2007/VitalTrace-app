@@ -1,6 +1,7 @@
 package com.vitaltrace.app.feature.measurements.presentation.components
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -35,6 +36,7 @@ import com.vitaltrace.app.ui.theme.VitalTraceTeal
 @Composable
 fun MeasurementHistoryCard(
     measurements: List<MeasurementUiModel>,
+    onMeasurementClick: (String) -> Unit,
     modifier: Modifier = Modifier
 ) {
     Card(
@@ -47,6 +49,7 @@ fun MeasurementHistoryCard(
             measurements.forEachIndexed { index, measurement ->
                 MeasurementHistoryItem(
                     measurement = measurement,
+                    onClick = { onMeasurementClick(measurement.id) },
                     modifier = Modifier.padding(vertical = 18.dp)
                 )
                 if (index < measurements.lastIndex) {
@@ -60,6 +63,7 @@ fun MeasurementHistoryCard(
 @Composable
 private fun MeasurementHistoryItem(
     measurement: MeasurementUiModel,
+    onClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     val unit = stringResource(R.string.measurements_pressure_unit)
@@ -74,6 +78,7 @@ private fun MeasurementHistoryItem(
     Row(
         modifier = modifier
             .fillMaxWidth()
+            .clickable(onClick = onClick)
             .semantics { contentDescription = description },
         horizontalArrangement = Arrangement.spacedBy(18.dp),
         verticalAlignment = Alignment.CenterVertically

@@ -19,6 +19,36 @@ class MeasurementsViewModel : ViewModel() {
     fun retry() {
         _uiState.value = sampleMeasurementsState()
     }
+
+    fun showMeasurementDetail(measurementId: String) {
+        _uiState.update { state ->
+            state.copy(
+                selectedMeasurementDetail = sampleMeasurementDetail(measurementId)
+            )
+        }
+    }
+
+    fun dismissMeasurementDetail() {
+        _uiState.update { state ->
+            state.copy(selectedMeasurementDetail = null)
+        }
+    }
+}
+
+private fun sampleMeasurementDetail(measurementId: String): MeasurementDetailUiModel {
+    return MeasurementDetailUiModel(
+        id = measurementId,
+        value = "145/92",
+        date = "14 jul 2026",
+        time = "9:42 a. m.",
+        observation = "En reposo",
+        status = MeasurementStatus.REVIEWED,
+        followUp = MeasurementFollowUpUiModel(
+            message = "Dr. Carlos Ruiz revisó el registro y dejó una observación de seguimiento.",
+            date = "15 jul",
+            time = "11:20 a. m."
+        )
+    )
 }
 
 private fun sampleMeasurementsState(): MeasurementsUiState {

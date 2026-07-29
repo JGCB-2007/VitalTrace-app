@@ -31,6 +31,7 @@ import com.vitaltrace.app.feature.measurements.presentation.components.Measureme
 import com.vitaltrace.app.feature.measurements.presentation.components.MeasurementsErrorState
 import com.vitaltrace.app.feature.measurements.presentation.components.MeasurementsHeader
 import com.vitaltrace.app.feature.measurements.presentation.components.MeasurementsLoadingState
+import com.vitaltrace.app.feature.measurements.presentation.detail.MeasurementDetailSheet
 import com.vitaltrace.app.ui.theme.VitalTraceNavy
 import com.vitaltrace.app.ui.theme.VitalTraceTheme
 import com.vitaltrace.app.ui.theme.VitalTraceWarmBackground
@@ -49,6 +50,8 @@ fun MeasurementsScreen(
         uiState = uiState,
         onFilterSelected = viewModel::selectFilter,
         onRetryClick = viewModel::retry,
+        onMeasurementClick = viewModel::showMeasurementDetail,
+        onDismissMeasurementDetail = viewModel::dismissMeasurementDetail,
         onHomeClick = onHomeClick,
         onAddMeasurementClick = onAddMeasurementClick,
         onAppointmentsClick = onAppointmentsClick,
@@ -61,11 +64,20 @@ private fun MeasurementsContent(
     uiState: MeasurementsUiState,
     onFilterSelected: (MeasurementFilter) -> Unit,
     onRetryClick: () -> Unit,
+    onMeasurementClick: (String) -> Unit,
+    onDismissMeasurementDetail: () -> Unit,
     onHomeClick: () -> Unit,
     onAddMeasurementClick: () -> Unit,
     onAppointmentsClick: () -> Unit,
     onProfileClick: () -> Unit
 ) {
+    uiState.selectedMeasurementDetail?.let { detail ->
+        MeasurementDetailSheet(
+            detail = detail,
+            onDismiss = onDismissMeasurementDetail
+        )
+    }
+
     Scaffold(
         containerColor = VitalTraceWarmBackground,
         bottomBar = {
@@ -109,6 +121,7 @@ private fun MeasurementsContent(
                 uiState = uiState,
                 onFilterSelected = onFilterSelected,
                 onAddMeasurementClick = onAddMeasurementClick,
+                onMeasurementClick = onMeasurementClick,
                 modifier = Modifier.padding(innerPadding)
             )
         }
@@ -120,6 +133,7 @@ private fun MeasurementsBody(
     uiState: MeasurementsUiState,
     onFilterSelected: (MeasurementFilter) -> Unit,
     onAddMeasurementClick: () -> Unit,
+    onMeasurementClick: (String) -> Unit,
     modifier: Modifier = Modifier
 ) {
     LazyColumn(
@@ -143,7 +157,10 @@ private fun MeasurementsBody(
         }
         uiState.latestMeasurement?.let { latestMeasurement ->
             item {
-                LatestMeasurementCard(measurement = latestMeasurement)
+                LatestMeasurementCard(
+                    measurement = latestMeasurement,
+                    onClick = { onMeasurementClick(latestMeasurement.id) }
+                )
             }
         }
         if (uiState.filteredMeasurements.isEmpty()) {
@@ -152,7 +169,10 @@ private fun MeasurementsBody(
             }
         } else {
             item {
-                MeasurementHistoryCard(measurements = uiState.filteredMeasurements)
+                MeasurementHistoryCard(
+                    measurements = uiState.filteredMeasurements,
+                    onMeasurementClick = onMeasurementClick
+                )
             }
         }
     }
@@ -166,6 +186,8 @@ private fun MeasurementsScreenPreview() {
             uiState = previewMeasurementsState(),
             onFilterSelected = {},
             onRetryClick = {},
+            onMeasurementClick = {},
+            onDismissMeasurementDetail = {},
             onHomeClick = {},
             onAddMeasurementClick = {},
             onAppointmentsClick = {},
