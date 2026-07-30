@@ -9,6 +9,7 @@ import com.vitaltrace.app.feature.patient.domain.model.Measurement
 import com.vitaltrace.app.feature.patient.domain.model.Page
 import com.vitaltrace.app.feature.patient.domain.model.PatientSummary
 import com.vitaltrace.app.feature.patient.domain.model.PatientRelative
+import com.vitaltrace.app.feature.patient.domain.model.PatientProfile
 import com.vitaltrace.app.feature.patient.domain.model.Treatment
 import com.vitaltrace.app.feature.patient.domain.repository.PatientRepository
 import retrofit2.HttpException
@@ -21,6 +22,11 @@ class PatientRepositoryImpl @Inject constructor(
     override suspend fun getSummary(): Result<PatientSummary> = execute {
         apiService.getSummary().data?.toDomain()
             ?: throw PatientException("Patient summary data was not received.")
+    }
+
+    override suspend fun getProfile(): Result<PatientProfile> = execute {
+        apiService.getProfile().data?.toDomain()
+            ?: throw PatientException("Patient profile data was not received.")
     }
 
     override suspend fun getAppointments(

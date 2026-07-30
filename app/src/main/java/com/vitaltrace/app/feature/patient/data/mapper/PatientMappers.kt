@@ -13,6 +13,7 @@ import com.vitaltrace.app.feature.patient.data.dto.treatments.TreatmentDto
 import com.vitaltrace.app.feature.patient.data.dto.relatives.PatientRelativeDto
 import com.vitaltrace.app.feature.patient.data.dto.relatives.RelativeDto
 import com.vitaltrace.app.feature.patient.data.dto.relatives.RelativePersonDto
+import com.vitaltrace.app.feature.patient.data.dto.profile.PatientProfileDto
 import com.vitaltrace.app.feature.patient.domain.model.AlertsSummary
 import com.vitaltrace.app.feature.patient.domain.model.Appointment
 import com.vitaltrace.app.feature.patient.domain.model.Diagnosis
@@ -32,6 +33,8 @@ import com.vitaltrace.app.feature.patient.domain.model.Treatment
 import com.vitaltrace.app.feature.patient.domain.model.PatientRelative
 import com.vitaltrace.app.feature.patient.domain.model.Relative
 import com.vitaltrace.app.feature.patient.domain.model.RelativePerson
+import com.vitaltrace.app.feature.patient.domain.model.PatientProfile
+import com.vitaltrace.app.feature.patient.domain.model.EmergencyContact
 
 fun PatientSummaryDataDto.toDomain() = PatientSummary(
     patient = SummaryPatient(
@@ -119,6 +122,23 @@ private fun RelativePersonDto.toDomain() = RelativePerson(
     id = id,
     fullName = fullName,
     phone = phone
+)
+
+fun PatientProfileDto.toDomain() = PatientProfile(
+    userId = userId,
+    patientId = patientId,
+    recordNumber = recordNumber,
+    fullName = fullName,
+    email = email,
+    phone = phone,
+    dateOfBirth = dateOfBirth,
+    age = age,
+    gender = gender,
+    address = address,
+    identificationNumber = identificationNumber,
+    emergencyContact = emergencyContact?.let { EmergencyContact(it.name, it.phone) },
+    accountStatus = accountStatus,
+    administrativeStatus = administrativeStatus
 )
 
 fun DiagnosisDto.toDomain() = Diagnosis(

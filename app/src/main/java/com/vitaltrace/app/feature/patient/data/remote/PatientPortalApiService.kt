@@ -6,6 +6,7 @@ import com.vitaltrace.app.feature.patient.data.dto.common.PaginatedResponseDto
 import com.vitaltrace.app.feature.patient.data.dto.measurements.CreateMeasurementRequestDto
 import com.vitaltrace.app.feature.patient.data.dto.measurements.MeasurementDto
 import com.vitaltrace.app.feature.patient.data.dto.relatives.PatientRelativeDto
+import com.vitaltrace.app.feature.patient.data.dto.profile.PatientProfileDto
 import com.vitaltrace.app.feature.patient.data.dto.summary.PatientSummaryDataDto
 import com.vitaltrace.app.feature.patient.data.dto.treatments.TreatmentDto
 import retrofit2.http.Body
@@ -19,6 +20,9 @@ import retrofit2.http.Query
 interface PatientPortalApiService {
     @GET("patient/summary")
     suspend fun getSummary(): ApiResponse<PatientSummaryDataDto>
+
+    @GET("patient/profile")
+    suspend fun getProfile(): ApiResponse<PatientProfileDto>
 
     @GET("patient/appointments")
     suspend fun getAppointments(

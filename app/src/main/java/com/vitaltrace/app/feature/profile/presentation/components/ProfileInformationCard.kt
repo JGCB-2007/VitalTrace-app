@@ -43,12 +43,38 @@ fun ProfileInformationCard(
                 label = stringResource(R.string.profile_email),
                 value = user.email
             )
-            HorizontalDivider(color = Color(0xFFE5E0D7))
-            ProfileInformationRow(
-                label = stringResource(R.string.profile_phone),
-                value = user.phone
+            OptionalProfileInformationRow(stringResource(R.string.profile_phone), user.phone)
+            OptionalProfileInformationRow(
+                stringResource(R.string.profile_identification),
+                user.identificationNumber
+            )
+            OptionalProfileInformationRow(
+                stringResource(R.string.profile_birth_date),
+                user.dateOfBirth
+            )
+            OptionalProfileInformationRow(
+                stringResource(R.string.profile_age),
+                user.age?.let { stringResource(R.string.profile_age_value, it) }
+            )
+            OptionalProfileInformationRow(stringResource(R.string.profile_gender), user.gender)
+            OptionalProfileInformationRow(stringResource(R.string.profile_address), user.address)
+            OptionalProfileInformationRow(
+                stringResource(R.string.profile_emergency_contact),
+                user.emergencyContactName
+            )
+            OptionalProfileInformationRow(
+                stringResource(R.string.profile_emergency_phone),
+                user.emergencyContactPhone
             )
         }
+    }
+}
+
+@Composable
+private fun OptionalProfileInformationRow(label: String, value: String?) {
+    value?.takeIf(String::isNotBlank)?.let {
+        HorizontalDivider(color = Color(0xFFE5E0D7))
+        ProfileInformationRow(label, it)
     }
 }
 

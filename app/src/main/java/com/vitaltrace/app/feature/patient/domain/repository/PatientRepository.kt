@@ -5,10 +5,13 @@ import com.vitaltrace.app.feature.patient.domain.model.Measurement
 import com.vitaltrace.app.feature.patient.domain.model.Page
 import com.vitaltrace.app.feature.patient.domain.model.PatientSummary
 import com.vitaltrace.app.feature.patient.domain.model.PatientRelative
+import com.vitaltrace.app.feature.patient.domain.model.PatientProfile
 import com.vitaltrace.app.feature.patient.domain.model.Treatment
 
 interface PatientRepository {
     suspend fun getSummary(): Result<PatientSummary>
+
+    suspend fun getProfile(): Result<PatientProfile>
 
     suspend fun getAppointments(
         status: String? = null,

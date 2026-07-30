@@ -122,6 +122,14 @@
     <string name="profile_identifier">Identificador</string>
     <string name="profile_email">Correo</string>
     <string name="profile_phone">Teléfono</string>
+    <string name="profile_identification">Identificación</string>
+    <string name="profile_birth_date">Fecha de nacimiento</string>
+    <string name="profile_age">Edad</string>
+    <string name="profile_age_value">%1$d años</string>
+    <string name="profile_gender">Género</string>
+    <string name="profile_address">Dirección</string>
+    <string name="profile_emergency_contact">Contacto de emergencia</string>
+    <string name="profile_emergency_phone">Teléfono de emergencia</string>
     <string name="profile_notifications">NOTIFICACIONES</string>
     <string name="profile_measurement_reminders">Recordatorios de medición</string>
     <string name="profile_appointment_notifications">Avisos de citas</string>

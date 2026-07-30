@@ -13,11 +13,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import com.vitaltrace.app.R
 import com.vitaltrace.app.feature.home.presentation.HomeBottomDestination
 import com.vitaltrace.app.feature.home.presentation.components.HomeBottomBar
@@ -28,7 +27,6 @@ import com.vitaltrace.app.feature.profile.presentation.components.ProfileInforma
 import com.vitaltrace.app.feature.profile.presentation.components.RelativesAccessCard
 import com.vitaltrace.app.feature.profile.presentation.components.ProfileLoadingState
 import com.vitaltrace.app.ui.theme.VitalTraceNavy
-import com.vitaltrace.app.ui.theme.VitalTraceTheme
 import com.vitaltrace.app.ui.theme.VitalTraceWarmBackground
 
 @Composable
@@ -37,7 +35,7 @@ fun ProfileScreen(
     onMeasurementsClick: () -> Unit,
     onAppointmentsClick: () -> Unit,
     onRelativesClick: () -> Unit,
-    viewModel: ProfileViewModel = viewModel()
+    viewModel: ProfileViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
@@ -140,31 +138,5 @@ private fun ProfileBody(
                 onEmailUpdatesChange = onEmailUpdatesChange
             )
         }
-    }
-}
-
-@Preview(showBackground = true, showSystemUi = true)
-@Composable
-private fun ProfileScreenPreview() {
-    VitalTraceTheme(dynamicColor = false) {
-        ProfileContent(
-            uiState = ProfileUiState(
-                user = ProfileUserUiModel(
-                    fullName = "Ana Martínez",
-                    initials = "AM",
-                    identifier = "VT-2026-014",
-                    email = "ana.martinez@ejemplo.com",
-                    phone = "+505 8888 0000"
-                )
-            ),
-            onHomeClick = {},
-            onMeasurementsClick = {},
-            onAppointmentsClick = {},
-            onRelativesClick = {},
-            onRetryClick = {},
-            onMeasurementRemindersChange = {},
-            onAppointmentNotificationsChange = {},
-            onEmailUpdatesChange = {}
-        )
     }
 }
