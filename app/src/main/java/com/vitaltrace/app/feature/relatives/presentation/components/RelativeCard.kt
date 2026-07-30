@@ -42,7 +42,8 @@ fun RelativeCard(
             verticalArrangement = Arrangement.spacedBy(10.dp)
         ) {
             Text(
-                text = relative.fullName ?: stringResource(R.string.relatives_linked_relative),
+                text = relative.fullName?.takeIf(String::isNotBlank)
+                    ?: stringResource(R.string.relatives_linked_relative),
                 color = VitalTraceNavy,
                 fontSize = 20.sp,
                 fontWeight = FontWeight.Bold

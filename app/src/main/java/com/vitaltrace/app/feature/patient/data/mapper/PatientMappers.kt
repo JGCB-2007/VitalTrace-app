@@ -116,7 +116,9 @@ fun PatientRelativeDto.toDomain() = PatientRelative(
 private fun RelativeDto.toDomain() = Relative(id, personId, person?.toDomain())
 
 private fun RelativePersonDto.toDomain() = RelativePerson(
-    id, firstName, middleName, firstLastName, secondLastName, phone
+    id = id,
+    fullName = fullName,
+    phone = phone
 )
 
 fun DiagnosisDto.toDomain() = Diagnosis(

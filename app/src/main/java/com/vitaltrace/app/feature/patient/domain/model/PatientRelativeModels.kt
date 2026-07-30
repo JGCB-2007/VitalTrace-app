@@ -19,15 +19,6 @@ data class Relative(
 
 data class RelativePerson(
     val id: Long,
-    val firstName: String?,
-    val middleName: String?,
-    val firstLastName: String?,
-    val secondLastName: String?,
+    val fullName: String?,
     val phone: String?
-) {
-    val fullName: String?
-        get() = listOf(firstName, middleName, firstLastName, secondLastName)
-            .mapNotNull { it?.trim()?.takeIf(String::isNotEmpty) }
-            .joinToString(" ")
-            .takeIf(String::isNotEmpty)
-}
+)

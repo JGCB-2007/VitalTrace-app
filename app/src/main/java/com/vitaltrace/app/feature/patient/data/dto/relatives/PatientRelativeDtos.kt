@@ -25,9 +25,6 @@ data class RelativeDto(
 @Serializable
 data class RelativePersonDto(
     val id: Long,
-    @SerialName("first_name") val firstName: String? = null,
-    @SerialName("middle_name") val middleName: String? = null,
-    @SerialName("first_last_name") val firstLastName: String? = null,
-    @SerialName("second_last_name") val secondLastName: String? = null,
+    @SerialName("full_name") val fullName: String? = null,
     val phone: String? = null
 )
