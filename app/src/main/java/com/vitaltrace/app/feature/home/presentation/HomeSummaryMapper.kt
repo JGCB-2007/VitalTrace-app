@@ -5,6 +5,7 @@ import com.vitaltrace.app.feature.patient.domain.model.Measurement
 import com.vitaltrace.app.feature.patient.domain.model.PatientSummary
 import java.time.LocalTime
 import javax.inject.Inject
+import com.vitaltrace.app.core.presentation.localizedStatusLabel
 
 class HomeSummaryMapper @Inject constructor() {
     fun map(summary: PatientSummary): HomeContentUiModel {
@@ -21,11 +22,12 @@ class HomeSummaryMapper @Inject constructor() {
     private fun Appointment.toUiModel(): NextAppointmentUiModel {
         val dateTimeParts = scheduledAt.trim().split(" ", limit = 2)
         return NextAppointmentUiModel(
+            id = id,
             professionalName = professional?.fullName.orEmpty(),
             reason = reason,
             date = dateTimeParts.firstOrNull().orEmpty(),
             time = dateTimeParts.getOrNull(1).orEmpty(),
-            status = status
+            status = localizedStatusLabel(status)
         )
     }
 

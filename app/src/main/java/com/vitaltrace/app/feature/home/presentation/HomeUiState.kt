@@ -34,6 +34,7 @@ data class FollowUpStatusUiModel(
 )
 
 data class NextAppointmentUiModel(
+    val id: Long,
     val professionalName: String,
     val reason: String,
     val date: String,

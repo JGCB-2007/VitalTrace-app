@@ -24,6 +24,8 @@ import com.vitaltrace.app.feature.measurements.presentation.MeasurementUiModel
 import com.vitaltrace.app.ui.theme.VitalTraceMint
 import com.vitaltrace.app.ui.theme.VitalTraceNavy
 import com.vitaltrace.app.ui.theme.VitalTraceTeal
+import com.vitaltrace.app.core.presentation.localizedMeasurementTypeLabel
+import androidx.compose.ui.text.style.TextOverflow
 
 @Composable
 fun LatestMeasurementCard(
@@ -56,19 +58,24 @@ fun LatestMeasurementCard(
                     letterSpacing = 0.5.sp
                 )
                 MeasurementStatusChip(status = measurement.status)
-                Text(
-                    text = measurement.typeName,
-                    color = Color(0xFF53636D),
-                    fontSize = 15.sp
-                )
             }
+            Text(
+                text = localizedMeasurementTypeLabel(measurement.typeName),
+                color = VitalTraceNavy,
+                fontSize = 18.sp,
+                fontWeight = FontWeight.Bold,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis
+            )
             Row(verticalAlignment = Alignment.Bottom) {
                 Text(
                     text = measurement.value,
                     color = VitalTraceNavy,
                     fontFamily = FontFamily.Serif,
                     fontSize = 38.sp,
-                    fontWeight = FontWeight.Bold
+                    fontWeight = FontWeight.Bold,
+                    maxLines = 1,
+                    softWrap = false
                 )
                 Text(
                     text = measurement.unit,
@@ -80,7 +87,8 @@ fun LatestMeasurementCard(
             Text(
                 text = "${measurement.date} · ${measurement.time}",
                 color = Color(0xFF53636D),
-                fontSize = 18.sp
+                fontSize = 16.sp,
+                maxLines = 2
             )
         }
     }

@@ -11,6 +11,9 @@ sealed class AppRoute(val route: String) {
     data object Measurements : AppRoute("measurements")
     data object MeasurementForm : AppRoute("measurement_form")
     data object Appointments : AppRoute("appointments")
+    data object AppointmentDetail : AppRoute("appointments/{appointmentId}") {
+        fun create(appointmentId: Long) = "appointments/$appointmentId"
+    }
     data object Profile : AppRoute("profile")
     data object Relatives : AppRoute("relatives")
     data object Treatments : AppRoute("treatments")

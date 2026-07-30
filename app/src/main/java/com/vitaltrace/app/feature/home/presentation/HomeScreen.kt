@@ -22,7 +22,6 @@ import com.vitaltrace.app.feature.home.presentation.components.LoadingState
 import com.vitaltrace.app.feature.home.presentation.components.NextAppointmentCard
 import com.vitaltrace.app.feature.home.presentation.components.RecentPressureCard
 import com.vitaltrace.app.feature.home.presentation.components.RegisterMeasurementButton
-import com.vitaltrace.app.feature.home.presentation.components.TreatmentsAccessCard
 import com.vitaltrace.app.ui.theme.VitalTraceTheme
 import kotlinx.coroutines.flow.collectLatest
 
@@ -30,12 +29,11 @@ import kotlinx.coroutines.flow.collectLatest
 fun HomeScreen(
     onLogoutSuccess: () -> Unit,
     onRegisterMeasurementClick: () -> Unit = {},
-    onAppointmentDetailClick: () -> Unit = {},
+    onAppointmentDetailClick: (Long) -> Unit = {},
     onPressureHistoryClick: () -> Unit = {},
     onMeasurementsClick: () -> Unit = {},
     onAppointmentsClick: () -> Unit = {},
     onProfileClick: () -> Unit = {},
-    onTreatmentsClick: () -> Unit = {},
     viewModel: HomeViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
@@ -57,8 +55,7 @@ fun HomeScreen(
         onPressureHistoryClick = onPressureHistoryClick,
         onMeasurementsClick = onMeasurementsClick,
         onAppointmentsClick = onAppointmentsClick,
-        onProfileClick = onProfileClick,
-        onTreatmentsClick = onTreatmentsClick
+        onProfileClick = onProfileClick
     )
 }
 
@@ -68,12 +65,11 @@ private fun HomeContent(
     onLogoutClick: () -> Unit,
     onRetryClick: () -> Unit,
     onRegisterMeasurementClick: () -> Unit,
-    onAppointmentDetailClick: () -> Unit,
+    onAppointmentDetailClick: (Long) -> Unit,
     onPressureHistoryClick: () -> Unit,
     onMeasurementsClick: () -> Unit,
     onAppointmentsClick: () -> Unit,
-    onProfileClick: () -> Unit,
-    onTreatmentsClick: () -> Unit
+    onProfileClick: () -> Unit
 ) {
     Scaffold(
         containerColor = HomeBackground,
@@ -107,7 +103,6 @@ private fun HomeContent(
                 onRegisterMeasurementClick = onRegisterMeasurementClick,
                 onAppointmentDetailClick = onAppointmentDetailClick,
                 onPressureHistoryClick = onPressureHistoryClick,
-                onTreatmentsClick = onTreatmentsClick,
                 modifier = Modifier.padding(innerPadding)
             )
         }
@@ -120,9 +115,8 @@ private fun HomeBody(
     isLoggingOut: Boolean,
     onLogoutClick: () -> Unit,
     onRegisterMeasurementClick: () -> Unit,
-    onAppointmentDetailClick: () -> Unit,
+    onAppointmentDetailClick: (Long) -> Unit,
     onPressureHistoryClick: () -> Unit,
-    onTreatmentsClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     LazyColumn(
@@ -158,13 +152,7 @@ private fun HomeBody(
         item {
             NextAppointmentCard(
                 appointment = content.nextAppointment,
-                onDetailClick = onAppointmentDetailClick,
-                modifier = Modifier.padding(top = 18.dp)
-            )
-        }
-        item {
-            TreatmentsAccessCard(
-                onClick = onTreatmentsClick,
+                onDetailClick = { content.nextAppointment?.let { onAppointmentDetailClick(it.id) } },
                 modifier = Modifier.padding(top = 18.dp)
             )
         }
@@ -191,8 +179,7 @@ private fun HomeScreenPreview() {
             onPressureHistoryClick = {},
             onMeasurementsClick = {},
             onAppointmentsClick = {},
-            onProfileClick = {},
-            onTreatmentsClick = {}
+            onProfileClick = {}
         )
     }
 }
@@ -210,6 +197,7 @@ private fun previewHomeState(): HomeUiState {
             description = "Un profesional podrá revisarla pronto."
         ),
         nextAppointment = NextAppointmentUiModel(
+            id = 25,
             professionalName = "Dr. Carlos Ruiz",
             reason = "Control",
             date = "23 jul",

@@ -98,10 +98,13 @@ fun AppNavHost(
                         launchSingleTop = true
                     }
                 },
-                onTreatmentsClick = {
-                    navController.navigate(AppRoute.Treatments.route) {
+                onAppointmentDetailClick = { appointmentId ->
+                    navController.navigate(AppRoute.AppointmentDetail.create(appointmentId)) {
                         launchSingleTop = true
                     }
+                },
+                onPressureHistoryClick = {
+                    navController.navigate(AppRoute.Measurements.route) { launchSingleTop = true }
                 }
             )
         }
@@ -261,6 +264,19 @@ fun AppNavHost(
             )
         }
 
+        composable(
+            route = AppRoute.AppointmentDetail.route,
+            arguments = listOf(navArgument("appointmentId") { type = NavType.LongType })
+        ) { backStackEntry ->
+            AppointmentsScreen(
+                onHomeClick = { navController.navigate(AppRoute.Home.route) { popUpTo(AppRoute.Home.route) } },
+                onMeasurementsClick = { navController.navigate(AppRoute.Measurements.route) },
+                onProfileClick = { navController.navigate(AppRoute.Profile.route) },
+                initialAppointmentId = backStackEntry.arguments?.getLong("appointmentId"),
+                onInitialDetailDismiss = { navController.popBackStack() }
+            )
+        }
+
         composable(AppRoute.Profile.route) {
             ProfileScreen(
                 onHomeClick = {
@@ -290,6 +306,9 @@ fun AppNavHost(
                     navController.navigate(AppRoute.ClinicalHistory.route) {
                         launchSingleTop = true
                     }
+                },
+                onTreatmentsClick = {
+                    navController.navigate(AppRoute.Treatments.route) { launchSingleTop = true }
                 }
             )
         }

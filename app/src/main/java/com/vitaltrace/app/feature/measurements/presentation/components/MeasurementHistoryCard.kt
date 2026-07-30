@@ -29,6 +29,8 @@ import androidx.compose.ui.unit.sp
 import com.vitaltrace.app.feature.measurements.presentation.MeasurementUiModel
 import com.vitaltrace.app.ui.theme.VitalTraceNavy
 import com.vitaltrace.app.ui.theme.VitalTraceTeal
+import com.vitaltrace.app.core.presentation.localizedMeasurementTypeLabel
+import androidx.compose.ui.text.style.TextOverflow
 
 @Composable
 fun MeasurementHistoryCard(
@@ -69,11 +71,11 @@ private fun MeasurementHistoryItem(
             .fillMaxWidth()
             .clickable(onClick = onClick)
             .semantics { contentDescription = description },
-        horizontalArrangement = Arrangement.spacedBy(18.dp),
+        horizontalArrangement = Arrangement.spacedBy(12.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
         Surface(
-            modifier = Modifier.size(60.dp),
+            modifier = Modifier.size(52.dp),
             color = Color(0xFFDDF4F2),
             shape = RoundedCornerShape(18.dp)
         ) {
@@ -81,27 +83,34 @@ private fun MeasurementHistoryItem(
                 imageVector = Icons.Rounded.MonitorHeart,
                 contentDescription = null,
                 tint = VitalTraceTeal,
-                modifier = Modifier.padding(15.dp)
+                modifier = Modifier.padding(13.dp)
             )
         }
-        Column(modifier = Modifier.weight(1f)) {
+        Column(modifier = Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(2.dp)) {
             Text(
-                text = measurement.value,
+                text = "${measurement.value} ${measurement.unit}",
                 color = VitalTraceNavy,
                 fontFamily = FontFamily.Serif,
-                fontSize = 24.sp,
-                fontWeight = FontWeight.Bold
+                fontSize = 22.sp,
+                fontWeight = FontWeight.Bold,
+                maxLines = 1,
+                softWrap = false,
+                overflow = TextOverflow.Ellipsis
             )
             Text(
-                text = measurement.unit,
-                color = VitalTraceNavy,
-                fontSize = 15.sp,
-                fontWeight = FontWeight.Bold
+                text = localizedMeasurementTypeLabel(measurement.typeName),
+                color = Color(0xFF53636D),
+                fontSize = 14.sp,
+                fontWeight = FontWeight.Bold,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis
             )
             Text(
                 text = "${measurement.date} · ${measurement.time}",
                 color = Color(0xFF53636D),
-                fontSize = 16.sp
+                fontSize = 14.sp,
+                maxLines = 2,
+                overflow = TextOverflow.Ellipsis
             )
         }
         MeasurementStatusChip(status = measurement.status)

@@ -9,6 +9,10 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontFamily
@@ -35,9 +39,19 @@ fun AppointmentsScreen(
     onHomeClick: () -> Unit,
     onMeasurementsClick: () -> Unit,
     onProfileClick: () -> Unit = {},
+    initialAppointmentId: Long? = null,
+    onInitialDetailDismiss: () -> Unit = {},
     viewModel: AppointmentsViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    var initialDetailHandled by rememberSaveable(initialAppointmentId) { mutableStateOf(false) }
+
+    LaunchedEffect(uiState.contentState, initialAppointmentId) {
+        if (initialAppointmentId != null && !initialDetailHandled && uiState.contentState is AppointmentsContentState.Success) {
+            viewModel.showAppointmentDetail(initialAppointmentId)
+            initialDetailHandled = true
+        }
+    }
 
     AppointmentsContent(
         uiState = uiState,
@@ -45,7 +59,10 @@ fun AppointmentsScreen(
         onHomeClick = onHomeClick,
         onMeasurementsClick = onMeasurementsClick,
         onAppointmentClick = viewModel::showAppointmentDetail,
-        onDismissAppointmentDetail = viewModel::dismissAppointmentDetail,
+        onDismissAppointmentDetail = {
+            viewModel.dismissAppointmentDetail()
+            if (initialAppointmentId != null) onInitialDetailDismiss()
+        },
         onProfileClick = onProfileClick
     )
 }

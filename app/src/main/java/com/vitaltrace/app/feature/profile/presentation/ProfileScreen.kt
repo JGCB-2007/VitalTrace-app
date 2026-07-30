@@ -9,6 +9,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.MedicalInformation
+import androidx.compose.material.icons.rounded.Medication
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
@@ -38,6 +39,7 @@ fun ProfileScreen(
     onAppointmentsClick: () -> Unit,
     onRelativesClick: () -> Unit,
     onClinicalHistoryClick: () -> Unit,
+    onTreatmentsClick: () -> Unit,
     viewModel: ProfileViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
@@ -49,6 +51,7 @@ fun ProfileScreen(
         onAppointmentsClick = onAppointmentsClick,
         onRelativesClick = onRelativesClick,
         onClinicalHistoryClick = onClinicalHistoryClick,
+        onTreatmentsClick = onTreatmentsClick,
         onRetryClick = viewModel::retry,
         onMeasurementRemindersChange = viewModel::setMeasurementReminders,
         onAppointmentNotificationsChange = viewModel::setAppointmentNotifications,
@@ -64,6 +67,7 @@ private fun ProfileContent(
     onAppointmentsClick: () -> Unit,
     onRelativesClick: () -> Unit,
     onClinicalHistoryClick: () -> Unit,
+    onTreatmentsClick: () -> Unit,
     onRetryClick: () -> Unit,
     onMeasurementRemindersChange: (Boolean) -> Unit,
     onAppointmentNotificationsChange: (Boolean) -> Unit,
@@ -98,6 +102,7 @@ private fun ProfileContent(
                 onEmailUpdatesChange = onEmailUpdatesChange,
                 onRelativesClick = onRelativesClick,
                 onClinicalHistoryClick = onClinicalHistoryClick,
+                onTreatmentsClick = onTreatmentsClick,
                 modifier = Modifier.padding(innerPadding)
             )
         }
@@ -113,6 +118,7 @@ private fun ProfileBody(
     onEmailUpdatesChange: (Boolean) -> Unit,
     onRelativesClick: () -> Unit,
     onClinicalHistoryClick: () -> Unit,
+    onTreatmentsClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     LazyColumn(
@@ -142,6 +148,13 @@ private fun ProfileBody(
                 onClick = onClinicalHistoryClick,
                 title = stringResource(R.string.clinical_history_title),
                 icon = Icons.Rounded.MedicalInformation
+            )
+        }
+        item {
+            RelativesAccessCard(
+                onClick = onTreatmentsClick,
+                title = "Mis medicamentos",
+                icon = Icons.Rounded.Medication
             )
         }
         item {
