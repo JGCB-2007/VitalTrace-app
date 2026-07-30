@@ -9,7 +9,7 @@ object LoggingInterceptor {
             redactHeader("Authorization")
             redactHeader("Cookie")
             redactHeader("Set-Cookie")
-            level = HttpLoggingInterceptor.Level.BODY
+            level = HttpLoggingInterceptor.Level.BASIC
         }
     }
 }

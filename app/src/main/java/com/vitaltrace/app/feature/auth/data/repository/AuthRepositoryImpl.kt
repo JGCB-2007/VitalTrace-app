@@ -1,6 +1,7 @@
 package com.vitaltrace.app.feature.auth.data.repository
 
 import com.vitaltrace.app.core.network.AuthInterceptor
+import com.vitaltrace.app.core.cache.PatientMemoryCache
 import com.vitaltrace.app.core.session.AuthenticatedUser
 import com.vitaltrace.app.core.session.TokenStore
 import com.vitaltrace.app.feature.auth.data.mapper.toAuthenticatedUser
@@ -20,7 +21,8 @@ import javax.inject.Inject
 class AuthRepositoryImpl @Inject constructor(
     private val authApiService: AuthApiService,
     private val tokenStore: TokenStore,
-    private val authInterceptor: AuthInterceptor
+    private val authInterceptor: AuthInterceptor,
+    private val patientMemoryCache: PatientMemoryCache
 ) : AuthRepository {
 
     override suspend fun login(
@@ -247,6 +249,7 @@ class AuthRepositoryImpl @Inject constructor(
     private suspend fun clearLocalSession() {
         tokenStore.clearToken()
         authInterceptor.updateToken(null)
+        patientMemoryCache.clear()
     }
 
     private fun getHttpErrorMessage(

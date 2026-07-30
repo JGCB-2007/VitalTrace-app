@@ -1,5 +1,6 @@
-﻿package com.vitaltrace.app.feature.patient.data.repository
+package com.vitaltrace.app.feature.patient.data.repository
 
+import com.vitaltrace.app.core.cache.PatientMemoryCache
 import com.vitaltrace.app.feature.patient.data.dto.measurements.CreateMeasurementRequestDto
 import com.vitaltrace.app.feature.patient.data.mapper.toDomain
 import com.vitaltrace.app.feature.patient.data.remote.PatientPortalApiService
@@ -20,33 +21,43 @@ import java.io.IOException
 import javax.inject.Inject
 
 class PatientRepositoryImpl @Inject constructor(
-    private val apiService: PatientPortalApiService
+    private val apiService: PatientPortalApiService,
+    private val cache: PatientMemoryCache
 ) : PatientRepository {
     override suspend fun getSummary(): Result<PatientSummary> = execute {
-        apiService.getSummary().data?.toDomain()
+        cache.get<PatientSummary>("summary")?.let { return@execute it }
+        apiService.getSummary().data?.toDomain()?.also { cache.put("summary", it) }
             ?: throw PatientException("Patient summary data was not received.")
     }
 
     override suspend fun getProfile(): Result<PatientProfile> = execute {
-        apiService.getProfile().data?.toDomain()
+        cache.get<PatientProfile>("profile")?.let { return@execute it }
+        apiService.getProfile().data?.toDomain()?.also { cache.put("profile", it) }
             ?: throw PatientException("Patient profile data was not received.")
     }
 
     override suspend fun getClinicalHistory(): Result<ClinicalHistory> = execute {
-        apiService.getClinicalHistory().data?.toDomain()
+        cache.get<ClinicalHistory>("clinical-history")?.let { return@execute it }
+        apiService.getClinicalHistory().data?.toDomain()?.also { cache.put("clinical-history", it) }
             ?: throw PatientException("Patient clinical history data was not received.")
     }
 
     override suspend fun getAppointments(
         status: String?, dateFrom: String?, dateTo: String?, upcoming: Boolean?, page: Int?
     ): Result<Page<Appointment>> = execute {
-        apiService.getAppointments(status, dateFrom, dateTo, upcoming, page).toDomain { it.toDomain() }
+        val key = "appointments:$status:$dateFrom:$dateTo:$upcoming:$page"
+        cache.get<Page<Appointment>>(key)?.let { return@execute it }
+        apiService.getAppointments(status, dateFrom, dateTo, upcoming, page)
+            .toDomain { it.toDomain() }.also { cache.put(key, it) }
     }
 
     override suspend fun getMeasurements(
         measurementTypeId: Long?, dateFrom: String?, dateTo: String?, page: Int?
     ): Result<Page<Measurement>> = execute {
-        apiService.getMeasurements(measurementTypeId, dateFrom, dateTo, page).toDomain { it.toDomain() }
+        val key = "measurements:$measurementTypeId:$dateFrom:$dateTo:$page"
+        cache.get<Page<Measurement>>(key)?.let { return@execute it }
+        apiService.getMeasurements(measurementTypeId, dateFrom, dateTo, page)
+            .toDomain { it.toDomain() }.also { cache.put(key, it) }
     }
 
     override suspend fun createMeasurement(
@@ -54,13 +65,21 @@ class PatientRepositoryImpl @Inject constructor(
     ): Result<Measurement> = execute {
         val request = CreateMeasurementRequestDto(measurementTypeId, value, unit, measuredAt, observation)
         apiService.createMeasurement(request).data?.toDomain()
+            ?.also {
+                cache.invalidate("measurements:")
+                cache.invalidate("summary")
+                cache.invalidate("clinical-history")
+            }
             ?: throw PatientException("The registered measurement was not received.")
     }
 
     override suspend fun getTreatments(
         status: String?, dateFrom: String?, dateTo: String?, active: Boolean?, page: Int?
     ): Result<Page<Treatment>> = execute {
-        apiService.getTreatments(status, dateFrom, dateTo, active, page).toDomain { it.toDomain() }
+        val key = "treatments:$status:$dateFrom:$dateTo:$active:$page"
+        cache.get<Page<Treatment>>(key)?.let { return@execute it }
+        apiService.getTreatments(status, dateFrom, dateTo, active, page)
+            .toDomain { it.toDomain() }.also { cache.put(key, it) }
     }
 
     override suspend fun getRelatives(page: Int?): Result<Page<PatientRelative>> = execute {
@@ -80,7 +99,10 @@ class PatientRepositoryImpl @Inject constructor(
     override suspend fun getNotifications(
         read: String, type: String?, page: Int
     ): Result<Page<PatientNotification>> = execute {
-        apiService.getNotifications(read, type, page).toDomain { it.toDomain() }
+        val key = "notifications:$read:$type:$page"
+        cache.get<Page<PatientNotification>>(key)?.let { return@execute it }
+        apiService.getNotifications(read, type, page)
+            .toDomain { it.toDomain() }.also { cache.put(key, it) }
     }
 
     override suspend fun getUnreadNotificationsCount(): Result<Int> = execute {
@@ -90,6 +112,7 @@ class PatientRepositoryImpl @Inject constructor(
 
     override suspend fun markNotificationAsRead(id: Long): Result<PatientNotification> = execute {
         apiService.markNotificationAsRead(id).data?.toDomain()
+            ?.also { cache.invalidate("notifications") }
             ?: throw PatientException("The updated notification was not received.")
     }
 

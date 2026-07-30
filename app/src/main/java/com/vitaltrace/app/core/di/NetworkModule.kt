@@ -3,6 +3,7 @@ package com.vitaltrace.app.core.di
 import com.vitaltrace.app.BuildConfig
 import com.vitaltrace.app.core.network.AuthInterceptor
 import com.vitaltrace.app.core.network.LoggingInterceptor
+import com.vitaltrace.app.core.network.RequestTimingEventListener
 import com.vitaltrace.app.feature.auth.data.remote.AuthApiService
 import dagger.Module
 import dagger.Provides
@@ -39,6 +40,7 @@ object NetworkModule {
 
         if (BuildConfig.DEBUG) {
             builder.addInterceptor(LoggingInterceptor.create())
+            builder.eventListenerFactory { RequestTimingEventListener() }
         }
 
         return builder.build()

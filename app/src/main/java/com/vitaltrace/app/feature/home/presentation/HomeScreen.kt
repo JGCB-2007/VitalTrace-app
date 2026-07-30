@@ -47,10 +47,6 @@ fun HomeScreen(
         }
     }
 
-    LaunchedEffect(Unit) {
-        viewModel.refreshUnreadNotificationsCount()
-    }
-
     HomeContent(
         uiState = uiState,
         onLogoutClick = viewModel::logout,
