@@ -22,6 +22,13 @@ import com.vitaltrace.app.ui.theme.VitalTraceWarmBackground
 @Composable
 fun ClinicalHistoryScreen(onNavigateBack: () -> Unit, viewModel: ClinicalHistoryViewModel = hiltViewModel()) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
+    ClinicalHistoryDesign(state, onNavigateBack, viewModel::retry)
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun LegacyClinicalHistoryScreen(onNavigateBack: () -> Unit, viewModel: ClinicalHistoryViewModel = hiltViewModel()) {
+    val state by viewModel.uiState.collectAsStateWithLifecycle()
     Scaffold(containerColor = VitalTraceWarmBackground, topBar = {
         TopAppBar(title = { Text("Historial clínico") }, navigationIcon = {
             IconButton(onClick = onNavigateBack) { Icon(Icons.AutoMirrored.Filled.ArrowBack, "Volver") }
