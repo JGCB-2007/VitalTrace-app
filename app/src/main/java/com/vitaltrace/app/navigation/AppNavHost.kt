@@ -15,6 +15,7 @@ import com.vitaltrace.app.feature.home.presentation.HomeScreen
 import com.vitaltrace.app.feature.measurements.presentation.MeasurementsScreen
 import com.vitaltrace.app.feature.measurements.presentation.form.MeasurementFormScreen
 import com.vitaltrace.app.feature.profile.presentation.ProfileScreen
+import com.vitaltrace.app.feature.relatives.presentation.RelativesScreen
 import com.vitaltrace.app.feature.splash.presentation.SplashScreen
 import com.vitaltrace.app.feature.treatments.presentation.TreatmentDetailScreen
 import com.vitaltrace.app.feature.treatments.presentation.TreatmentsScreen
@@ -93,6 +94,31 @@ fun AppNavHost(
                         launchSingleTop = true
                     }
                 }
+            )
+        }
+
+        composable(AppRoute.Relatives.route) {
+            RelativesScreen(
+                onNavigateBack = { navController.popBackStack() },
+                onHomeClick = {
+                    navController.navigate(AppRoute.Home.route) {
+                        popUpTo(AppRoute.Home.route)
+                        launchSingleTop = true
+                    }
+                },
+                onMeasurementsClick = {
+                    navController.navigate(AppRoute.Measurements.route) {
+                        popUpTo(AppRoute.Home.route)
+                        launchSingleTop = true
+                    }
+                },
+                onAppointmentsClick = {
+                    navController.navigate(AppRoute.Appointments.route) {
+                        popUpTo(AppRoute.Home.route)
+                        launchSingleTop = true
+                    }
+                },
+                onProfileClick = { navController.popBackStack() }
             )
         }
 
@@ -199,6 +225,11 @@ fun AppNavHost(
                 onAppointmentsClick = {
                     navController.navigate(AppRoute.Appointments.route) {
                         popUpTo(AppRoute.Home.route)
+                        launchSingleTop = true
+                    }
+                },
+                onRelativesClick = {
+                    navController.navigate(AppRoute.Relatives.route) {
                         launchSingleTop = true
                     }
                 }

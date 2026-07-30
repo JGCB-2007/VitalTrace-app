@@ -25,6 +25,7 @@ import com.vitaltrace.app.feature.profile.presentation.components.NotificationSe
 import com.vitaltrace.app.feature.profile.presentation.components.ProfileErrorState
 import com.vitaltrace.app.feature.profile.presentation.components.ProfileIdentityCard
 import com.vitaltrace.app.feature.profile.presentation.components.ProfileInformationCard
+import com.vitaltrace.app.feature.profile.presentation.components.RelativesAccessCard
 import com.vitaltrace.app.feature.profile.presentation.components.ProfileLoadingState
 import com.vitaltrace.app.ui.theme.VitalTraceNavy
 import com.vitaltrace.app.ui.theme.VitalTraceTheme
@@ -35,6 +36,7 @@ fun ProfileScreen(
     onHomeClick: () -> Unit,
     onMeasurementsClick: () -> Unit,
     onAppointmentsClick: () -> Unit,
+    onRelativesClick: () -> Unit,
     viewModel: ProfileViewModel = viewModel()
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
@@ -44,6 +46,7 @@ fun ProfileScreen(
         onHomeClick = onHomeClick,
         onMeasurementsClick = onMeasurementsClick,
         onAppointmentsClick = onAppointmentsClick,
+        onRelativesClick = onRelativesClick,
         onRetryClick = viewModel::retry,
         onMeasurementRemindersChange = viewModel::setMeasurementReminders,
         onAppointmentNotificationsChange = viewModel::setAppointmentNotifications,
@@ -57,6 +60,7 @@ private fun ProfileContent(
     onHomeClick: () -> Unit,
     onMeasurementsClick: () -> Unit,
     onAppointmentsClick: () -> Unit,
+    onRelativesClick: () -> Unit,
     onRetryClick: () -> Unit,
     onMeasurementRemindersChange: (Boolean) -> Unit,
     onAppointmentNotificationsChange: (Boolean) -> Unit,
@@ -89,6 +93,7 @@ private fun ProfileContent(
                 onMeasurementRemindersChange = onMeasurementRemindersChange,
                 onAppointmentNotificationsChange = onAppointmentNotificationsChange,
                 onEmailUpdatesChange = onEmailUpdatesChange,
+                onRelativesClick = onRelativesClick,
                 modifier = Modifier.padding(innerPadding)
             )
         }
@@ -102,6 +107,7 @@ private fun ProfileBody(
     onMeasurementRemindersChange: (Boolean) -> Unit,
     onAppointmentNotificationsChange: (Boolean) -> Unit,
     onEmailUpdatesChange: (Boolean) -> Unit,
+    onRelativesClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     LazyColumn(
@@ -125,6 +131,7 @@ private fun ProfileBody(
         }
         item { ProfileIdentityCard(user = user) }
         item { ProfileInformationCard(user = user) }
+        item { RelativesAccessCard(onClick = onRelativesClick) }
         item {
             NotificationSettingsCard(
                 settings = settings,
@@ -153,6 +160,7 @@ private fun ProfileScreenPreview() {
             onHomeClick = {},
             onMeasurementsClick = {},
             onAppointmentsClick = {},
+            onRelativesClick = {},
             onRetryClick = {},
             onMeasurementRemindersChange = {},
             onAppointmentNotificationsChange = {},

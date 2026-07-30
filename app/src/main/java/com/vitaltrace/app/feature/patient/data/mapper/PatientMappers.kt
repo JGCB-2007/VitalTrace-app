@@ -10,6 +10,9 @@ import com.vitaltrace.app.feature.patient.data.dto.summary.PatientSummaryDataDto
 import com.vitaltrace.app.feature.patient.data.dto.treatments.DiagnosisDto
 import com.vitaltrace.app.feature.patient.data.dto.treatments.PrescriberDto
 import com.vitaltrace.app.feature.patient.data.dto.treatments.TreatmentDto
+import com.vitaltrace.app.feature.patient.data.dto.relatives.PatientRelativeDto
+import com.vitaltrace.app.feature.patient.data.dto.relatives.RelativeDto
+import com.vitaltrace.app.feature.patient.data.dto.relatives.RelativePersonDto
 import com.vitaltrace.app.feature.patient.domain.model.AlertsSummary
 import com.vitaltrace.app.feature.patient.domain.model.Appointment
 import com.vitaltrace.app.feature.patient.domain.model.Diagnosis
@@ -26,6 +29,9 @@ import com.vitaltrace.app.feature.patient.domain.model.Professional
 import com.vitaltrace.app.feature.patient.domain.model.Specialty
 import com.vitaltrace.app.feature.patient.domain.model.SummaryPatient
 import com.vitaltrace.app.feature.patient.domain.model.Treatment
+import com.vitaltrace.app.feature.patient.domain.model.PatientRelative
+import com.vitaltrace.app.feature.patient.domain.model.Relative
+import com.vitaltrace.app.feature.patient.domain.model.RelativePerson
 
 fun PatientSummaryDataDto.toDomain() = PatientSummary(
     patient = SummaryPatient(
@@ -94,6 +100,23 @@ fun TreatmentDto.toDomain() = Treatment(
     status = status,
     prescribedBy = prescribedBy,
     prescriber = prescriber?.toDomain()
+)
+
+fun PatientRelativeDto.toDomain() = PatientRelative(
+    id = id,
+    patientId = patientId,
+    relativeId = relativeId,
+    relationship = relationship,
+    status = status,
+    startDate = startDate,
+    endDate = endDate,
+    relative = relative?.toDomain()
+)
+
+private fun RelativeDto.toDomain() = Relative(id, personId, person?.toDomain())
+
+private fun RelativePersonDto.toDomain() = RelativePerson(
+    id, firstName, middleName, firstLastName, secondLastName, phone
 )
 
 fun DiagnosisDto.toDomain() = Diagnosis(

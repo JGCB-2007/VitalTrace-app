@@ -139,4 +139,18 @@
     <string name="treatment_detail_prescriber">Prescrito por</string>
     <string name="treatment_detail_professional_type">Tipo de profesional</string>
     <string name="treatment_detail_specialty">Especialidad</string>
+    <string name="relatives_title">Familiares autorizados</string>
+    <string name="relatives_back">Volver al perfil</string>
+    <string name="relatives_linked_relative">Familiar vinculado</string>
+    <string name="relatives_status_authorized">Acceso autorizado</string>
+    <string name="relatives_status_not_authorized">Acceso no autorizado</string>
+    <string name="relatives_authorize">Autorizar acceso</string>
+    <string name="relatives_revoke">Revocar acceso</string>
+    <string name="relatives_empty">Todavía no tienes familiares vinculados.</string>
+    <string name="relatives_retry">Intentar de nuevo</string>
+    <string name="relatives_authorize_title">Autorizar familiar</string>
+    <string name="relatives_revoke_title">Revocar acceso</string>
+    <string name="relatives_authorize_confirmation">¿Deseas autorizar a este familiar para consultar tu información permitida?</string>
+    <string name="relatives_revoke_confirmation">¿Deseas revocar el acceso de este familiar?</string>
+    <string name="relatives_cancel">Cancelar</string>
 </resources>

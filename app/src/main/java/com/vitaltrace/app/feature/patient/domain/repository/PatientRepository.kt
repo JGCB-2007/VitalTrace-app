@@ -4,6 +4,7 @@ import com.vitaltrace.app.feature.patient.domain.model.Appointment
 import com.vitaltrace.app.feature.patient.domain.model.Measurement
 import com.vitaltrace.app.feature.patient.domain.model.Page
 import com.vitaltrace.app.feature.patient.domain.model.PatientSummary
+import com.vitaltrace.app.feature.patient.domain.model.PatientRelative
 import com.vitaltrace.app.feature.patient.domain.model.Treatment
 
 interface PatientRepository {
@@ -39,4 +40,10 @@ interface PatientRepository {
         active: Boolean? = null,
         page: Int? = null
     ): Result<Page<Treatment>>
+
+    suspend fun getRelatives(page: Int? = null): Result<Page<PatientRelative>>
+
+    suspend fun authorizeRelative(id: Long): Result<PatientRelative>
+
+    suspend fun revokeRelative(id: Long): Result<PatientRelative>
 }

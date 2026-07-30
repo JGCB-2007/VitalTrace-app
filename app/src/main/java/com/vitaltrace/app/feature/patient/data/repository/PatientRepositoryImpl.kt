@@ -8,6 +8,7 @@ import com.vitaltrace.app.feature.patient.domain.model.Appointment
 import com.vitaltrace.app.feature.patient.domain.model.Measurement
 import com.vitaltrace.app.feature.patient.domain.model.Page
 import com.vitaltrace.app.feature.patient.domain.model.PatientSummary
+import com.vitaltrace.app.feature.patient.domain.model.PatientRelative
 import com.vitaltrace.app.feature.patient.domain.model.Treatment
 import com.vitaltrace.app.feature.patient.domain.repository.PatientRepository
 import retrofit2.HttpException
@@ -46,6 +47,20 @@ class PatientRepositoryImpl @Inject constructor(
         status: String?, dateFrom: String?, dateTo: String?, active: Boolean?, page: Int?
     ): Result<Page<Treatment>> = execute {
         apiService.getTreatments(status, dateFrom, dateTo, active, page).toDomain { it.toDomain() }
+    }
+
+    override suspend fun getRelatives(page: Int?): Result<Page<PatientRelative>> = execute {
+        apiService.getRelatives(page).toDomain { it.toDomain() }
+    }
+
+    override suspend fun authorizeRelative(id: Long): Result<PatientRelative> = execute {
+        apiService.authorizeRelative(id).data?.toDomain()
+            ?: throw PatientException("The authorized relative was not received.")
+    }
+
+    override suspend fun revokeRelative(id: Long): Result<PatientRelative> = execute {
+        apiService.revokeRelative(id).data?.toDomain()
+            ?: throw PatientException("The revoked relative was not received.")
     }
 
     private suspend fun <T> execute(block: suspend () -> T): Result<T> = try {

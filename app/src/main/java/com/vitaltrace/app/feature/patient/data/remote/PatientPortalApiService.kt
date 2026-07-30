@@ -5,11 +5,15 @@ import com.vitaltrace.app.feature.patient.data.dto.appointments.AppointmentDto
 import com.vitaltrace.app.feature.patient.data.dto.common.PaginatedResponseDto
 import com.vitaltrace.app.feature.patient.data.dto.measurements.CreateMeasurementRequestDto
 import com.vitaltrace.app.feature.patient.data.dto.measurements.MeasurementDto
+import com.vitaltrace.app.feature.patient.data.dto.relatives.PatientRelativeDto
 import com.vitaltrace.app.feature.patient.data.dto.summary.PatientSummaryDataDto
 import com.vitaltrace.app.feature.patient.data.dto.treatments.TreatmentDto
 import retrofit2.http.Body
 import retrofit2.http.GET
+import retrofit2.http.DELETE
 import retrofit2.http.POST
+import retrofit2.http.PUT
+import retrofit2.http.Path
 import retrofit2.http.Query
 
 interface PatientPortalApiService {
@@ -46,4 +50,19 @@ interface PatientPortalApiService {
         @Query("active") active: Boolean? = null,
         @Query("page") page: Int? = null
     ): PaginatedResponseDto<TreatmentDto>
+
+    @GET("patient/relatives")
+    suspend fun getRelatives(
+        @Query("page") page: Int? = null
+    ): PaginatedResponseDto<PatientRelativeDto>
+
+    @PUT("patient/relatives/{patientRelative}/authorize")
+    suspend fun authorizeRelative(
+        @Path("patientRelative") patientRelativeId: Long
+    ): ApiResponse<PatientRelativeDto>
+
+    @DELETE("patient/relatives/{patientRelative}/authorize")
+    suspend fun revokeRelative(
+        @Path("patientRelative") patientRelativeId: Long
+    ): ApiResponse<PatientRelativeDto>
 }
