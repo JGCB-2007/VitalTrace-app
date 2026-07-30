@@ -6,6 +6,8 @@ import com.vitaltrace.app.core.session.TokenStore
 import com.vitaltrace.app.feature.auth.data.mapper.toAuthenticatedUser
 import com.vitaltrace.app.feature.auth.data.remote.AuthApiService
 import com.vitaltrace.app.feature.auth.data.remote.dto.LoginRequestDto
+import com.vitaltrace.app.feature.auth.data.remote.dto.ForgotPasswordRequestDto
+import com.vitaltrace.app.feature.auth.data.remote.dto.ResetPasswordRequestDto
 import com.vitaltrace.app.feature.auth.domain.exception.AuthException
 import com.vitaltrace.app.feature.auth.domain.repository.AuthRepository
 import retrofit2.HttpException
@@ -159,6 +161,55 @@ class AuthRepositoryImpl @Inject constructor(
         } finally {
             clearLocalSession()
         }
+    }
+
+    override suspend fun forgotPassword(email: String): Result<Unit> {
+        return executePublicRequest {
+            authApiService.forgotPassword(ForgotPasswordRequestDto(email))
+        }
+    }
+
+    override suspend fun resetPassword(
+        email: String,
+        token: String,
+        password: String,
+        passwordConfirmation: String
+    ): Result<Unit> {
+        return executePublicRequest {
+            authApiService.resetPassword(
+                ResetPasswordRequestDto(email, token, password, passwordConfirmation)
+            )
+        }
+    }
+
+    private suspend fun executePublicRequest(
+        request: suspend () -> Unit
+    ): Result<Unit> = try {
+        request()
+        Result.success(Unit)
+    } catch (exception: HttpException) {
+        Result.failure(
+            AuthException(
+                message = getHttpErrorMessage(exception),
+                cause = exception,
+                httpCode = exception.code()
+            )
+        )
+    } catch (exception: IOException) {
+        Result.failure(
+            AuthException(
+                message = exception.message ?: "Could not connect to the server.",
+                cause = exception,
+                isNetworkError = true
+            )
+        )
+    } catch (exception: Exception) {
+        Result.failure(
+            AuthException(
+                message = exception.message ?: "The authentication request failed.",
+                cause = exception
+            )
+        )
     }
 
     private suspend fun clearLocalSession() {
