@@ -2,7 +2,8 @@ package com.vitaltrace.app.feature.splash.presentation
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.vitaltrace.app.feature.auth.domain.usecase.ValidateSessionUseCase
+import com.vitaltrace.app.core.session.SessionManager
+import com.vitaltrace.app.core.session.SessionState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.receiveAsFlow
@@ -11,7 +12,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class SplashViewModel @Inject constructor(
-    private val validateSessionUseCase: ValidateSessionUseCase
+    private val sessionManager: SessionManager
 ) : ViewModel() {
 
     private val effectChannel = Channel<SplashUiEffect>(
@@ -26,17 +27,12 @@ class SplashViewModel @Inject constructor(
 
     private fun validateSession() {
         viewModelScope.launch {
-            validateSessionUseCase()
-                .onSuccess {
-                    effectChannel.send(
-                        SplashUiEffect.NavigateToHome
-                    )
-                }
-                .onFailure {
-                    effectChannel.send(
-                        SplashUiEffect.NavigateToLogin
-                    )
-                }
+            sessionManager.restoreSession()
+            val effect = when (sessionManager.state.value) {
+                is SessionState.Authenticated -> SplashUiEffect.NavigateToHome
+                else -> SplashUiEffect.NavigateToLogin
+            }
+            effectChannel.send(effect)
         }
     }
 }

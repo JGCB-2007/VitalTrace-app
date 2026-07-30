@@ -20,9 +20,10 @@ class AuthInterceptor @Inject constructor() : Interceptor {
 
         val request = chain.request()
             .newBuilder()
+            .header("Accept", "application/json")
             .apply {
                 if (!currentToken.isNullOrBlank()) {
-                    addHeader(
+                    header(
                         "Authorization",
                         "Bearer $currentToken"
                     )
