@@ -1,6 +1,10 @@
 package com.vitaltrace.app.feature.relatives.presentation
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.slideInVertically
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -75,12 +79,20 @@ fun RelativesScreen(
         topBar = {
             TopAppBar(
                 title = {
-                    Text(
-                        stringResource(R.string.relatives_title),
-                        fontFamily = FontFamily.Serif,
-                        fontSize = 25.sp,
-                        fontWeight = FontWeight.Bold
-                    )
+                    Column(verticalArrangement = Arrangement.spacedBy(2.dp)) {
+                        Text(
+                            stringResource(R.string.relatives_title),
+                            fontFamily = FontFamily.Serif,
+                            fontSize = 25.sp,
+                            fontWeight = FontWeight.Bold
+                        )
+                        Text(
+                            stringResource(R.string.relatives_description),
+                            color = androidx.compose.ui.graphics.Color(0xFF5C6870),
+                            fontSize = 12.sp,
+                            lineHeight = 15.sp
+                        )
+                    }
                 },
                 navigationIcon = {
                     IconButton(onClick = onNavigateBack) {
@@ -120,24 +132,29 @@ fun RelativesScreen(
                 } else {
                     LazyColumn(
                         modifier = Modifier.fillMaxSize().padding(padding),
-                        contentPadding = PaddingValues(24.dp, 18.dp, 24.dp, 30.dp),
-                        verticalArrangement = Arrangement.spacedBy(18.dp)
+                        contentPadding = PaddingValues(24.dp, 24.dp, 24.dp, 36.dp),
+                        verticalArrangement = Arrangement.spacedBy(24.dp)
                     ) {
                         items(content.relatives, key = RelativeUiModel::id) { relative ->
-                            RelativeCard(
-                                relative = relative,
-                                isActionInProgress = state.actionInProgressId == relative.id,
-                                onAction = {
-                                    viewModel.requestAction(
-                                        relative.id,
-                                        if (relative.isAuthorized) {
-                                            RelativeAction.REVOKE
-                                        } else {
-                                            RelativeAction.AUTHORIZE
-                                        }
-                                    )
-                                }
-                            )
+                            AnimatedVisibility(
+                                visible = true,
+                                enter = fadeIn() + slideInVertically { it / 5 }
+                            ) {
+                                RelativeCard(
+                                    relative = relative,
+                                    isActionInProgress = state.actionInProgressId == relative.id,
+                                    onAction = {
+                                        viewModel.requestAction(
+                                            relative.id,
+                                            if (relative.isAuthorized) {
+                                                RelativeAction.REVOKE
+                                            } else {
+                                                RelativeAction.AUTHORIZE
+                                            }
+                                        )
+                                    }
+                                )
+                            }
                         }
                     }
                 }
