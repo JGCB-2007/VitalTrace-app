@@ -6,6 +6,7 @@ import com.vitaltrace.app.feature.patient.data.dto.appointments.SpecialtyDto
 import com.vitaltrace.app.feature.patient.data.dto.common.PaginatedResponseDto
 import com.vitaltrace.app.feature.patient.data.dto.measurements.MeasurementDto
 import com.vitaltrace.app.feature.patient.data.dto.measurements.MeasurementTypeDto
+import com.vitaltrace.app.feature.patient.data.dto.notifications.PatientNotificationDto
 import com.vitaltrace.app.feature.patient.data.dto.summary.PatientSummaryDataDto
 import com.vitaltrace.app.feature.patient.data.dto.treatments.DiagnosisDto
 import com.vitaltrace.app.feature.patient.data.dto.treatments.PrescriberDto
@@ -34,6 +35,7 @@ import com.vitaltrace.app.feature.patient.domain.model.PatientRelative
 import com.vitaltrace.app.feature.patient.domain.model.Relative
 import com.vitaltrace.app.feature.patient.domain.model.RelativePerson
 import com.vitaltrace.app.feature.patient.domain.model.PatientProfile
+import com.vitaltrace.app.feature.patient.domain.model.PatientNotification
 import com.vitaltrace.app.feature.patient.domain.model.EmergencyContact
 
 fun PatientSummaryDataDto.toDomain() = PatientSummary(
@@ -139,6 +141,19 @@ fun PatientProfileDto.toDomain() = PatientProfile(
     emergencyContact = emergencyContact?.let { EmergencyContact(it.name, it.phone) },
     accountStatus = accountStatus,
     administrativeStatus = administrativeStatus
+)
+
+fun PatientNotificationDto.toDomain() = PatientNotification(
+    id = id,
+    type = type,
+    title = title,
+    message = message,
+    isRead = isRead,
+    readAt = readAt,
+    relatedType = relatedType,
+    relatedId = relatedId,
+    actionRoute = actionRoute,
+    createdAt = createdAt
 )
 
 fun DiagnosisDto.toDomain() = Diagnosis(

@@ -1,8 +1,9 @@
-package com.vitaltrace.app.navigation
+﻿package com.vitaltrace.app.navigation
 
 import android.net.Uri
 
 sealed class AppRoute(val route: String) {
+    data object Notifications : AppRoute("notifications")
     data object Splash : AppRoute("splash")
     data object Login : AppRoute("login")
     data object ForgotPassword : AppRoute("forgot_password")
@@ -26,3 +27,4 @@ sealed class AppRoute(val route: String) {
             "diagnosis_education/${Uri.encode(cieCode)}/${Uri.encode(diagnosisName)}"
     }
 }
+

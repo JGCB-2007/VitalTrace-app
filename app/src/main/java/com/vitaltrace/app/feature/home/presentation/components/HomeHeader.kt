@@ -1,4 +1,4 @@
-package com.vitaltrace.app.feature.home.presentation.components
+﻿package com.vitaltrace.app.feature.home.presentation.components
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -8,11 +8,17 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.Badge
+import androidx.compose.material3.BadgedBox
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.Notifications
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -36,6 +42,8 @@ fun HomeHeader(
     patientInitials: String,
     isLoggingOut: Boolean,
     onLogoutClick: () -> Unit,
+    unreadNotificationsCount: Int,
+    onNotificationsClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     var isMenuExpanded by remember { mutableStateOf(false) }
@@ -62,7 +70,25 @@ fun HomeHeader(
             )
         }
 
-        Box {
+        BadgedBox(
+            badge = {
+                if (unreadNotificationsCount > 0) {
+                    Badge {
+                        Text(if (unreadNotificationsCount > 99) "99+" else unreadNotificationsCount.toString())
+                    }
+                }
+            }
+        ) {
+            IconButton(onClick = onNotificationsClick) {
+                Icon(
+                    imageVector = Icons.Outlined.Notifications,
+                    contentDescription = "Notificaciones",
+                    tint = HomeNavy
+                )
+            }
+        }
+
+        Box(modifier = Modifier.padding(start = 8.dp)) {
             Surface(
                 onClick = { isMenuExpanded = true },
                 modifier = Modifier
@@ -108,3 +134,4 @@ fun HomeHeader(
         }
     }
 }
+

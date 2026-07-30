@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.vitaltrace.app.feature.auth.domain.usecase.LogoutUseCase
 import com.vitaltrace.app.feature.patient.domain.usecase.GetPatientSummaryUseCase
+import com.vitaltrace.app.feature.patient.domain.usecase.GetUnreadNotificationsCountUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.channels.Channel
@@ -18,6 +19,7 @@ import javax.inject.Inject
 class HomeViewModel @Inject constructor(
     private val logoutUseCase: LogoutUseCase,
     private val getPatientSummary: GetPatientSummaryUseCase,
+    private val getUnreadNotificationsCount: GetUnreadNotificationsCountUseCase,
     private val summaryMapper: HomeSummaryMapper
 ) : ViewModel() {
 
@@ -28,9 +30,11 @@ class HomeViewModel @Inject constructor(
     val effects = effectChannel.receiveAsFlow()
 
     private var summaryRequest: Job? = null
+    private var notificationsCountRequest: Job? = null
 
     init {
         loadSummary()
+        refreshUnreadNotificationsCount()
     }
 
     fun logout() {
@@ -50,6 +54,16 @@ class HomeViewModel @Inject constructor(
 
     fun retry() {
         loadSummary()
+        refreshUnreadNotificationsCount()
+    }
+
+    fun refreshUnreadNotificationsCount() {
+        if (notificationsCountRequest?.isActive == true) return
+        notificationsCountRequest = viewModelScope.launch {
+            getUnreadNotificationsCount().onSuccess { count ->
+                _uiState.update { it.copy(unreadNotificationsCount = count.coerceAtLeast(0)) }
+            }
+        }
     }
 
     private fun loadSummary() {

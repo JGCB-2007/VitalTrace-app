@@ -3,6 +3,7 @@ package com.vitaltrace.app.feature.home.presentation
 data class HomeUiState(
     val contentState: HomeContentState = HomeContentState.Loading,
     val isLoggingOut: Boolean = false,
+    val unreadNotificationsCount: Int = 0,
     val selectedBottomDestination: HomeBottomDestination = HomeBottomDestination.HOME
 )
 

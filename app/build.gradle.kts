@@ -33,7 +33,7 @@ android {
             buildConfigField(
                 "String",
                 "BASE_URL",
-                "\"http://192.168.1.12:8000/api/v1/\""
+                "\"http://10.52.215.214:8000/api/v1/\""
             )
         }
 

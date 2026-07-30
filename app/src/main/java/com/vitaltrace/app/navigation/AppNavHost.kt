@@ -1,4 +1,4 @@
-package com.vitaltrace.app.navigation
+﻿package com.vitaltrace.app.navigation
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
@@ -18,6 +18,7 @@ import com.vitaltrace.app.feature.diagnosiseducation.presentation.DiagnosisEduca
 import com.vitaltrace.app.feature.home.presentation.HomeScreen
 import com.vitaltrace.app.feature.measurements.presentation.MeasurementsScreen
 import com.vitaltrace.app.feature.measurements.presentation.form.MeasurementFormScreen
+import com.vitaltrace.app.feature.notifications.presentation.NotificationsScreen
 import com.vitaltrace.app.feature.profile.presentation.ProfileScreen
 import com.vitaltrace.app.feature.relatives.presentation.RelativesScreen
 import com.vitaltrace.app.feature.splash.presentation.SplashScreen
@@ -33,6 +34,31 @@ fun AppNavHost(
         navController = navController,
         startDestination = AppRoute.Splash.route
     ) {
+        composable(AppRoute.Notifications.route) {
+            NotificationsScreen(
+                onNavigateBack = { navController.popBackStack() },
+                onNotificationAction = { actionRoute, relatedId ->
+                    when (actionRoute?.lowercase()) {
+                        "appointments" -> {
+                            val destination = relatedId?.let(AppRoute.AppointmentDetail::create)
+                                ?: AppRoute.Appointments.route
+                            navController.navigate(destination) { launchSingleTop = true }
+                        }
+                        "measurements" -> {
+                            navController.navigate(AppRoute.Measurements.route) {
+                                launchSingleTop = true
+                            }
+                        }
+                        "treatments" -> {
+                            navController.navigate(AppRoute.Treatments.route) {
+                                launchSingleTop = true
+                            }
+                        }
+                    }
+                }
+            )
+        }
+
         composable(AppRoute.Splash.route) {
             SplashScreen(
                 onNavigateToLogin = {
@@ -71,6 +97,11 @@ fun AppNavHost(
 
         composable(AppRoute.Home.route) {
             HomeScreen(
+                onNotificationsClick = {
+                    navController.navigate(AppRoute.Notifications.route) {
+                        launchSingleTop = true
+                    }
+                },
                 onLogoutSuccess = {
                     navController.navigate(AppRoute.Login.route) {
                         popUpTo(AppRoute.Home.route) {
@@ -325,3 +356,4 @@ fun AppNavHost(
         }
     }
 }
+

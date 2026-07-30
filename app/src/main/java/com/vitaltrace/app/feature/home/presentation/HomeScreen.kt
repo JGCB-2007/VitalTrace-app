@@ -34,6 +34,7 @@ fun HomeScreen(
     onMeasurementsClick: () -> Unit = {},
     onAppointmentsClick: () -> Unit = {},
     onProfileClick: () -> Unit = {},
+    onNotificationsClick: () -> Unit = {},
     viewModel: HomeViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
@@ -46,6 +47,10 @@ fun HomeScreen(
         }
     }
 
+    LaunchedEffect(Unit) {
+        viewModel.refreshUnreadNotificationsCount()
+    }
+
     HomeContent(
         uiState = uiState,
         onLogoutClick = viewModel::logout,
@@ -55,7 +60,8 @@ fun HomeScreen(
         onPressureHistoryClick = onPressureHistoryClick,
         onMeasurementsClick = onMeasurementsClick,
         onAppointmentsClick = onAppointmentsClick,
-        onProfileClick = onProfileClick
+        onProfileClick = onProfileClick,
+        onNotificationsClick = onNotificationsClick
     )
 }
 
@@ -69,7 +75,8 @@ private fun HomeContent(
     onPressureHistoryClick: () -> Unit,
     onMeasurementsClick: () -> Unit,
     onAppointmentsClick: () -> Unit,
-    onProfileClick: () -> Unit
+    onProfileClick: () -> Unit,
+    onNotificationsClick: () -> Unit
 ) {
     Scaffold(
         containerColor = HomeBackground,
@@ -103,6 +110,8 @@ private fun HomeContent(
                 onRegisterMeasurementClick = onRegisterMeasurementClick,
                 onAppointmentDetailClick = onAppointmentDetailClick,
                 onPressureHistoryClick = onPressureHistoryClick,
+                unreadNotificationsCount = uiState.unreadNotificationsCount,
+                onNotificationsClick = onNotificationsClick,
                 modifier = Modifier.padding(innerPadding)
             )
         }
@@ -117,6 +126,8 @@ private fun HomeBody(
     onRegisterMeasurementClick: () -> Unit,
     onAppointmentDetailClick: (Long) -> Unit,
     onPressureHistoryClick: () -> Unit,
+    unreadNotificationsCount: Int,
+    onNotificationsClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     LazyColumn(
@@ -134,7 +145,9 @@ private fun HomeBody(
                 patientName = content.patientName,
                 patientInitials = content.patientInitials,
                 isLoggingOut = isLoggingOut,
-                onLogoutClick = onLogoutClick
+                onLogoutClick = onLogoutClick,
+                unreadNotificationsCount = unreadNotificationsCount,
+                onNotificationsClick = onNotificationsClick
             )
         }
         item {
@@ -179,7 +192,8 @@ private fun HomeScreenPreview() {
             onPressureHistoryClick = {},
             onMeasurementsClick = {},
             onAppointmentsClick = {},
-            onProfileClick = {}
+            onProfileClick = {},
+            onNotificationsClick = {}
         )
     }
 }

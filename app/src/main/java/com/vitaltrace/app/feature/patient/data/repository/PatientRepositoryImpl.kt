@@ -1,4 +1,4 @@
-package com.vitaltrace.app.feature.patient.data.repository
+﻿package com.vitaltrace.app.feature.patient.data.repository
 
 import com.vitaltrace.app.feature.patient.data.dto.measurements.CreateMeasurementRequestDto
 import com.vitaltrace.app.feature.patient.data.mapper.toDomain
@@ -6,6 +6,8 @@ import com.vitaltrace.app.feature.patient.data.remote.PatientPortalApiService
 import com.vitaltrace.app.feature.patient.domain.exception.PatientException
 import com.vitaltrace.app.feature.patient.domain.model.Appointment
 import com.vitaltrace.app.feature.patient.domain.model.Measurement
+import com.vitaltrace.app.feature.patient.domain.model.MarkAllNotificationsReadResult
+import com.vitaltrace.app.feature.patient.domain.model.PatientNotification
 import com.vitaltrace.app.feature.patient.domain.model.Page
 import com.vitaltrace.app.feature.patient.domain.model.PatientSummary
 import com.vitaltrace.app.feature.patient.domain.model.PatientRelative
@@ -75,6 +77,28 @@ class PatientRepositoryImpl @Inject constructor(
             ?: throw PatientException("The revoked relative was not received.")
     }
 
+    override suspend fun getNotifications(
+        read: String, type: String?, page: Int
+    ): Result<Page<PatientNotification>> = execute {
+        apiService.getNotifications(read, type, page).toDomain { it.toDomain() }
+    }
+
+    override suspend fun getUnreadNotificationsCount(): Result<Int> = execute {
+        apiService.getUnreadNotificationsCount().data?.unreadCount
+            ?: throw PatientException("The unread notification count was not received.")
+    }
+
+    override suspend fun markNotificationAsRead(id: Long): Result<PatientNotification> = execute {
+        apiService.markNotificationAsRead(id).data?.toDomain()
+            ?: throw PatientException("The updated notification was not received.")
+    }
+
+    override suspend fun markAllNotificationsAsRead(): Result<MarkAllNotificationsReadResult> = execute {
+        apiService.markAllNotificationsAsRead().data?.let {
+            MarkAllNotificationsReadResult(it.updatedCount, it.unreadCount)
+        } ?: throw PatientException("The notification update result was not received.")
+    }
+
     private suspend fun <T> execute(block: suspend () -> T): Result<T> = try {
         Result.success(block())
     } catch (exception: PatientException) {
@@ -101,3 +125,4 @@ class PatientRepositoryImpl @Inject constructor(
         else -> "The patient portal request failed."
     }
 }
+

@@ -1,4 +1,4 @@
-package com.vitaltrace.app.feature.patient.domain.repository
+﻿package com.vitaltrace.app.feature.patient.domain.repository
 
 import com.vitaltrace.app.feature.patient.domain.model.Appointment
 import com.vitaltrace.app.feature.patient.domain.model.Measurement
@@ -8,6 +8,8 @@ import com.vitaltrace.app.feature.patient.domain.model.PatientRelative
 import com.vitaltrace.app.feature.patient.domain.model.PatientProfile
 import com.vitaltrace.app.feature.patient.domain.model.ClinicalHistory
 import com.vitaltrace.app.feature.patient.domain.model.Treatment
+import com.vitaltrace.app.feature.patient.domain.model.PatientNotification
+import com.vitaltrace.app.feature.patient.domain.model.MarkAllNotificationsReadResult
 
 interface PatientRepository {
     suspend fun getSummary(): Result<PatientSummary>
@@ -52,4 +54,16 @@ interface PatientRepository {
     suspend fun authorizeRelative(id: Long): Result<PatientRelative>
 
     suspend fun revokeRelative(id: Long): Result<PatientRelative>
+    suspend fun getNotifications(
+        read: String = "all",
+        type: String? = null,
+        page: Int = 1
+    ): Result<Page<PatientNotification>>
+
+    suspend fun getUnreadNotificationsCount(): Result<Int>
+
+    suspend fun markNotificationAsRead(id: Long): Result<PatientNotification>
+
+    suspend fun markAllNotificationsAsRead(): Result<MarkAllNotificationsReadResult>
 }
+

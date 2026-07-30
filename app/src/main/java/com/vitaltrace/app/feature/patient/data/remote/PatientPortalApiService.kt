@@ -1,10 +1,13 @@
-package com.vitaltrace.app.feature.patient.data.remote
+﻿package com.vitaltrace.app.feature.patient.data.remote
 
 import com.vitaltrace.app.core.network.ApiResponse
 import com.vitaltrace.app.feature.patient.data.dto.appointments.AppointmentDto
 import com.vitaltrace.app.feature.patient.data.dto.common.PaginatedResponseDto
 import com.vitaltrace.app.feature.patient.data.dto.measurements.CreateMeasurementRequestDto
 import com.vitaltrace.app.feature.patient.data.dto.measurements.MeasurementDto
+import com.vitaltrace.app.feature.patient.data.dto.notifications.MarkAllNotificationsReadDto
+import com.vitaltrace.app.feature.patient.data.dto.notifications.PatientNotificationDto
+import com.vitaltrace.app.feature.patient.data.dto.notifications.UnreadNotificationsCountDto
 import com.vitaltrace.app.feature.patient.data.dto.relatives.PatientRelativeDto
 import com.vitaltrace.app.feature.patient.data.dto.profile.PatientProfileDto
 import com.vitaltrace.app.feature.patient.data.dto.clinicalhistory.ClinicalHistoryDto
@@ -16,6 +19,7 @@ import retrofit2.http.DELETE
 import retrofit2.http.POST
 import retrofit2.http.PUT
 import retrofit2.http.Path
+import retrofit2.http.PATCH
 import retrofit2.http.Query
 
 interface PatientPortalApiService {
@@ -73,4 +77,22 @@ interface PatientPortalApiService {
     suspend fun revokeRelative(
         @Path("patientRelative") patientRelativeId: Long
     ): ApiResponse<PatientRelativeDto>
+    @GET("patient/notifications")
+    suspend fun getNotifications(
+        @Query("read") read: String? = null,
+        @Query("type") type: String? = null,
+        @Query("page") page: Int? = null
+    ): PaginatedResponseDto<PatientNotificationDto>
+
+    @GET("patient/notifications/unread-count")
+    suspend fun getUnreadNotificationsCount(): ApiResponse<UnreadNotificationsCountDto>
+
+    @PATCH("patient/notifications/{notification}/read")
+    suspend fun markNotificationAsRead(
+        @Path("notification") notificationId: Long
+    ): ApiResponse<PatientNotificationDto>
+
+    @PATCH("patient/notifications/read-all")
+    suspend fun markAllNotificationsAsRead(): ApiResponse<MarkAllNotificationsReadDto>
 }
+
