@@ -17,6 +17,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -25,7 +26,12 @@ import com.vitaltrace.app.R
 import com.vitaltrace.app.ui.theme.VitalTraceNavy
 
 @Composable
-fun RelativesAccessCard(onClick: () -> Unit, modifier: Modifier = Modifier) {
+fun RelativesAccessCard(
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+    title: String = stringResource(R.string.relatives_title),
+    icon: ImageVector = Icons.Rounded.Group
+) {
     Card(
         modifier = modifier.fillMaxWidth().clickable(onClick = onClick),
         shape = RoundedCornerShape(26.dp),
@@ -37,9 +43,9 @@ fun RelativesAccessCard(onClick: () -> Unit, modifier: Modifier = Modifier) {
             horizontalArrangement = Arrangement.spacedBy(16.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Icon(Icons.Rounded.Group, null, tint = VitalTraceNavy)
+            Icon(icon, null, tint = VitalTraceNavy)
             Text(
-                stringResource(R.string.relatives_title),
+                title,
                 modifier = Modifier.weight(1f),
                 color = VitalTraceNavy,
                 fontSize = 17.sp,

@@ -55,7 +55,7 @@ data class ClinicalTreatmentDto(
 @Serializable
 data class ClinicalMeasurementDto(
     val id: Long,
-    val value: Double,
+    val value: String,
     val unit: String,
     @SerialName("measured_at") val measuredAt: String,
     val observation: String? = null,
@@ -67,5 +67,5 @@ data class ClinicalMeasurementDto(
 data class ClinicalMeasurementTypeDto(
     val id: Long,
     val name: String,
-    val code: String
+    val code: String? = null
 )

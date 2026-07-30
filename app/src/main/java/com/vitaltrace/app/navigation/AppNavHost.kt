@@ -269,6 +269,11 @@ fun AppNavHost(
                     navController.navigate(AppRoute.Relatives.route) {
                         launchSingleTop = true
                     }
+                },
+                onClinicalHistoryClick = {
+                    navController.navigate(AppRoute.ClinicalHistory.route) {
+                        launchSingleTop = true
+                    }
                 }
             )
         }

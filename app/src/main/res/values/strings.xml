@@ -182,4 +182,5 @@
     <string name="relatives_authorize_confirmation">¿Deseas autorizar a este familiar para consultar tu información permitida?</string>
     <string name="relatives_revoke_confirmation">¿Deseas revocar el acceso de este familiar?</string>
     <string name="relatives_cancel">Cancelar</string>
+    <string name="clinical_history_title">Historial clínico</string>
 </resources>

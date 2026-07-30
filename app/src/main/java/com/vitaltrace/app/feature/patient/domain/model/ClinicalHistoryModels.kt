@@ -50,4 +50,4 @@ data class ClinicalMeasurement(
     val measurementType: ClinicalMeasurementType?
 )
 
-data class ClinicalMeasurementType(val id: Long, val name: String, val code: String)
+data class ClinicalMeasurementType(val id: Long, val name: String, val code: String?)

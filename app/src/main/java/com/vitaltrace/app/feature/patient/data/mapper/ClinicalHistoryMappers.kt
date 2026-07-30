@@ -28,7 +28,7 @@ private fun ClinicalTreatmentDto.toDomain() = ClinicalTreatment(
 
 private fun ClinicalMeasurementDto.toDomain() = ClinicalMeasurement(
     id,
-    value,
+    value.toDouble(),
     unit,
     measuredAt,
     observation,
