@@ -1,16 +1,32 @@
 package com.vitaltrace.app.feature.appointments.presentation
 
 data class AppointmentsUiState(
-    val nextAppointment: AppointmentUiModel? = null,
-    val upcomingAppointments: List<AppointmentUiModel> = emptyList(),
-    val previousAppointments: List<AppointmentUiModel> = emptyList(),
-    val selectedAppointmentDetail: AppointmentDetailUiModel? = null,
-    val isLoading: Boolean = false,
-    val errorMessage: String? = null
+    val contentState: AppointmentsContentState = AppointmentsContentState.Loading,
+    val selectedAppointmentDetail: AppointmentDetailUiModel? = null
+)
+
+sealed interface AppointmentsContentState {
+    data object Loading : AppointmentsContentState
+
+    data class Success(
+        val content: AppointmentsContentUiModel
+    ) : AppointmentsContentState
+
+    data class Error(
+        val message: String
+    ) : AppointmentsContentState
+}
+
+data class AppointmentsContentUiModel(
+    val nextAppointment: AppointmentUiModel?,
+    val upcomingAppointments: List<AppointmentUiModel>,
+    val previousAppointments: List<AppointmentUiModel>,
+    val currentPage: Int,
+    val lastPage: Int
 )
 
 data class AppointmentDetailUiModel(
-    val id: String,
+    val id: Long,
     val professionalName: String,
     val professionalInitials: String,
     val specialty: String,
@@ -21,15 +37,39 @@ data class AppointmentDetailUiModel(
 )
 
 data class AppointmentUiModel(
-    val id: String,
+    val id: Long,
     val professionalName: String,
+    val professionalInitials: String,
+    val specialty: String,
     val reason: String,
     val date: String,
     val time: String,
+    val scheduledAt: String,
     val status: AppointmentStatus
-)
+) {
+    fun toDetail(): AppointmentDetailUiModel = AppointmentDetailUiModel(
+        id = id,
+        professionalName = professionalName,
+        professionalInitials = professionalInitials,
+        specialty = specialty,
+        reason = reason,
+        date = date,
+        time = time,
+        status = status
+    )
+}
 
-enum class AppointmentStatus {
-    SCHEDULED,
-    COMPLETED
+enum class AppointmentStatus(val isUpcoming: Boolean) {
+    SCHEDULED(true),
+    CONFIRMED(true),
+    ATTENDED(false),
+    CANCELLED(false),
+    NO_SHOW(false),
+    UNKNOWN(false);
+
+    companion object {
+        fun fromApiValue(value: String): AppointmentStatus {
+            return entries.firstOrNull { it.name == value } ?: UNKNOWN
+        }
+    }
 }

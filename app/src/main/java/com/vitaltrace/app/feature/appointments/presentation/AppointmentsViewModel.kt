@@ -1,80 +1,81 @@
 package com.vitaltrace.app.feature.appointments.presentation
 
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.vitaltrace.app.feature.patient.domain.usecase.GetPatientAppointmentsUseCase
+import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class AppointmentsViewModel : ViewModel() {
+@HiltViewModel
+class AppointmentsViewModel @Inject constructor(
+    private val getPatientAppointments: GetPatientAppointmentsUseCase,
+    private val appointmentsMapper: AppointmentsMapper
+) : ViewModel() {
 
-    private val _uiState = MutableStateFlow(sampleAppointmentsState())
+    private val _uiState = MutableStateFlow(AppointmentsUiState())
     val uiState = _uiState.asStateFlow()
 
-    fun retry() {
-        _uiState.value = sampleAppointmentsState()
+    private var appointmentsRequest: Job? = null
+
+    init {
+        loadAppointments()
     }
 
-    fun showAppointmentDetail(appointmentId: String) {
-        _uiState.update { state ->
-            state.copy(selectedAppointmentDetail = sampleAppointmentDetail(appointmentId))
-        }
+    fun retry() {
+        loadAppointments()
+    }
+
+    fun showAppointmentDetail(appointmentId: Long) {
+        val content = (_uiState.value.contentState as? AppointmentsContentState.Success)?.content
+            ?: return
+        val appointment = sequenceOf(content.nextAppointment)
+            .plus(content.upcomingAppointments.asSequence())
+            .plus(content.previousAppointments.asSequence())
+            .filterNotNull()
+            .firstOrNull { it.id == appointmentId }
+            ?: return
+
+        _uiState.update { it.copy(selectedAppointmentDetail = appointment.toDetail()) }
     }
 
     fun dismissAppointmentDetail() {
-        _uiState.update { state -> state.copy(selectedAppointmentDetail = null) }
+        _uiState.update { it.copy(selectedAppointmentDetail = null) }
     }
-}
 
-private fun sampleAppointmentDetail(appointmentId: String): AppointmentDetailUiModel {
-    return AppointmentDetailUiModel(
-        id = appointmentId,
-        professionalName = "Dr. Carlos Ruiz",
-        professionalInitials = "CR",
-        specialty = "Medicina interna",
-        reason = "Control de presión",
-        date = "23 jul 2026",
-        time = "10:30 a. m.",
-        status = AppointmentStatus.SCHEDULED
-    )
-}
+    private fun loadAppointments() {
+        if (appointmentsRequest?.isActive == true) return
 
-private fun sampleAppointmentsState(): AppointmentsUiState {
-    return AppointmentsUiState(
-        nextAppointment = AppointmentUiModel(
-            id = "next-appointment",
-            professionalName = "Dr. Carlos Ruiz",
-            reason = "Control de presión arterial",
-            date = "23 jul 2026",
-            time = "10:30 a. m.",
-            status = AppointmentStatus.SCHEDULED
-        ),
-        upcomingAppointments = listOf(
-            AppointmentUiModel(
-                id = "upcoming-appointment",
-                professionalName = "Dra. Elena Ortiz",
-                reason = "Nutrición",
-                date = "5 ago",
-                time = "9:00 a. m.",
-                status = AppointmentStatus.SCHEDULED
+        _uiState.update {
+            it.copy(
+                contentState = AppointmentsContentState.Loading,
+                selectedAppointmentDetail = null
             )
-        ),
-        previousAppointments = listOf(
-            AppointmentUiModel(
-                id = "previous-appointment-1",
-                professionalName = "Dr. Carlos Ruiz",
-                reason = "Control",
-                date = "25 jun",
-                time = "10:30 a. m.",
-                status = AppointmentStatus.COMPLETED
-            ),
-            AppointmentUiModel(
-                id = "previous-appointment-2",
-                professionalName = "Dr. Carlos Ruiz",
-                reason = "Control",
-                date = "28 may",
-                time = "10:30 a. m.",
-                status = AppointmentStatus.COMPLETED
-            )
-        )
-    )
+        }
+        appointmentsRequest = viewModelScope.launch {
+            getPatientAppointments()
+                .onSuccess { page ->
+                    _uiState.update {
+                        it.copy(
+                            contentState = AppointmentsContentState.Success(
+                                appointmentsMapper.map(page)
+                            )
+                        )
+                    }
+                }
+                .onFailure {
+                    _uiState.update {
+                        it.copy(
+                            contentState = AppointmentsContentState.Error(
+                                "No pudimos cargar tus citas. Intenta de nuevo."
+                            )
+                        )
+                    }
+                }
+        }
+    }
 }

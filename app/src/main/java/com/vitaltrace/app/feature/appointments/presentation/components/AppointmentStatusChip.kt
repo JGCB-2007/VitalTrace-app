@@ -58,6 +58,11 @@ fun AppointmentStatusChip(
     }
 }
 
+@Composable
+fun appointmentStatusLabel(status: AppointmentStatus): String {
+    return stringResource(status.presentation(prominent = false).label)
+}
+
 private data class AppointmentStatusPresentation(
     @param:StringRes val label: Int,
     val icon: ImageVector,
@@ -73,11 +78,35 @@ private fun AppointmentStatus.presentation(prominent: Boolean): AppointmentStatu
             background = if (prominent) Color.White.copy(alpha = 0.20f) else Color(0xFFDDF4F2),
             content = if (prominent) Color.White else VitalTraceTeal
         )
-        AppointmentStatus.COMPLETED -> AppointmentStatusPresentation(
-            label = R.string.appointments_status_completed,
+        AppointmentStatus.CONFIRMED -> AppointmentStatusPresentation(
+            label = R.string.appointments_status_confirmed,
+            icon = Icons.Rounded.Schedule,
+            background = if (prominent) Color.White.copy(alpha = 0.20f) else Color(0xFFDDF4F2),
+            content = if (prominent) Color.White else VitalTraceTeal
+        )
+        AppointmentStatus.ATTENDED -> AppointmentStatusPresentation(
+            label = R.string.appointments_status_attended,
             icon = Icons.Rounded.Check,
             background = Color(0xFFDDF1E7),
             content = Color(0xFF23805F)
+        )
+        AppointmentStatus.CANCELLED -> AppointmentStatusPresentation(
+            label = R.string.appointments_status_cancelled,
+            icon = Icons.Rounded.Check,
+            background = Color(0xFFF3E4E1),
+            content = Color(0xFF8C3D32)
+        )
+        AppointmentStatus.NO_SHOW -> AppointmentStatusPresentation(
+            label = R.string.appointments_status_no_show,
+            icon = Icons.Rounded.Check,
+            background = Color(0xFFF3E4E1),
+            content = Color(0xFF8C3D32)
+        )
+        AppointmentStatus.UNKNOWN -> AppointmentStatusPresentation(
+            label = R.string.appointments_status_unknown,
+            icon = Icons.Rounded.Schedule,
+            background = Color(0xFFE8E8E8),
+            content = Color(0xFF53636D)
         )
     }
 }

@@ -37,6 +37,7 @@ import com.vitaltrace.app.R
 import com.vitaltrace.app.feature.appointments.presentation.AppointmentDetailUiModel
 import com.vitaltrace.app.feature.appointments.presentation.AppointmentStatus
 import com.vitaltrace.app.feature.appointments.presentation.components.AppointmentStatusChip
+import com.vitaltrace.app.feature.appointments.presentation.components.appointmentStatusLabel
 import com.vitaltrace.app.ui.theme.VitalTraceMint
 import com.vitaltrace.app.ui.theme.VitalTraceNavy
 import com.vitaltrace.app.ui.theme.VitalTraceTeal
@@ -178,7 +179,7 @@ private fun AppointmentInformationCard(detail: AppointmentDetailUiModel) {
             HorizontalDivider(color = Color(0xFFE5E0D7))
             AppointmentDetailRow(
                 label = stringResource(R.string.appointment_detail_status),
-                value = stringResource(R.string.appointments_status_scheduled),
+                value = appointmentStatusLabel(detail.status),
                 valueColor = VitalTraceTeal
             )
         }
@@ -242,7 +243,7 @@ private fun AppointmentDetailPreview() {
         Surface(color = VitalTraceWarmBackground) {
             AppointmentDetailContent(
                 detail = AppointmentDetailUiModel(
-                    id = "preview",
+                    id = 1,
                     professionalName = "Dr. Carlos Ruiz",
                     professionalInitials = "CR",
                     specialty = "Medicina interna",

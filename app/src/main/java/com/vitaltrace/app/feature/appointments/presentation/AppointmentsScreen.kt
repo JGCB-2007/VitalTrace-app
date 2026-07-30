@@ -17,7 +17,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import com.vitaltrace.app.R
 import com.vitaltrace.app.feature.appointments.presentation.components.AppointmentSection
 import com.vitaltrace.app.feature.appointments.presentation.components.AppointmentsErrorState
@@ -35,7 +35,7 @@ fun AppointmentsScreen(
     onHomeClick: () -> Unit,
     onMeasurementsClick: () -> Unit,
     onProfileClick: () -> Unit = {},
-    viewModel: AppointmentsViewModel = viewModel()
+    viewModel: AppointmentsViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
@@ -56,7 +56,7 @@ private fun AppointmentsContent(
     onRetryClick: () -> Unit,
     onHomeClick: () -> Unit,
     onMeasurementsClick: () -> Unit,
-    onAppointmentClick: (String) -> Unit,
+    onAppointmentClick: (Long) -> Unit,
     onDismissAppointmentDetail: () -> Unit,
     onProfileClick: () -> Unit
 ) {
@@ -79,17 +79,17 @@ private fun AppointmentsContent(
             )
         }
     ) { innerPadding ->
-        when {
-            uiState.isLoading -> AppointmentsLoadingState(
+        when (val contentState = uiState.contentState) {
+            AppointmentsContentState.Loading -> AppointmentsLoadingState(
                 modifier = Modifier.padding(innerPadding)
             )
-            uiState.errorMessage != null -> AppointmentsErrorState(
-                message = uiState.errorMessage,
+            is AppointmentsContentState.Error -> AppointmentsErrorState(
+                message = contentState.message,
                 onRetryClick = onRetryClick,
                 modifier = Modifier.padding(innerPadding)
             )
-            else -> AppointmentsBody(
-                uiState = uiState,
+            is AppointmentsContentState.Success -> AppointmentsBody(
+                content = contentState.content,
                 onAppointmentClick = onAppointmentClick,
                 modifier = Modifier.padding(innerPadding)
             )
@@ -99,8 +99,8 @@ private fun AppointmentsContent(
 
 @Composable
 private fun AppointmentsBody(
-    uiState: AppointmentsUiState,
-    onAppointmentClick: (String) -> Unit,
+    content: AppointmentsContentUiModel,
+    onAppointmentClick: (Long) -> Unit,
     modifier: Modifier = Modifier
 ) {
     LazyColumn(
@@ -122,7 +122,7 @@ private fun AppointmentsBody(
                 fontWeight = FontWeight.Bold
             )
         }
-        uiState.nextAppointment?.let { appointment ->
+        content.nextAppointment?.let { appointment ->
             item {
                 FeaturedAppointmentCard(
                     appointment = appointment,
@@ -133,7 +133,7 @@ private fun AppointmentsBody(
         item {
             AppointmentSection(
                 title = stringResource(R.string.appointments_upcoming),
-                appointments = uiState.upcomingAppointments,
+                appointments = content.upcomingAppointments,
                 emptyMessage = stringResource(R.string.appointments_empty_upcoming),
                 onAppointmentClick = onAppointmentClick
             )
@@ -141,7 +141,7 @@ private fun AppointmentsBody(
         item {
             AppointmentSection(
                 title = stringResource(R.string.appointments_previous),
-                appointments = uiState.previousAppointments,
+                appointments = content.previousAppointments,
                 emptyMessage = stringResource(R.string.appointments_empty_previous),
                 onAppointmentClick = onAppointmentClick
             )
@@ -167,32 +167,47 @@ private fun AppointmentsScreenPreview() {
 
 private fun previewAppointmentsState(): AppointmentsUiState {
     return AppointmentsUiState(
+        contentState = AppointmentsContentState.Success(
+            AppointmentsContentUiModel(
         nextAppointment = AppointmentUiModel(
-            id = "preview-next",
+            id = 1,
             professionalName = "Dr. Carlos Ruiz",
+            professionalInitials = "CR",
+            specialty = "Medicina interna",
             reason = "Control de presión arterial",
             date = "23 jul 2026",
             time = "10:30 a. m.",
+            scheduledAt = "2026-07-23 10:30:00",
             status = AppointmentStatus.SCHEDULED
         ),
         upcomingAppointments = listOf(
             AppointmentUiModel(
-                id = "preview-upcoming",
+                id = 2,
                 professionalName = "Dra. Elena Ortiz",
+                professionalInitials = "EO",
+                specialty = "Nutrición",
                 reason = "Nutrición",
                 date = "5 ago",
                 time = "9:00 a. m.",
+                scheduledAt = "2026-08-05 09:00:00",
                 status = AppointmentStatus.SCHEDULED
             )
         ),
         previousAppointments = listOf(
             AppointmentUiModel(
-                id = "preview-previous",
+                id = 3,
                 professionalName = "Dr. Carlos Ruiz",
+                professionalInitials = "CR",
+                specialty = "Medicina interna",
                 reason = "Control",
                 date = "25 jun",
                 time = "10:30 a. m.",
-                status = AppointmentStatus.COMPLETED
+                scheduledAt = "2026-06-25 10:30:00",
+                status = AppointmentStatus.ATTENDED
+            )
+        ),
+                currentPage = 1,
+                lastPage = 1
             )
         )
     )

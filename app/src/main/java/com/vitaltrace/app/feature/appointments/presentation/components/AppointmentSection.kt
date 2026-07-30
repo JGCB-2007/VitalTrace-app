@@ -40,7 +40,7 @@ fun AppointmentSection(
     title: String,
     appointments: List<AppointmentUiModel>,
     emptyMessage: String,
-    onAppointmentClick: (String) -> Unit,
+    onAppointmentClick: (Long) -> Unit,
     modifier: Modifier = Modifier
 ) {
     Column(modifier = modifier, verticalArrangement = Arrangement.spacedBy(8.dp)) {
@@ -87,13 +87,7 @@ private fun AppointmentListItem(
     onClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val statusLabel = stringResource(
-        if (appointment.status == AppointmentStatus.SCHEDULED) {
-            R.string.appointments_status_scheduled
-        } else {
-            R.string.appointments_status_completed
-        }
-    )
+    val statusLabel = appointmentStatusLabel(appointment.status)
     val description = stringResource(
         R.string.appointments_item_description,
         appointment.professionalName,
@@ -159,7 +153,7 @@ private fun AppointmentListItem(
 private fun AppointmentLeadingIcon(status: AppointmentStatus) {
     Surface(
         modifier = Modifier.size(60.dp),
-        color = if (status == AppointmentStatus.SCHEDULED) {
+        color = if (status.isUpcoming) {
             Color(0xFFDDF4F2)
         } else {
             Color(0xFFDDF1E7)
@@ -167,13 +161,13 @@ private fun AppointmentLeadingIcon(status: AppointmentStatus) {
         shape = RoundedCornerShape(18.dp)
     ) {
         Icon(
-            imageVector = if (status == AppointmentStatus.SCHEDULED) {
+            imageVector = if (status.isUpcoming) {
                 Icons.Rounded.CalendarMonth
             } else {
                 Icons.Rounded.Check
             },
             contentDescription = null,
-            tint = if (status == AppointmentStatus.SCHEDULED) {
+            tint = if (status.isUpcoming) {
                 VitalTraceTeal
             } else {
                 Color(0xFF23805F)

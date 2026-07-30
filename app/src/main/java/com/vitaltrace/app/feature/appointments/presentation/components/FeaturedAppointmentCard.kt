@@ -35,7 +35,7 @@ fun FeaturedAppointmentCard(
     onClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val status = stringResource(R.string.appointments_status_scheduled)
+    val status = appointmentStatusLabel(appointment.status)
     val description = stringResource(
         R.string.appointments_item_description,
         appointment.professionalName,

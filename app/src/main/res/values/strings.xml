@@ -80,7 +80,11 @@
     <string name="appointments_upcoming">PRÓXIMAS</string>
     <string name="appointments_previous">ANTERIORES</string>
     <string name="appointments_status_scheduled">Programada</string>
-    <string name="appointments_status_completed">Realizada</string>
+    <string name="appointments_status_confirmed">Confirmada</string>
+    <string name="appointments_status_attended">Realizada</string>
+    <string name="appointments_status_cancelled">Cancelada</string>
+    <string name="appointments_status_no_show">No asistió</string>
+    <string name="appointments_status_unknown">Estado no disponible</string>
     <string name="appointments_item_description">Cita con %1$s, %2$s, %3$s, estado %4$s</string>
     <string name="appointments_loading">Cargando citas</string>
     <string name="appointments_error">No se pudieron cargar las citas</string>
