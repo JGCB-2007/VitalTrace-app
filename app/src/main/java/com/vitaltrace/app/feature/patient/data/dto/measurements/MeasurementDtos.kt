@@ -14,6 +14,11 @@ data class MeasurementDto(
     val origin: String,
     @SerialName("author_user_id") val authorUserId: Long,
     val observation: String? = null,
+    @SerialName("review_status") val reviewStatus: String = "PENDING",
+    @SerialName("reviewed_at") val reviewedAt: String? = null,
+    @SerialName("reviewed_by") val reviewedBy: Long? = null,
+    @SerialName("review_observation") val reviewObservation: String? = null,
+    val reviewer: MeasurementReviewerDto? = null,
     @SerialName("measurement_type") val measurementType: MeasurementTypeDto? = null,
     @SerialName("created_at") val createdAt: String? = null,
     @SerialName("created_by") val createdBy: Long? = null,
@@ -21,6 +26,12 @@ data class MeasurementDto(
     @SerialName("updated_by") val updatedBy: Long? = null,
     @SerialName("deleted_at") val deletedAt: String? = null,
     @SerialName("deleted_by") val deletedBy: Long? = null
+)
+
+@Serializable
+data class MeasurementReviewerDto(
+    val id: Long,
+    @SerialName("full_name") val fullName: String? = null
 )
 
 @Serializable

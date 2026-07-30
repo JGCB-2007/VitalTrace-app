@@ -26,6 +26,10 @@ class MeasurementsViewModel @Inject constructor(
 
     fun retry() = loadMeasurements()
 
+    fun selectFilter(filter: MeasurementFilter) {
+        _uiState.update { it.copy(selectedFilter = filter) }
+    }
+
     fun showMeasurementDetail(measurementId: Long) {
         val content = (_uiState.value.contentState as? MeasurementsContentState.Success)?.content
             ?: return

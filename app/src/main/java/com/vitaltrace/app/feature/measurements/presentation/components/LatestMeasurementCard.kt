@@ -55,6 +55,7 @@ fun LatestMeasurementCard(
                     fontWeight = FontWeight.ExtraBold,
                     letterSpacing = 0.5.sp
                 )
+                MeasurementStatusChip(status = measurement.status)
                 Text(
                     text = measurement.typeName,
                     color = Color(0xFF53636D),

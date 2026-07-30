@@ -104,5 +104,6 @@ private fun MeasurementHistoryItem(
                 fontSize = 16.sp
             )
         }
+        MeasurementStatusChip(status = measurement.status)
     }
 }

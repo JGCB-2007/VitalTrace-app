@@ -14,6 +14,7 @@ import com.vitaltrace.app.feature.patient.domain.model.AlertsSummary
 import com.vitaltrace.app.feature.patient.domain.model.Appointment
 import com.vitaltrace.app.feature.patient.domain.model.Diagnosis
 import com.vitaltrace.app.feature.patient.domain.model.Measurement
+import com.vitaltrace.app.feature.patient.domain.model.MeasurementReviewer
 import com.vitaltrace.app.feature.patient.domain.model.MeasurementType
 import com.vitaltrace.app.feature.patient.domain.model.Page
 import com.vitaltrace.app.feature.patient.domain.model.PaginationLinks
@@ -67,6 +68,11 @@ fun MeasurementDto.toDomain() = Measurement(
     origin = origin,
     authorUserId = authorUserId,
     observation = observation,
+    reviewStatus = reviewStatus,
+    reviewedAt = reviewedAt,
+    reviewedBy = reviewedBy,
+    reviewObservation = reviewObservation,
+    reviewer = reviewer?.let { MeasurementReviewer(it.id, it.fullName) },
     measurementType = measurementType?.toDomain()
 )
 

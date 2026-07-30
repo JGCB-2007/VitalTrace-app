@@ -24,7 +24,11 @@ class MeasurementsMapper @Inject constructor() {
             unit = unit,
             date = dateTimeParts.firstOrNull().orEmpty(),
             time = dateTimeParts.getOrNull(1).orEmpty(),
-            observation = observation.orEmpty()
+            observation = observation.orEmpty(),
+            status = MeasurementStatus.fromApiValue(reviewStatus),
+            reviewerName = reviewer?.fullName,
+            reviewedAt = reviewedAt,
+            reviewObservation = reviewObservation
         )
     }
 }

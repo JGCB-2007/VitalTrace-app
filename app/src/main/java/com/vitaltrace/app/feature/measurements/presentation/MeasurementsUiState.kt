@@ -2,8 +2,21 @@ package com.vitaltrace.app.feature.measurements.presentation
 
 data class MeasurementsUiState(
     val contentState: MeasurementsContentState = MeasurementsContentState.Loading,
-    val selectedMeasurementDetail: MeasurementDetailUiModel? = null
-)
+    val selectedMeasurementDetail: MeasurementDetailUiModel? = null,
+    val selectedFilter: MeasurementFilter = MeasurementFilter.ALL
+) {
+    val visibleMeasurements: List<MeasurementUiModel>
+        get() {
+            val content = (contentState as? MeasurementsContentState.Success)?.content
+                ?: return emptyList()
+            val all = listOfNotNull(content.latestMeasurement) + content.measurements
+            return when (selectedFilter) {
+                MeasurementFilter.ALL -> content.measurements
+                MeasurementFilter.PENDING -> all.filter { it.status == MeasurementStatus.PENDING }
+                MeasurementFilter.REVIEWED -> all.filter { it.status == MeasurementStatus.REVIEWED }
+            }
+        }
+}
 
 sealed interface MeasurementsContentState {
     data object Loading : MeasurementsContentState
@@ -25,7 +38,12 @@ data class MeasurementDetailUiModel(
     val unit: String,
     val date: String,
     val time: String,
-    val observation: String
+    val observation: String,
+    val status: MeasurementStatus,
+    val reviewerName: String?,
+    val reviewedDate: String?,
+    val reviewedTime: String?,
+    val reviewObservation: String?
 )
 
 data class MeasurementUiModel(
@@ -35,7 +53,11 @@ data class MeasurementUiModel(
     val unit: String,
     val date: String,
     val time: String,
-    val observation: String
+    val observation: String,
+    val status: MeasurementStatus,
+    val reviewerName: String?,
+    val reviewedAt: String?,
+    val reviewObservation: String?
 ) {
     fun toDetail() = MeasurementDetailUiModel(
         id = id,
@@ -44,7 +66,12 @@ data class MeasurementUiModel(
         unit = unit,
         date = date,
         time = time,
-        observation = observation
+        observation = observation,
+        status = status,
+        reviewerName = reviewerName,
+        reviewedDate = reviewedAt?.substringBefore(" "),
+        reviewedTime = reviewedAt?.substringAfter(" ", ""),
+        reviewObservation = reviewObservation
     )
 }
 
@@ -55,8 +82,13 @@ enum class MeasurementFilter {
 }
 
 enum class MeasurementStatus {
-    REGISTERED,
     PENDING,
-    IN_REVIEW,
-    REVIEWED
+    REVIEWED,
+    UNKNOWN;
+
+    companion object {
+        fun fromApiValue(value: String): MeasurementStatus {
+            return entries.firstOrNull { it.name == value } ?: UNKNOWN
+        }
+    }
 }

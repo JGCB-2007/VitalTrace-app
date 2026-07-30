@@ -28,6 +28,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.vitaltrace.app.R
 import com.vitaltrace.app.feature.measurements.presentation.MeasurementDetailUiModel
+import com.vitaltrace.app.feature.measurements.presentation.components.MeasurementStatusChip
 import com.vitaltrace.app.ui.theme.VitalTraceNavy
 import com.vitaltrace.app.ui.theme.VitalTraceTeal
 
@@ -38,13 +39,20 @@ fun MeasurementDetailContent(
     modifier: Modifier = Modifier
 ) {
     Column(modifier = modifier, verticalArrangement = Arrangement.spacedBy(20.dp)) {
-        Text(
-            text = stringResource(R.string.measurement_detail_title),
-            color = VitalTraceTeal,
-            fontSize = 16.sp,
-            fontWeight = FontWeight.ExtraBold,
-            letterSpacing = 0.7.sp
-        )
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(
+                text = stringResource(R.string.measurement_detail_title),
+                color = VitalTraceTeal,
+                fontSize = 16.sp,
+                fontWeight = FontWeight.ExtraBold,
+                letterSpacing = 0.7.sp
+            )
+            MeasurementStatusChip(status = detail.status)
+        }
         Text(text = detail.typeName, color = Color(0xFF53636D), fontSize = 18.sp)
         Row(verticalAlignment = Alignment.Bottom) {
             Text(
@@ -104,6 +112,22 @@ private fun MeasurementInformationCard(detail: MeasurementDetailUiModel) {
             DetailRow(stringResource(R.string.measurement_detail_time), detail.time)
             HorizontalDivider(color = Color(0xFFE5E0D7))
             DetailRow(stringResource(R.string.measurement_detail_observation), detail.observation)
+            detail.reviewerName?.takeIf(String::isNotBlank)?.let { reviewer ->
+                HorizontalDivider(color = Color(0xFFE5E0D7))
+                DetailRow(stringResource(R.string.measurement_detail_reviewer), reviewer)
+            }
+            detail.reviewedDate?.takeIf(String::isNotBlank)?.let { reviewedDate ->
+                HorizontalDivider(color = Color(0xFFE5E0D7))
+                DetailRow(
+                    stringResource(R.string.measurement_detail_reviewed_at),
+                    listOfNotNull(reviewedDate, detail.reviewedTime?.takeIf(String::isNotBlank))
+                        .joinToString(" ")
+                )
+            }
+            detail.reviewObservation?.takeIf(String::isNotBlank)?.let { observation ->
+                HorizontalDivider(color = Color(0xFFE5E0D7))
+                DetailRow(stringResource(R.string.measurement_detail_review_observation), observation)
+            }
         }
     }
 }

@@ -66,29 +66,23 @@ private data class MeasurementStatusPresentation(
 
 private fun statusPresentation(status: MeasurementStatus): MeasurementStatusPresentation {
     return when (status) {
-        MeasurementStatus.REGISTERED -> MeasurementStatusPresentation(
-            label = R.string.measurements_status_registered,
-            icon = Icons.Rounded.Upload,
-            background = Color(0xFFE5EDF4),
-            content = Color(0xFF315A76)
-        )
         MeasurementStatus.PENDING -> MeasurementStatusPresentation(
             label = R.string.measurements_status_pending,
             icon = Icons.Rounded.Schedule,
             background = Color(0xFFFFEBC7),
             content = Color(0xFF765315)
         )
-        MeasurementStatus.IN_REVIEW -> MeasurementStatusPresentation(
-            label = R.string.measurements_status_in_review,
-            icon = Icons.Rounded.Schedule,
-            background = Color(0xFFD9EEEE),
-            content = VitalTraceTeal
-        )
         MeasurementStatus.REVIEWED -> MeasurementStatusPresentation(
             label = R.string.measurements_status_reviewed,
             icon = Icons.Rounded.Check,
             background = Color(0xFFDDF1E7),
             content = Color(0xFF23805F)
+        )
+        MeasurementStatus.UNKNOWN -> MeasurementStatusPresentation(
+            label = R.string.measurements_status_unknown,
+            icon = Icons.Rounded.Upload,
+            background = Color(0xFFE5EDF4),
+            content = Color(0xFF315A76)
         )
     }
 }

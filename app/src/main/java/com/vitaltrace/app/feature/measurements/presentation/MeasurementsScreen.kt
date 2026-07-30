@@ -26,6 +26,7 @@ import com.vitaltrace.app.feature.home.presentation.HomeBottomDestination
 import com.vitaltrace.app.feature.home.presentation.components.HomeBottomBar
 import com.vitaltrace.app.feature.measurements.presentation.components.LatestMeasurementCard
 import com.vitaltrace.app.feature.measurements.presentation.components.MeasurementHistoryCard
+import com.vitaltrace.app.feature.measurements.presentation.components.MeasurementFilterBar
 import com.vitaltrace.app.feature.measurements.presentation.components.MeasurementsEmptyState
 import com.vitaltrace.app.feature.measurements.presentation.components.MeasurementsErrorState
 import com.vitaltrace.app.feature.measurements.presentation.components.MeasurementsHeader
@@ -52,6 +53,7 @@ fun MeasurementsScreen(
     MeasurementsContent(
         uiState = uiState,
         onRetryClick = viewModel::retry,
+        onFilterSelected = viewModel::selectFilter,
         onMeasurementClick = viewModel::showMeasurementDetail,
         onDismissMeasurementDetail = viewModel::dismissMeasurementDetail,
         onHomeClick = onHomeClick,
@@ -65,6 +67,7 @@ fun MeasurementsScreen(
 private fun MeasurementsContent(
     uiState: MeasurementsUiState,
     onRetryClick: () -> Unit,
+    onFilterSelected: (MeasurementFilter) -> Unit,
     onMeasurementClick: (Long) -> Unit,
     onDismissMeasurementDetail: () -> Unit,
     onHomeClick: () -> Unit,
@@ -113,6 +116,9 @@ private fun MeasurementsContent(
             )
             is MeasurementsContentState.Success -> MeasurementsBody(
                 content = contentState.content,
+                selectedFilter = uiState.selectedFilter,
+                visibleMeasurements = uiState.visibleMeasurements,
+                onFilterSelected = onFilterSelected,
                 onAddMeasurementClick = onAddMeasurementClick,
                 onMeasurementClick = onMeasurementClick,
                 modifier = Modifier.padding(innerPadding)
@@ -124,6 +130,9 @@ private fun MeasurementsContent(
 @Composable
 private fun MeasurementsBody(
     content: MeasurementsContentUiModel,
+    selectedFilter: MeasurementFilter,
+    visibleMeasurements: List<MeasurementUiModel>,
+    onFilterSelected: (MeasurementFilter) -> Unit,
     onAddMeasurementClick: () -> Unit,
     onMeasurementClick: (Long) -> Unit,
     modifier: Modifier = Modifier
@@ -134,7 +143,13 @@ private fun MeasurementsBody(
         verticalArrangement = Arrangement.spacedBy(18.dp)
     ) {
         item { MeasurementsHeader(onAddMeasurementClick = onAddMeasurementClick) }
-        content.latestMeasurement?.let { measurement ->
+        item {
+            MeasurementFilterBar(
+                selectedFilter = selectedFilter,
+                onFilterSelected = onFilterSelected
+            )
+        }
+        if (selectedFilter == MeasurementFilter.ALL) content.latestMeasurement?.let { measurement ->
             item {
                 LatestMeasurementCard(
                     measurement = measurement,
@@ -142,12 +157,15 @@ private fun MeasurementsBody(
                 )
             }
         }
-        if (content.latestMeasurement == null) {
+        if (
+            visibleMeasurements.isEmpty() &&
+            (selectedFilter != MeasurementFilter.ALL || content.latestMeasurement == null)
+        ) {
             item { MeasurementsEmptyState(onAddMeasurementClick = onAddMeasurementClick) }
-        } else if (content.measurements.isNotEmpty()) {
+        } else if (visibleMeasurements.isNotEmpty()) {
             item {
                 MeasurementHistoryCard(
-                    measurements = content.measurements,
+                    measurements = visibleMeasurements,
                     onMeasurementClick = onMeasurementClick
                 )
             }
@@ -166,6 +184,7 @@ private fun MeasurementsScreenPreview() {
                 )
             ),
             onRetryClick = {},
+            onFilterSelected = {},
             onMeasurementClick = {},
             onDismissMeasurementDetail = {},
             onHomeClick = {},

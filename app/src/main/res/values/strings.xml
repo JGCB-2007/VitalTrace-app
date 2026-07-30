@@ -42,6 +42,7 @@
     <string name="measurements_status_pending">Pendiente</string>
     <string name="measurements_status_in_review">En revisión</string>
     <string name="measurements_status_reviewed">Revisada</string>
+    <string name="measurements_status_unknown">Estado no disponible</string>
     <string name="measurements_pressure_unit">mmHg</string>
     <string name="measurements_item_description">Medición de presión arterial: %1$s %2$s, %3$s, estado %4$s</string>
     <string name="measurements_loading">Cargando mediciones</string>
@@ -73,6 +74,9 @@
     <string name="measurement_detail_date">Fecha</string>
     <string name="measurement_detail_time">Hora</string>
     <string name="measurement_detail_observation">Observación</string>
+    <string name="measurement_detail_reviewer">Revisado por</string>
+    <string name="measurement_detail_reviewed_at">Fecha de revisión</string>
+    <string name="measurement_detail_review_observation">Observación de revisión</string>
     <string name="measurement_detail_follow_up">SEGUIMIENTO REGISTRADO</string>
     <string name="measurement_detail_close">Cerrar</string>
     <string name="measurement_detail_value_description">Presión arterial: %1$s %2$s</string>
