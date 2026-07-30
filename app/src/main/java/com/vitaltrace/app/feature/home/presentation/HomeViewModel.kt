@@ -3,7 +3,9 @@ package com.vitaltrace.app.feature.home.presentation
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.vitaltrace.app.feature.auth.domain.usecase.LogoutUseCase
+import com.vitaltrace.app.feature.patient.domain.usecase.GetPatientSummaryUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -14,89 +16,66 @@ import javax.inject.Inject
 
 @HiltViewModel
 class HomeViewModel @Inject constructor(
-    private val logoutUseCase: LogoutUseCase
+    private val logoutUseCase: LogoutUseCase,
+    private val getPatientSummary: GetPatientSummaryUseCase,
+    private val summaryMapper: HomeSummaryMapper
 ) : ViewModel() {
 
-    private val _uiState = MutableStateFlow(createSampleState())
+    private val _uiState = MutableStateFlow(HomeUiState())
     val uiState = _uiState.asStateFlow()
 
-    private val effectChannel = Channel<HomeUiEffect>(
-        capacity = Channel.BUFFERED
-    )
-
+    private val effectChannel = Channel<HomeUiEffect>(capacity = Channel.BUFFERED)
     val effects = effectChannel.receiveAsFlow()
 
-    fun logout() {
-        if (_uiState.value.isLoggingOut) {
-            return
-        }
+    private var summaryRequest: Job? = null
 
-        viewModelScope.launch {
-            _uiState.update {
-                it.copy(
-                    isLoggingOut = true,
-                    errorMessage = null
-                )
-            }
-
-            logoutUseCase()
-                .onSuccess {
-                    effectChannel.send(
-                        HomeUiEffect.NavigateToLogin
-                    )
-                }
-                .onFailure { throwable ->
-                    _uiState.update {
-                        it.copy(
-                            isLoggingOut = false,
-                            errorMessage = throwable.message
-                                ?: "Could not close the session."
-                        )
-                    }
-                }
-        }
+    init {
+        loadSummary()
     }
 
-    fun clearError() {
-        _uiState.update {
-            it.copy(errorMessage = null)
+    fun logout() {
+        if (_uiState.value.isLoggingOut) return
+
+        viewModelScope.launch {
+            _uiState.update { it.copy(isLoggingOut = true) }
+            logoutUseCase()
+                .onSuccess {
+                    effectChannel.send(HomeUiEffect.NavigateToLogin)
+                }
+                .onFailure {
+                    _uiState.update { state -> state.copy(isLoggingOut = false) }
+                }
         }
     }
 
     fun retry() {
-        _uiState.value = createSampleState()
+        loadSummary()
     }
 
-    private fun createSampleState(): HomeUiState {
-        return HomeUiState(
-            greeting = "Buenos días",
-            patientName = "Ana Martínez",
-            patientInitials = "AM",
-            followUpStatus = FollowUpStatusUiModel(
-                status = "En revisión",
-                title = "Tu última medición fue enviada para revisión.",
-                description = "Un profesional podrá revisarla pronto."
-            ),
-            nextAppointment = NextAppointmentUiModel(
-                professionalName = "Dr. Carlos Ruiz",
-                reason = "Control",
-                date = "23 jul",
-                time = "10:30 a. m.",
-                status = "Programada"
-            ),
-            recentMeasurement = RecentMeasurementUiModel(
-                value = "145/92",
-                unit = "mmHg",
-                date = "14 jul",
-                chartValues = listOf(
-                    0.46f,
-                    0.58f,
-                    0.52f,
-                    0.68f,
-                    0.61f,
-                    0.93f
-                )
-            )
-        )
+    private fun loadSummary() {
+        if (summaryRequest?.isActive == true) return
+
+        _uiState.update { it.copy(contentState = HomeContentState.Loading) }
+        summaryRequest = viewModelScope.launch {
+            getPatientSummary()
+                .onSuccess { summary ->
+                    _uiState.update {
+                        it.copy(
+                            contentState = HomeContentState.Success(
+                                summaryMapper.map(summary)
+                            )
+                        )
+                    }
+                }
+                .onFailure {
+                    _uiState.update {
+                        it.copy(
+                            contentState = HomeContentState.Error(
+                                "No pudimos cargar tu información. Intenta de nuevo."
+                            )
+                        )
+                    }
+                }
+        }
     }
 }

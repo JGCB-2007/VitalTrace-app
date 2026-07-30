@@ -83,23 +83,22 @@ private fun HomeContent(
             )
         }
     ) { innerPadding ->
-        when {
-            uiState.isLoading -> LoadingState(
+        when (val contentState = uiState.contentState) {
+            HomeContentState.Loading -> LoadingState(
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(innerPadding)
             )
-            uiState.errorMessage != null && !uiState.hasContent -> {
-                HomeErrorState(
-                    message = uiState.errorMessage,
-                    onRetryClick = onRetryClick,
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(innerPadding)
-                )
-            }
-            else -> HomeBody(
-                uiState = uiState,
+            is HomeContentState.Error -> HomeErrorState(
+                message = contentState.message,
+                onRetryClick = onRetryClick,
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(innerPadding)
+            )
+            is HomeContentState.Success -> HomeBody(
+                content = contentState.content,
+                isLoggingOut = uiState.isLoggingOut,
                 onLogoutClick = onLogoutClick,
                 onRegisterMeasurementClick = onRegisterMeasurementClick,
                 onAppointmentDetailClick = onAppointmentDetailClick,
@@ -112,7 +111,8 @@ private fun HomeContent(
 
 @Composable
 private fun HomeBody(
-    uiState: HomeUiState,
+    content: HomeContentUiModel,
+    isLoggingOut: Boolean,
     onLogoutClick: () -> Unit,
     onRegisterMeasurementClick: () -> Unit,
     onAppointmentDetailClick: () -> Unit,
@@ -130,16 +130,16 @@ private fun HomeBody(
     ) {
         item {
             HomeHeader(
-                greeting = uiState.greeting,
-                patientName = uiState.patientName,
-                patientInitials = uiState.patientInitials,
-                isLoggingOut = uiState.isLoggingOut,
+                greeting = content.greeting,
+                patientName = content.patientName,
+                patientInitials = content.patientInitials,
+                isLoggingOut = isLoggingOut,
                 onLogoutClick = onLogoutClick
             )
         }
         item {
             FollowUpStatusCard(
-                status = uiState.followUpStatus,
+                status = content.followUpStatus,
                 modifier = Modifier.padding(top = 28.dp)
             )
         }
@@ -151,14 +151,14 @@ private fun HomeBody(
         }
         item {
             NextAppointmentCard(
-                appointment = uiState.nextAppointment,
+                appointment = content.nextAppointment,
                 onDetailClick = onAppointmentDetailClick,
                 modifier = Modifier.padding(top = 18.dp)
             )
         }
         item {
             RecentPressureCard(
-                measurement = uiState.recentMeasurement,
+                measurement = content.recentMeasurement,
                 onHistoryClick = onPressureHistoryClick,
                 modifier = Modifier.padding(top = 18.dp)
             )
@@ -186,6 +186,8 @@ private fun HomeScreenPreview() {
 
 private fun previewHomeState(): HomeUiState {
     return HomeUiState(
+        contentState = HomeContentState.Success(
+            HomeContentUiModel(
         greeting = "Buenos días",
         patientName = "Ana Martínez",
         patientInitials = "AM",
@@ -212,6 +214,8 @@ private fun previewHomeState(): HomeUiState {
                 0.68f,
                 0.61f,
                 0.93f
+            )
+        )
             )
         )
     )
