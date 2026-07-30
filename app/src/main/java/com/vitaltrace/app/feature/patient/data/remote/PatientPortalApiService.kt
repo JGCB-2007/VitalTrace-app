@@ -7,6 +7,7 @@ import com.vitaltrace.app.feature.patient.data.dto.measurements.CreateMeasuremen
 import com.vitaltrace.app.feature.patient.data.dto.measurements.MeasurementDto
 import com.vitaltrace.app.feature.patient.data.dto.relatives.PatientRelativeDto
 import com.vitaltrace.app.feature.patient.data.dto.profile.PatientProfileDto
+import com.vitaltrace.app.feature.patient.data.dto.clinicalhistory.ClinicalHistoryDto
 import com.vitaltrace.app.feature.patient.data.dto.summary.PatientSummaryDataDto
 import com.vitaltrace.app.feature.patient.data.dto.treatments.TreatmentDto
 import retrofit2.http.Body
@@ -23,6 +24,9 @@ interface PatientPortalApiService {
 
     @GET("patient/profile")
     suspend fun getProfile(): ApiResponse<PatientProfileDto>
+
+    @GET("patient/clinical-history")
+    suspend fun getClinicalHistory(): ApiResponse<ClinicalHistoryDto>
 
     @GET("patient/appointments")
     suspend fun getAppointments(

@@ -15,4 +15,5 @@ sealed class AppRoute(val route: String) {
     data object TreatmentDetail : AppRoute("treatments/{treatmentId}") {
         fun create(id: Long) = "treatments/$id"
     }
+    data object ClinicalHistory : AppRoute("clinical_history")
 }

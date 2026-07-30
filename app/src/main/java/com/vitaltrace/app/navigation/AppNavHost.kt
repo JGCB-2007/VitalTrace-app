@@ -13,6 +13,7 @@ import com.vitaltrace.app.feature.auth.presentation.LoginScreen
 import com.vitaltrace.app.feature.auth.presentation.recovery.ForgotPasswordScreen
 import com.vitaltrace.app.feature.auth.presentation.recovery.ResetPasswordScreen
 import com.vitaltrace.app.feature.appointments.presentation.AppointmentsScreen
+import com.vitaltrace.app.feature.clinicalhistory.presentation.ClinicalHistoryScreen
 import com.vitaltrace.app.feature.home.presentation.HomeScreen
 import com.vitaltrace.app.feature.measurements.presentation.MeasurementsScreen
 import com.vitaltrace.app.feature.measurements.presentation.form.MeasurementFormScreen
@@ -152,6 +153,10 @@ fun AppNavHost(
                 },
                 onProfileClick = { navController.popBackStack() }
             )
+        }
+
+        composable(AppRoute.ClinicalHistory.route) {
+            ClinicalHistoryScreen(onNavigateBack = { navController.popBackStack() })
         }
 
         composable(AppRoute.Treatments.route) {
