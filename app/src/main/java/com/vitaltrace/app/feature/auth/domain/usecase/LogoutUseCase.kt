@@ -1,13 +1,13 @@
 package com.vitaltrace.app.feature.auth.domain.usecase
 
-import com.vitaltrace.app.feature.auth.domain.repository.AuthRepository
+import com.vitaltrace.app.core.session.SessionManager
 import javax.inject.Inject
 
 class LogoutUseCase @Inject constructor(
-    private val authRepository: AuthRepository
+    private val sessionManager: SessionManager
 ) {
 
     suspend operator fun invoke(): Result<Unit> {
-        return authRepository.logout()
+        return sessionManager.logout()
     }
 }

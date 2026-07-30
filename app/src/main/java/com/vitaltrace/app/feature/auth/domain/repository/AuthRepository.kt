@@ -1,13 +1,15 @@
 package com.vitaltrace.app.feature.auth.domain.repository
 
+import com.vitaltrace.app.core.session.AuthenticatedUser
+
 interface AuthRepository {
 
     suspend fun login(
         email: String,
         password: String
-    ): Result<Unit>
+    ): Result<AuthenticatedUser>
 
-    suspend fun validateSession(): Result<Unit>
+    suspend fun getCurrentUser(): Result<AuthenticatedUser>
 
     suspend fun logout(): Result<Unit>
 }

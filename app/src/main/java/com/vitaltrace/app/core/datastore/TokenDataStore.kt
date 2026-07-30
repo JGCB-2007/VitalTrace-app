@@ -5,6 +5,7 @@ import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
 import dagger.hilt.android.qualifiers.ApplicationContext
+import com.vitaltrace.app.core.session.TokenStore
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
@@ -18,7 +19,7 @@ private val Context.dataStore by preferencesDataStore(
 @Singleton
 class TokenDataStore @Inject constructor(
     @ApplicationContext private val context: Context
-) {
+) : TokenStore {
 
     private companion object {
         val AUTH_TOKEN = stringPreferencesKey("auth_token")
@@ -28,17 +29,17 @@ class TokenDataStore @Inject constructor(
         preferences[AUTH_TOKEN]
     }
 
-    suspend fun getToken(): String? {
+    override suspend fun getToken(): String? {
         return token.first()
     }
 
-    suspend fun saveToken(token: String) {
+    override suspend fun saveToken(token: String) {
         context.dataStore.edit { preferences ->
             preferences[AUTH_TOKEN] = token
         }
     }
 
-    suspend fun clearToken() {
+    override suspend fun clearToken() {
         context.dataStore.edit { preferences ->
             preferences.remove(AUTH_TOKEN)
         }

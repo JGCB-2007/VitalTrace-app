@@ -1,11 +1,11 @@
 package com.vitaltrace.app.feature.auth.domain.usecase
 
+import com.vitaltrace.app.core.session.SessionManager
 import com.vitaltrace.app.feature.auth.domain.repository.AuthException
-import com.vitaltrace.app.feature.auth.domain.repository.AuthRepository
 import javax.inject.Inject
 
 class LoginUseCase @Inject constructor(
-    private val authRepository: AuthRepository
+    private val sessionManager: SessionManager
 ) {
 
     suspend operator fun invoke(
@@ -32,7 +32,7 @@ class LoginUseCase @Inject constructor(
             )
         }
 
-        return authRepository.login(
+        return sessionManager.login(
             email = normalizedEmail,
             password = password
         )

@@ -1,7 +1,9 @@
 package com.vitaltrace.app.feature.auth.data.repository
 
-import com.vitaltrace.app.core.datastore.TokenDataStore
 import com.vitaltrace.app.core.network.AuthInterceptor
+import com.vitaltrace.app.core.session.AuthenticatedUser
+import com.vitaltrace.app.core.session.TokenStore
+import com.vitaltrace.app.feature.auth.data.mapper.toAuthenticatedUser
 import com.vitaltrace.app.feature.auth.data.remote.AuthApiService
 import com.vitaltrace.app.feature.auth.data.remote.dto.LoginRequestDto
 import com.vitaltrace.app.feature.auth.domain.exception.AuthException
@@ -12,14 +14,14 @@ import javax.inject.Inject
 
 class AuthRepositoryImpl @Inject constructor(
     private val authApiService: AuthApiService,
-    private val tokenDataStore: TokenDataStore,
+    private val tokenStore: TokenStore,
     private val authInterceptor: AuthInterceptor
 ) : AuthRepository {
 
     override suspend fun login(
         email: String,
         password: String
-    ): Result<Unit> {
+    ): Result<AuthenticatedUser> {
         return try {
             val response = authApiService.login(
                 LoginRequestDto(
@@ -28,7 +30,10 @@ class AuthRepositoryImpl @Inject constructor(
                 )
             )
 
-            val token = response.data?.token
+            val data = response.data ?: return Result.failure(
+                AuthException("Authentication data was not received.")
+            )
+            val token = data.token
 
             if (token.isNullOrBlank()) {
                 return Result.failure(
@@ -38,15 +43,16 @@ class AuthRepositoryImpl @Inject constructor(
                 )
             }
 
-            tokenDataStore.saveToken(token)
+            tokenStore.saveToken(token)
             authInterceptor.updateToken(token)
 
-            Result.success(Unit)
+            Result.success(data.user.toAuthenticatedUser())
         } catch (exception: HttpException) {
             Result.failure(
                 AuthException(
                     message = getHttpErrorMessage(exception),
-                    cause = exception
+                    cause = exception,
+                    httpCode = exception.code()
                 )
             )
         } catch (exception: IOException) {
@@ -54,7 +60,8 @@ class AuthRepositoryImpl @Inject constructor(
                 AuthException(
                     message = exception.message
                         ?: "Could not connect to the server.",
-                    cause = exception
+                    cause = exception,
+                    isNetworkError = true
                 )
             )
         } catch (exception: Exception) {
@@ -68,9 +75,9 @@ class AuthRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun validateSession(): Result<Unit> {
+    override suspend fun getCurrentUser(): Result<AuthenticatedUser> {
         return try {
-            val token = tokenDataStore.getToken()
+            val token = tokenStore.getToken()
 
             if (token.isNullOrBlank()) {
                 return Result.failure(
@@ -82,9 +89,10 @@ class AuthRepositoryImpl @Inject constructor(
 
             authInterceptor.updateToken(token)
 
-            authApiService.getAuthenticatedUser()
+            val user = authApiService.getAuthenticatedUser().data
+                ?: return Result.failure(AuthException("Authenticated user data was not received."))
 
-            Result.success(Unit)
+            Result.success(user.toAuthenticatedUser())
         } catch (exception: HttpException) {
             if (exception.code() == 401) {
                 clearLocalSession()
@@ -93,7 +101,8 @@ class AuthRepositoryImpl @Inject constructor(
             Result.failure(
                 AuthException(
                     message = getHttpErrorMessage(exception),
-                    cause = exception
+                    cause = exception,
+                    httpCode = exception.code()
                 )
             )
         } catch (exception: IOException) {
@@ -101,7 +110,8 @@ class AuthRepositoryImpl @Inject constructor(
                 AuthException(
                     message = exception.message
                         ?: "Could not connect to the server.",
-                    cause = exception
+                    cause = exception,
+                    isNetworkError = true
                 )
             )
         } catch (exception: Exception) {
@@ -124,23 +134,35 @@ class AuthRepositoryImpl @Inject constructor(
                 return Result.failure(
                     AuthException(
                         message = getHttpErrorMessage(exception),
-                        cause = exception
+                        cause = exception,
+                        httpCode = exception.code()
                     )
                 )
             }
 
             Result.success(Unit)
         } catch (exception: IOException) {
-            Result.success(Unit)
+            Result.failure(
+                AuthException(
+                    message = exception.message ?: "Could not connect to the server.",
+                    cause = exception,
+                    isNetworkError = true
+                )
+            )
         } catch (exception: Exception) {
-            Result.success(Unit)
+            Result.failure(
+                AuthException(
+                    message = exception.message ?: "Could not close the remote session.",
+                    cause = exception
+                )
+            )
         } finally {
             clearLocalSession()
         }
     }
 
     private suspend fun clearLocalSession() {
-        tokenDataStore.clearToken()
+        tokenStore.clearToken()
         authInterceptor.updateToken(null)
     }
 
