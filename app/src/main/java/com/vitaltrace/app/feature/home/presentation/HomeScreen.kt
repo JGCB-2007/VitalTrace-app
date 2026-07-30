@@ -22,6 +22,7 @@ import com.vitaltrace.app.feature.home.presentation.components.LoadingState
 import com.vitaltrace.app.feature.home.presentation.components.NextAppointmentCard
 import com.vitaltrace.app.feature.home.presentation.components.RecentPressureCard
 import com.vitaltrace.app.feature.home.presentation.components.RegisterMeasurementButton
+import com.vitaltrace.app.feature.home.presentation.components.TreatmentsAccessCard
 import com.vitaltrace.app.ui.theme.VitalTraceTheme
 import kotlinx.coroutines.flow.collectLatest
 
@@ -34,6 +35,7 @@ fun HomeScreen(
     onMeasurementsClick: () -> Unit = {},
     onAppointmentsClick: () -> Unit = {},
     onProfileClick: () -> Unit = {},
+    onTreatmentsClick: () -> Unit = {},
     viewModel: HomeViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
@@ -55,7 +57,8 @@ fun HomeScreen(
         onPressureHistoryClick = onPressureHistoryClick,
         onMeasurementsClick = onMeasurementsClick,
         onAppointmentsClick = onAppointmentsClick,
-        onProfileClick = onProfileClick
+        onProfileClick = onProfileClick,
+        onTreatmentsClick = onTreatmentsClick
     )
 }
 
@@ -69,7 +72,8 @@ private fun HomeContent(
     onPressureHistoryClick: () -> Unit,
     onMeasurementsClick: () -> Unit,
     onAppointmentsClick: () -> Unit,
-    onProfileClick: () -> Unit
+    onProfileClick: () -> Unit,
+    onTreatmentsClick: () -> Unit
 ) {
     Scaffold(
         containerColor = HomeBackground,
@@ -103,6 +107,7 @@ private fun HomeContent(
                 onRegisterMeasurementClick = onRegisterMeasurementClick,
                 onAppointmentDetailClick = onAppointmentDetailClick,
                 onPressureHistoryClick = onPressureHistoryClick,
+                onTreatmentsClick = onTreatmentsClick,
                 modifier = Modifier.padding(innerPadding)
             )
         }
@@ -117,6 +122,7 @@ private fun HomeBody(
     onRegisterMeasurementClick: () -> Unit,
     onAppointmentDetailClick: () -> Unit,
     onPressureHistoryClick: () -> Unit,
+    onTreatmentsClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     LazyColumn(
@@ -157,6 +163,12 @@ private fun HomeBody(
             )
         }
         item {
+            TreatmentsAccessCard(
+                onClick = onTreatmentsClick,
+                modifier = Modifier.padding(top = 18.dp)
+            )
+        }
+        item {
             RecentPressureCard(
                 measurement = content.recentMeasurement,
                 onHistoryClick = onPressureHistoryClick,
@@ -179,7 +191,8 @@ private fun HomeScreenPreview() {
             onPressureHistoryClick = {},
             onMeasurementsClick = {},
             onAppointmentsClick = {},
-            onProfileClick = {}
+            onProfileClick = {},
+            onTreatmentsClick = {}
         )
     }
 }

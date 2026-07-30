@@ -1,7 +1,11 @@
 package com.vitaltrace.app.navigation
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import androidx.navigation.NavType
 import androidx.navigation.NavHostController
+import androidx.navigation.navArgument
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
@@ -12,6 +16,9 @@ import com.vitaltrace.app.feature.measurements.presentation.MeasurementsScreen
 import com.vitaltrace.app.feature.measurements.presentation.form.MeasurementFormScreen
 import com.vitaltrace.app.feature.profile.presentation.ProfileScreen
 import com.vitaltrace.app.feature.splash.presentation.SplashScreen
+import com.vitaltrace.app.feature.treatments.presentation.TreatmentDetailScreen
+import com.vitaltrace.app.feature.treatments.presentation.TreatmentsScreen
+import com.vitaltrace.app.feature.treatments.presentation.TreatmentsViewModel
 
 @Composable
 fun AppNavHost(
@@ -80,7 +87,53 @@ fun AppNavHost(
                     navController.navigate(AppRoute.Profile.route) {
                         launchSingleTop = true
                     }
+                },
+                onTreatmentsClick = {
+                    navController.navigate(AppRoute.Treatments.route) {
+                        launchSingleTop = true
+                    }
                 }
+            )
+        }
+
+        composable(AppRoute.Treatments.route) {
+            TreatmentsScreen(
+                onTreatmentClick = { id ->
+                    navController.navigate(AppRoute.TreatmentDetail.create(id))
+                },
+                onHomeClick = { navController.popBackStack() },
+                onMeasurementsClick = {
+                    navController.navigate(AppRoute.Measurements.route) {
+                        popUpTo(AppRoute.Home.route)
+                        launchSingleTop = true
+                    }
+                },
+                onAppointmentsClick = {
+                    navController.navigate(AppRoute.Appointments.route) {
+                        popUpTo(AppRoute.Home.route)
+                        launchSingleTop = true
+                    }
+                },
+                onProfileClick = {
+                    navController.navigate(AppRoute.Profile.route) {
+                        popUpTo(AppRoute.Home.route)
+                        launchSingleTop = true
+                    }
+                }
+            )
+        }
+
+        composable(
+            route = AppRoute.TreatmentDetail.route,
+            arguments = listOf(navArgument("treatmentId") { type = NavType.LongType })
+        ) { backStackEntry ->
+            val treatmentsEntry = remember(backStackEntry) {
+                navController.getBackStackEntry(AppRoute.Treatments.route)
+            }
+            val viewModel: TreatmentsViewModel = hiltViewModel(treatmentsEntry)
+            TreatmentDetailScreen(
+                onNavigateBack = { navController.popBackStack() },
+                viewModel = viewModel
             )
         }
 

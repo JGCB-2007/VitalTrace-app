@@ -120,4 +120,23 @@
     <string name="splash_logo_description">Logo de VitalTrace</string>
     <string name="splash_tagline">Seguimiento clínico continuo</string>
     <string name="splash_loading">Validando tu sesión</string>
+    <string name="treatments_title">Mis medicamentos</string>
+    <string name="treatments_home_access">Mis medicamentos</string>
+    <string name="treatments_loading">Cargando medicamentos</string>
+    <string name="treatments_retry">Intentar de nuevo</string>
+    <string name="treatments_empty_title">Aún no tienes medicamentos registrados</string>
+    <string name="treatments_empty_description">Cuando tu equipo de atención registre un tratamiento, aparecerá aquí.</string>
+    <string name="treatments_status_active">Activo</string>
+    <string name="treatments_status_finished">Finalizado</string>
+    <string name="treatments_status_suspended">Suspendido</string>
+    <string name="treatments_status_unknown">Estado no disponible</string>
+    <string name="treatment_detail_title">Detalle del tratamiento</string>
+    <string name="treatment_detail_back">Volver</string>
+    <string name="treatment_detail_indications">Indicaciones</string>
+    <string name="treatment_detail_diagnosis_code">Código diagnóstico</string>
+    <string name="treatment_detail_start_date">Fecha de inicio</string>
+    <string name="treatment_detail_end_date">Fecha de finalización</string>
+    <string name="treatment_detail_prescriber">Prescrito por</string>
+    <string name="treatment_detail_professional_type">Tipo de profesional</string>
+    <string name="treatment_detail_specialty">Especialidad</string>
 </resources>
