@@ -2,6 +2,7 @@ package com.vitaltrace.app.feature.clinicalhistory.presentation
 
 import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -9,6 +10,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.ArrowBack
 import androidx.compose.material.icons.automirrored.rounded.MenuBook
+import androidx.compose.material.icons.automirrored.rounded.ArrowForward
 import androidx.compose.material.icons.rounded.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -140,9 +142,18 @@ private fun DiagnosisCard(item: ClinicalDiagnosis, onEducationClick: (String, St
     DetailLine(Icons.Rounded.CalendarMonth, item.diagnosisDate)
     professionalName(item.professional)?.let { DetailLine(Icons.Rounded.MedicalServices, it) }
     item.cieCode?.takeIf(String::isNotBlank)?.let { code ->
-        TextButton(onClick = { onEducationClick(code, item.description) }) {
-            Icon(Icons.AutoMirrored.Rounded.MenuBook, null, Modifier.size(18.dp))
-            Text("Ver información educativa", Modifier.padding(start = 8.dp), fontWeight = FontWeight.Bold)
+        Surface(
+            modifier = Modifier.fillMaxWidth().clickable { onEducationClick(code, item.description) },
+            color = Color(0xFFF3FAF9),
+            contentColor = VitalTraceTeal,
+            shape = RoundedCornerShape(16.dp),
+            border = BorderStroke(1.dp, VitalTraceMint.copy(alpha = 0.55f))
+        ) {
+            Row(Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 13.dp), verticalAlignment = Alignment.CenterVertically) {
+                Icon(Icons.AutoMirrored.Rounded.MenuBook, null, Modifier.size(20.dp))
+                Text("Ver información educativa", Modifier.weight(1f).padding(horizontal = 10.dp), fontWeight = FontWeight.Bold)
+                Icon(Icons.AutoMirrored.Rounded.ArrowForward, null, Modifier.size(19.dp))
+            }
         }
     }
 }
