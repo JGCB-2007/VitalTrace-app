@@ -1,5 +1,7 @@
 package com.vitaltrace.app.navigation
 
+import android.net.Uri
+
 sealed class AppRoute(val route: String) {
     data object Splash : AppRoute("splash")
     data object Login : AppRoute("login")
@@ -16,4 +18,8 @@ sealed class AppRoute(val route: String) {
         fun create(id: Long) = "treatments/$id"
     }
     data object ClinicalHistory : AppRoute("clinical_history")
+    data object DiagnosisEducation : AppRoute("diagnosis_education/{cieCode}/{diagnosisName}") {
+        fun create(cieCode: String, diagnosisName: String) =
+            "diagnosis_education/${Uri.encode(cieCode)}/${Uri.encode(diagnosisName)}"
+    }
 }

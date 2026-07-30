@@ -8,6 +8,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.ArrowBack
+import androidx.compose.material.icons.automirrored.rounded.MenuBook
 import androidx.compose.material.icons.rounded.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -30,6 +31,7 @@ import com.vitaltrace.app.ui.theme.*
 internal fun ClinicalHistoryDesign(
     state: ClinicalHistoryUiState,
     onNavigateBack: () -> Unit,
+    onEducationClick: (String, String) -> Unit,
     onRetry: () -> Unit
 ) {
     Scaffold(
@@ -61,13 +63,17 @@ internal fun ClinicalHistoryDesign(
             ClinicalHistoryUiState.Loading -> ClinicalLoading(Modifier.padding(padding))
             is ClinicalHistoryUiState.Empty -> ClinicalEmpty(Modifier.padding(padding))
             is ClinicalHistoryUiState.Error -> ClinicalError(state.message, onRetry, Modifier.padding(padding))
-            is ClinicalHistoryUiState.Success -> ClinicalHistoryList(state.history, Modifier.padding(padding))
+            is ClinicalHistoryUiState.Success -> ClinicalHistoryList(state.history, onEducationClick, Modifier.padding(padding))
         }
     }
 }
 
 @Composable
-private fun ClinicalHistoryList(history: ClinicalHistory, modifier: Modifier = Modifier) {
+private fun ClinicalHistoryList(
+    history: ClinicalHistory,
+    onEducationClick: (String, String) -> Unit,
+    modifier: Modifier = Modifier
+) {
     LazyColumn(
         modifier = modifier.fillMaxSize(),
         contentPadding = PaddingValues(start = 24.dp, top = 16.dp, end = 24.dp, bottom = 30.dp),
@@ -76,7 +82,7 @@ private fun ClinicalHistoryList(history: ClinicalHistory, modifier: Modifier = M
         item { RecordBadge(history.recordNumber) }
         if (history.diagnoses.isNotEmpty()) {
             item { ClinicalSectionHeader(Icons.Rounded.HealthAndSafety, "Diagnósticos") }
-            items(history.diagnoses, key = { "diagnosis-${it.id}" }) { DiagnosisCard(it) }
+            items(history.diagnoses, key = { "diagnosis-${it.id}" }) { DiagnosisCard(it, onEducationClick) }
         }
         if (history.clinicalEvolutions.isNotEmpty()) {
             item { ClinicalSectionHeader(Icons.Rounded.HistoryEdu, "Evoluciones clínicas") }
@@ -125,7 +131,7 @@ private fun ClinicalSectionHeader(icon: ImageVector, title: String) {
 }
 
 @Composable
-private fun DiagnosisCard(item: ClinicalDiagnosis) = VitalTraceClinicalCard {
+private fun DiagnosisCard(item: ClinicalDiagnosis, onEducationClick: (String, String) -> Unit) = VitalTraceClinicalCard {
     Text(item.description, color = VitalTraceNavy, fontFamily = FontFamily.Serif, fontSize = 21.sp, fontWeight = FontWeight.Bold)
     Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween, verticalAlignment = Alignment.CenterVertically) {
         item.cieCode?.takeIf(String::isNotBlank)?.let { DetailLabel("Código CIE", it) }
@@ -133,6 +139,12 @@ private fun DiagnosisCard(item: ClinicalDiagnosis) = VitalTraceClinicalCard {
     }
     DetailLine(Icons.Rounded.CalendarMonth, item.diagnosisDate)
     professionalName(item.professional)?.let { DetailLine(Icons.Rounded.MedicalServices, it) }
+    item.cieCode?.takeIf(String::isNotBlank)?.let { code ->
+        TextButton(onClick = { onEducationClick(code, item.description) }) {
+            Icon(Icons.AutoMirrored.Rounded.MenuBook, null, Modifier.size(18.dp))
+            Text("Ver información educativa", Modifier.padding(start = 8.dp), fontWeight = FontWeight.Bold)
+        }
+    }
 }
 
 @Composable

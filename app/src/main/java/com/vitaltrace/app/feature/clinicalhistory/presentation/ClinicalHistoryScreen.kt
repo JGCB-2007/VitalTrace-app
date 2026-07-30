@@ -20,9 +20,13 @@ import com.vitaltrace.app.ui.theme.VitalTraceWarmBackground
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ClinicalHistoryScreen(onNavigateBack: () -> Unit, viewModel: ClinicalHistoryViewModel = hiltViewModel()) {
+fun ClinicalHistoryScreen(
+    onNavigateBack: () -> Unit,
+    onEducationClick: (String, String) -> Unit,
+    viewModel: ClinicalHistoryViewModel = hiltViewModel()
+) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
-    ClinicalHistoryDesign(state, onNavigateBack, viewModel::retry)
+    ClinicalHistoryDesign(state, onNavigateBack, onEducationClick, viewModel::retry)
 }
 
 @OptIn(ExperimentalMaterial3Api::class)

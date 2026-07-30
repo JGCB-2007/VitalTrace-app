@@ -14,6 +14,7 @@ import com.vitaltrace.app.feature.auth.presentation.recovery.ForgotPasswordScree
 import com.vitaltrace.app.feature.auth.presentation.recovery.ResetPasswordScreen
 import com.vitaltrace.app.feature.appointments.presentation.AppointmentsScreen
 import com.vitaltrace.app.feature.clinicalhistory.presentation.ClinicalHistoryScreen
+import com.vitaltrace.app.feature.diagnosiseducation.presentation.DiagnosisEducationScreen
 import com.vitaltrace.app.feature.home.presentation.HomeScreen
 import com.vitaltrace.app.feature.measurements.presentation.MeasurementsScreen
 import com.vitaltrace.app.feature.measurements.presentation.form.MeasurementFormScreen
@@ -156,7 +157,22 @@ fun AppNavHost(
         }
 
         composable(AppRoute.ClinicalHistory.route) {
-            ClinicalHistoryScreen(onNavigateBack = { navController.popBackStack() })
+            ClinicalHistoryScreen(
+                onNavigateBack = { navController.popBackStack() },
+                onEducationClick = { cieCode, diagnosisName ->
+                    navController.navigate(AppRoute.DiagnosisEducation.create(cieCode, diagnosisName))
+                }
+            )
+        }
+
+        composable(
+            route = AppRoute.DiagnosisEducation.route,
+            arguments = listOf(
+                navArgument("cieCode") { type = NavType.StringType },
+                navArgument("diagnosisName") { type = NavType.StringType }
+            )
+        ) {
+            DiagnosisEducationScreen(onNavigateBack = { navController.popBackStack() })
         }
 
         composable(AppRoute.Treatments.route) {
