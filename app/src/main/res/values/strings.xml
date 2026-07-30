@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">VitalTrace</string>
     <string name="login_logo_description">Logo de VitalTrace</string>
@@ -183,4 +184,39 @@
     <string name="relatives_revoke_confirmation">¿Deseas revocar el acceso de este familiar?</string>
     <string name="relatives_cancel">Cancelar</string>
     <string name="clinical_history_title">Historial clínico</string>
+    <string name="notifications_screen_title">Notificaciones</string>
+    <string name="notifications_back">Volver</string>
+    <string name="notifications_unread_one">1 sin leer</string>
+    <string name="notifications_unread_count">%1$d sin leer</string>
+    <string name="notifications_mark_all">Marcar todas</string>
+    <string name="notifications_filter_all">Todas</string>
+    <string name="notifications_filter_unread">No le&#237;das</string>
+    <string name="notifications_filter_read">Le&#237;das</string>
+    <string name="notifications_status_read">Le&#237;da</string>
+    <string name="notifications_status_new">Nueva</string>
+    <string name="notifications_category_appointment">Cita</string>
+    <string name="notifications_category_measurement">Medici&#243;n</string>
+    <string name="notifications_category_treatment">Tratamiento</string>
+    <string name="notifications_category_general">Notificaci&#243;n general</string>
+    <string name="notifications_category_alert">Alerta</string>
+    <string name="notifications_empty_icon">Sin notificaciones</string>
+    <string name="notifications_empty_title">No tienes notificaciones</string>
+    <string name="notifications_empty_description">Cuando haya novedades aparecer&#225;n aqu&#237;.</string>
+    <string name="notifications_refresh">Actualizar</string>
+    <string name="notifications_error_icon">Error al cargar</string>
+    <string name="notifications_error_title">No pudimos cargar las notificaciones.</string>
+    <string name="notifications_retry">Reintentar</string>
+    <string name="notification_title_appointment_reminder">Pr&#243;xima cita m&#233;dica</string>
+    <string name="notification_title_high_glucose_alert">Alerta de glucosa alta</string>
+    <string name="notification_title_measurement_reviewed">Medici&#243;n revisada</string>
+    <string name="notification_title_treatment_updated">Tratamiento actualizado</string>
+    <string name="notification_message_appointment_glucose_review">Tu cita para revisar las mediciones de glucosa est&#225; programada dentro de tres d&#237;as.</string>
+    <string name="notification_message_high_glucose_alert">Un valor de glucosa de 212 mg/dL gener&#243; una alerta de alta gravedad.</string>
+    <string name="notification_message_upcoming_appointment">Tienes una pr&#243;xima cita m&#233;dica.</string>
+    <string name="notification_message_high_glucose">Se registr&#243; una alerta de glucosa alta.</string>
+    <string name="notifications_feedback_mark_read_error">No pudimos marcar la notificaci&#243;n como le&#237;da.</string>
+    <string name="notifications_feedback_mark_all_success">Notificaciones marcadas como le&#237;das.</string>
+    <string name="notifications_feedback_update_error">No pudimos actualizar las notificaciones.</string>
+    <string name="notifications_feedback_load_more_error">No pudimos cargar m&#225;s notificaciones.</string>
 </resources>
+
