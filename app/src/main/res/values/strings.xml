@@ -51,7 +51,7 @@
     <string name="measurements_empty_description">No tienes mediciones esperando revisión. Registra una nueva para empezar tu seguimiento.</string>
     <string name="measurements_empty_action">Registrar medición</string>
     <string name="measurement_form_title">Registrar medición</string>
-    <string name="measurement_form_subtitle">Presión arterial</string>
+    <string name="measurement_form_subtitle">Medición escalar</string>
     <string name="measurement_form_back">Volver</string>
     <string name="measurement_form_systolic">Sistólica</string>
     <string name="measurement_form_diastolic">Diastólica</string>
@@ -63,6 +63,7 @@
     <string name="measurement_form_note_placeholder">Ej. Medición tomada en reposo…</string>
     <string name="measurement_form_information">VitalTrace registra la información y no interpreta ni diagnostica los valores.</string>
     <string name="measurement_form_save">Guardar medición</string>
+    <string name="measurement_form_success">Medición registrada correctamente</string>
     <string name="measurement_form_cancel">Cancelar</string>
     <string name="measurement_form_required_error">Ingresa un valor</string>
     <string name="measurement_form_invalid_error">Ingresa un valor válido</string>

@@ -1,8 +1,6 @@
 package com.vitaltrace.app.feature.measurements.presentation
 
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -19,13 +17,14 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.compose.LifecycleEventEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.vitaltrace.app.R
 import com.vitaltrace.app.feature.home.presentation.HomeBottomDestination
 import com.vitaltrace.app.feature.home.presentation.components.HomeBottomBar
 import com.vitaltrace.app.feature.measurements.presentation.components.LatestMeasurementCard
-import com.vitaltrace.app.feature.measurements.presentation.components.MeasurementFilterBar
 import com.vitaltrace.app.feature.measurements.presentation.components.MeasurementHistoryCard
 import com.vitaltrace.app.feature.measurements.presentation.components.MeasurementsEmptyState
 import com.vitaltrace.app.feature.measurements.presentation.components.MeasurementsErrorState
@@ -42,13 +41,16 @@ fun MeasurementsScreen(
     onAddMeasurementClick: () -> Unit = {},
     onAppointmentsClick: () -> Unit = {},
     onProfileClick: () -> Unit = {},
-    viewModel: MeasurementsViewModel = viewModel()
+    viewModel: MeasurementsViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
+    LifecycleEventEffect(Lifecycle.Event.ON_RESUME) {
+        viewModel.retry()
+    }
+
     MeasurementsContent(
         uiState = uiState,
-        onFilterSelected = viewModel::selectFilter,
         onRetryClick = viewModel::retry,
         onMeasurementClick = viewModel::showMeasurementDetail,
         onDismissMeasurementDetail = viewModel::dismissMeasurementDetail,
@@ -62,9 +64,8 @@ fun MeasurementsScreen(
 @Composable
 private fun MeasurementsContent(
     uiState: MeasurementsUiState,
-    onFilterSelected: (MeasurementFilter) -> Unit,
     onRetryClick: () -> Unit,
-    onMeasurementClick: (String) -> Unit,
+    onMeasurementClick: (Long) -> Unit,
     onDismissMeasurementDetail: () -> Unit,
     onHomeClick: () -> Unit,
     onAddMeasurementClick: () -> Unit,
@@ -72,10 +73,7 @@ private fun MeasurementsContent(
     onProfileClick: () -> Unit
 ) {
     uiState.selectedMeasurementDetail?.let { detail ->
-        MeasurementDetailSheet(
-            detail = detail,
-            onDismiss = onDismissMeasurementDetail
-        )
+        MeasurementDetailSheet(detail = detail, onDismiss = onDismissMeasurementDetail)
     }
 
     Scaffold(
@@ -90,11 +88,7 @@ private fun MeasurementsContent(
             )
         },
         floatingActionButton = {
-            if (
-                !uiState.isLoading &&
-                uiState.errorMessage == null &&
-                uiState.selectedFilter != MeasurementFilter.PENDING
-            ) {
+            if (uiState.contentState is MeasurementsContentState.Success) {
                 FloatingActionButton(
                     onClick = onAddMeasurementClick,
                     containerColor = VitalTraceNavy,
@@ -108,22 +102,17 @@ private fun MeasurementsContent(
             }
         }
     ) { innerPadding ->
-        when {
-            uiState.isLoading -> MeasurementsLoadingState(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(innerPadding)
+        when (val contentState = uiState.contentState) {
+            MeasurementsContentState.Loading -> MeasurementsLoadingState(
+                modifier = Modifier.fillMaxSize().padding(innerPadding)
             )
-            uiState.errorMessage != null -> MeasurementsErrorState(
-                message = uiState.errorMessage,
+            is MeasurementsContentState.Error -> MeasurementsErrorState(
+                message = contentState.message,
                 onRetryClick = onRetryClick,
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(innerPadding)
+                modifier = Modifier.fillMaxSize().padding(innerPadding)
             )
-            else -> MeasurementsBody(
-                uiState = uiState,
-                onFilterSelected = onFilterSelected,
+            is MeasurementsContentState.Success -> MeasurementsBody(
+                content = contentState.content,
                 onAddMeasurementClick = onAddMeasurementClick,
                 onMeasurementClick = onMeasurementClick,
                 modifier = Modifier.padding(innerPadding)
@@ -134,49 +123,31 @@ private fun MeasurementsContent(
 
 @Composable
 private fun MeasurementsBody(
-    uiState: MeasurementsUiState,
-    onFilterSelected: (MeasurementFilter) -> Unit,
+    content: MeasurementsContentUiModel,
     onAddMeasurementClick: () -> Unit,
-    onMeasurementClick: (String) -> Unit,
+    onMeasurementClick: (Long) -> Unit,
     modifier: Modifier = Modifier
 ) {
     LazyColumn(
         modifier = modifier.fillMaxSize(),
-        contentPadding = PaddingValues(
-            start = 24.dp,
-            top = 30.dp,
-            end = 24.dp,
-            bottom = 88.dp
-        ),
+        contentPadding = PaddingValues(24.dp, 30.dp, 24.dp, 88.dp),
         verticalArrangement = Arrangement.spacedBy(18.dp)
     ) {
-        item {
-            MeasurementsHeader(onAddMeasurementClick = onAddMeasurementClick)
-        }
-        item {
-            MeasurementFilterBar(
-                selectedFilter = uiState.selectedFilter,
-                onFilterSelected = onFilterSelected
-            )
-        }
-        if (uiState.selectedFilter == MeasurementFilter.ALL) {
-            uiState.latestMeasurement?.let { latestMeasurement ->
-                item {
-                    LatestMeasurementCard(
-                        measurement = latestMeasurement,
-                        onClick = { onMeasurementClick(latestMeasurement.id) }
-                    )
-                }
-            }
-        }
-        if (uiState.filteredMeasurements.isEmpty()) {
+        item { MeasurementsHeader(onAddMeasurementClick = onAddMeasurementClick) }
+        content.latestMeasurement?.let { measurement ->
             item {
-                MeasurementsEmptyState(onAddMeasurementClick = onAddMeasurementClick)
+                LatestMeasurementCard(
+                    measurement = measurement,
+                    onClick = { onMeasurementClick(measurement.id) }
+                )
             }
-        } else {
+        }
+        if (content.latestMeasurement == null) {
+            item { MeasurementsEmptyState(onAddMeasurementClick = onAddMeasurementClick) }
+        } else if (content.measurements.isNotEmpty()) {
             item {
                 MeasurementHistoryCard(
-                    measurements = uiState.filteredMeasurements,
+                    measurements = content.measurements,
                     onMeasurementClick = onMeasurementClick
                 )
             }
@@ -189,49 +160,11 @@ private fun MeasurementsBody(
 private fun MeasurementsScreenPreview() {
     VitalTraceTheme(dynamicColor = false) {
         MeasurementsContent(
-            uiState = previewMeasurementsState(),
-            onFilterSelected = {},
-            onRetryClick = {},
-            onMeasurementClick = {},
-            onDismissMeasurementDetail = {},
-            onHomeClick = {},
-            onAddMeasurementClick = {},
-            onAppointmentsClick = {},
-            onProfileClick = {}
-        )
-    }
-}
-
-private fun previewMeasurementsState(): MeasurementsUiState {
-    return MeasurementsUiState(
-        latestMeasurement = MeasurementUiModel(
-            id = "latest",
-            value = "145/92",
-            date = "14 jul",
-            time = "9:42 a. m.",
-            status = MeasurementStatus.IN_REVIEW
-        ),
-        measurements = listOf(
-            MeasurementUiModel(
-                id = "preview",
-                value = "138/88",
-                date = "13 jul",
-                time = "8:15 a. m.",
-                status = MeasurementStatus.REVIEWED
-            )
-        )
-    )
-}
-
-@Preview(showBackground = true, showSystemUi = true)
-@Composable
-private fun MeasurementsEmptyScreenPreview() {
-    VitalTraceTheme(dynamicColor = false) {
-        MeasurementsContent(
-            uiState = previewMeasurementsState().copy(
-                selectedFilter = MeasurementFilter.PENDING
+            uiState = MeasurementsUiState(
+                contentState = MeasurementsContentState.Success(
+                    MeasurementsContentUiModel(null, emptyList(), 1, 1)
+                )
             ),
-            onFilterSelected = {},
             onRetryClick = {},
             onMeasurementClick = {},
             onDismissMeasurementDetail = {},

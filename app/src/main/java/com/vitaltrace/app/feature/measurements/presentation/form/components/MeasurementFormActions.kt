@@ -36,7 +36,12 @@ fun MeasurementFormActions(
                 .height(64.dp),
             enabled = !isSaving,
             shape = RoundedCornerShape(18.dp),
-            colors = ButtonDefaults.buttonColors(containerColor = VitalTraceNavy)
+            colors = ButtonDefaults.buttonColors(
+                containerColor = VitalTraceNavy,
+                contentColor = Color.White,
+                disabledContainerColor = VitalTraceNavy.copy(alpha = 0.62f),
+                disabledContentColor = Color.White
+            )
         ) {
             if (isSaving) {
                 CircularProgressIndicator(

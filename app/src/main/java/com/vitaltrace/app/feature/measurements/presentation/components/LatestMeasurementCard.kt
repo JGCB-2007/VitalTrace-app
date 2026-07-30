@@ -55,7 +55,11 @@ fun LatestMeasurementCard(
                     fontWeight = FontWeight.ExtraBold,
                     letterSpacing = 0.5.sp
                 )
-                MeasurementStatusChip(status = measurement.status)
+                Text(
+                    text = measurement.typeName,
+                    color = Color(0xFF53636D),
+                    fontSize = 15.sp
+                )
             }
             Row(verticalAlignment = Alignment.Bottom) {
                 Text(
@@ -66,7 +70,7 @@ fun LatestMeasurementCard(
                     fontWeight = FontWeight.Bold
                 )
                 Text(
-                    text = stringResource(R.string.measurements_pressure_unit),
+                    text = measurement.unit,
                     modifier = Modifier.padding(start = 10.dp, bottom = 4.dp),
                     color = Color(0xFF53636D),
                     fontSize = 20.sp

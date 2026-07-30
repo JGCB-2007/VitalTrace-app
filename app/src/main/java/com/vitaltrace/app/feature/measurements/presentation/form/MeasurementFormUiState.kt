@@ -4,14 +4,26 @@ import java.time.LocalDate
 import java.time.LocalTime
 
 data class MeasurementFormUiState(
-    val systolic: String = "145",
-    val diastolic: String = "92",
-    val date: LocalDate = LocalDate.of(2026, 7, 14),
-    val time: LocalTime = LocalTime.of(9, 42),
+    val availableTypes: List<MeasurementTypeOption> = emptyList(),
+    val selectedTypeId: Long? = null,
+    val value: String = "",
+    val date: LocalDate = LocalDate.now(),
+    val time: LocalTime = LocalTime.now().withSecond(0).withNano(0),
     val note: String = "",
-    val systolicError: MeasurementFieldError? = null,
-    val diastolicError: MeasurementFieldError? = null,
+    val typeError: MeasurementFieldError? = null,
+    val valueError: MeasurementFieldError? = null,
+    val errorMessage: String? = null,
+    val isLoadingTypes: Boolean = true,
     val isSaving: Boolean = false
+) {
+    val selectedType: MeasurementTypeOption?
+        get() = availableTypes.firstOrNull { it.id == selectedTypeId }
+}
+
+data class MeasurementTypeOption(
+    val id: Long,
+    val name: String,
+    val unit: String
 )
 
 enum class MeasurementFieldError {

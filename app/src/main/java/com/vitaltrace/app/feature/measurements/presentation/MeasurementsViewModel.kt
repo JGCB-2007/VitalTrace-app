@@ -1,87 +1,74 @@
 package com.vitaltrace.app.feature.measurements.presentation
 
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.vitaltrace.app.feature.patient.domain.usecase.GetPatientMeasurementsUseCase
+import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class MeasurementsViewModel : ViewModel() {
-
-    private val _uiState = MutableStateFlow(sampleMeasurementsState())
+@HiltViewModel
+class MeasurementsViewModel @Inject constructor(
+    private val getPatientMeasurements: GetPatientMeasurementsUseCase,
+    private val measurementsMapper: MeasurementsMapper
+) : ViewModel() {
+    private val _uiState = MutableStateFlow(MeasurementsUiState())
     val uiState = _uiState.asStateFlow()
+    private var measurementsRequest: Job? = null
 
-    fun selectFilter(filter: MeasurementFilter) {
-        _uiState.update { state ->
-            state.copy(selectedFilter = filter)
-        }
+    init {
+        loadMeasurements()
     }
 
-    fun retry() {
-        _uiState.value = sampleMeasurementsState()
-    }
+    fun retry() = loadMeasurements()
 
-    fun showMeasurementDetail(measurementId: String) {
-        _uiState.update { state ->
-            state.copy(
-                selectedMeasurementDetail = sampleMeasurementDetail(measurementId)
-            )
-        }
+    fun showMeasurementDetail(measurementId: Long) {
+        val content = (_uiState.value.contentState as? MeasurementsContentState.Success)?.content
+            ?: return
+        val measurement = sequenceOf(content.latestMeasurement)
+            .plus(content.measurements.asSequence())
+            .filterNotNull()
+            .firstOrNull { it.id == measurementId }
+            ?: return
+        _uiState.update { it.copy(selectedMeasurementDetail = measurement.toDetail()) }
     }
 
     fun dismissMeasurementDetail() {
-        _uiState.update { state ->
-            state.copy(selectedMeasurementDetail = null)
+        _uiState.update { it.copy(selectedMeasurementDetail = null) }
+    }
+
+    private fun loadMeasurements() {
+        if (measurementsRequest?.isActive == true) return
+        _uiState.update {
+            it.copy(
+                contentState = MeasurementsContentState.Loading,
+                selectedMeasurementDetail = null
+            )
+        }
+        measurementsRequest = viewModelScope.launch {
+            getPatientMeasurements()
+                .onSuccess { page ->
+                    _uiState.update {
+                        it.copy(
+                            contentState = MeasurementsContentState.Success(
+                                measurementsMapper.map(page)
+                            )
+                        )
+                    }
+                }
+                .onFailure {
+                    _uiState.update {
+                        it.copy(
+                            contentState = MeasurementsContentState.Error(
+                                "No pudimos cargar tus mediciones. Intenta de nuevo."
+                            )
+                        )
+                    }
+                }
         }
     }
-}
-
-private fun sampleMeasurementDetail(measurementId: String): MeasurementDetailUiModel {
-    return MeasurementDetailUiModel(
-        id = measurementId,
-        value = "145/92",
-        date = "14 jul 2026",
-        time = "9:42 a. m.",
-        observation = "En reposo",
-        status = MeasurementStatus.REVIEWED,
-        followUp = MeasurementFollowUpUiModel(
-            message = "Dr. Carlos Ruiz revisó el registro y dejó una observación de seguimiento.",
-            date = "15 jul",
-            time = "11:20 a. m."
-        )
-    )
-}
-
-private fun sampleMeasurementsState(): MeasurementsUiState {
-    return MeasurementsUiState(
-        latestMeasurement = MeasurementUiModel(
-            id = "latest",
-            value = "145/92",
-            date = "14 jul",
-            time = "9:42 a. m.",
-            status = MeasurementStatus.IN_REVIEW
-        ),
-        measurements = listOf(
-            MeasurementUiModel(
-                id = "measurement-1",
-                value = "138/88",
-                date = "13 jul",
-                time = "8:15 a. m.",
-                status = MeasurementStatus.REVIEWED
-            ),
-            MeasurementUiModel(
-                id = "measurement-2",
-                value = "132/85",
-                date = "11 jul",
-                time = "8:02 a. m.",
-                status = MeasurementStatus.REVIEWED
-            ),
-            MeasurementUiModel(
-                id = "measurement-3",
-                value = "129/84",
-                date = "9 jul",
-                time = "7:58 a. m.",
-                status = MeasurementStatus.REVIEWED
-            )
-        )
-    )
 }

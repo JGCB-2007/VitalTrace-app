@@ -20,23 +20,20 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.vitaltrace.app.R
 import com.vitaltrace.app.feature.measurements.presentation.MeasurementUiModel
-import com.vitaltrace.app.feature.measurements.presentation.MeasurementStatus
 import com.vitaltrace.app.ui.theme.VitalTraceNavy
 import com.vitaltrace.app.ui.theme.VitalTraceTeal
 
 @Composable
 fun MeasurementHistoryCard(
     measurements: List<MeasurementUiModel>,
-    onMeasurementClick: (String) -> Unit,
+    onMeasurementClick: (Long) -> Unit,
     modifier: Modifier = Modifier
 ) {
     Card(
@@ -66,15 +63,7 @@ private fun MeasurementHistoryItem(
     onClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val unit = stringResource(R.string.measurements_pressure_unit)
-    val statusLabel = stringResource(measurement.status.labelResource())
-    val description = stringResource(
-        R.string.measurements_item_description,
-        measurement.value,
-        unit,
-        "${measurement.date} ${measurement.time}",
-        statusLabel
-    )
+    val description = "${measurement.typeName}: ${measurement.value} ${measurement.unit}"
     Row(
         modifier = modifier
             .fillMaxWidth()
@@ -104,7 +93,7 @@ private fun MeasurementHistoryItem(
                 fontWeight = FontWeight.Bold
             )
             Text(
-                text = unit,
+                text = measurement.unit,
                 color = VitalTraceNavy,
                 fontSize = 15.sp,
                 fontWeight = FontWeight.Bold
@@ -115,15 +104,5 @@ private fun MeasurementHistoryItem(
                 fontSize = 16.sp
             )
         }
-        MeasurementStatusChip(status = measurement.status)
-    }
-}
-
-private fun MeasurementStatus.labelResource(): Int {
-    return when (this) {
-        MeasurementStatus.REGISTERED -> R.string.measurements_status_registered
-        MeasurementStatus.PENDING -> R.string.measurements_status_pending
-        MeasurementStatus.IN_REVIEW -> R.string.measurements_status_in_review
-        MeasurementStatus.REVIEWED -> R.string.measurements_status_reviewed
     }
 }
