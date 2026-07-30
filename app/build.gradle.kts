@@ -33,7 +33,7 @@ android {
             buildConfigField(
                 "String",
                 "BASE_URL",
-                "\"http://10.52.215.214:8000/api/v1/\""
+                "\"https://api.vitaltrace.lat/api/v1/\""
             )
         }
 
