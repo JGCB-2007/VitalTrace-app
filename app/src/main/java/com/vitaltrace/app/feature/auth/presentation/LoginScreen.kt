@@ -25,6 +25,7 @@ import com.vitaltrace.app.ui.theme.VitalTraceWarmBackground
 fun LoginScreen(
     onLoginSuccess: () -> Unit,
     onForgotPasswordClick: () -> Unit = {},
+    onFirstAccessClick: () -> Unit = {},
     viewModel: LoginViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
@@ -47,7 +48,8 @@ fun LoginScreen(
             focusManager.clearFocus()
             viewModel.login()
         },
-        onForgotPasswordClick = onForgotPasswordClick
+        onForgotPasswordClick = onForgotPasswordClick,
+        onFirstAccessClick = onFirstAccessClick
     )
 }
 
@@ -58,7 +60,8 @@ private fun LoginContent(
     onPasswordChange: (String) -> Unit,
     onPasswordVisibilityChange: () -> Unit,
     onLoginClick: () -> Unit,
-    onForgotPasswordClick: () -> Unit
+    onForgotPasswordClick: () -> Unit,
+    onFirstAccessClick: () -> Unit
 ) {
     Scaffold(
         containerColor = VitalTraceWarmBackground
@@ -77,7 +80,8 @@ private fun LoginContent(
                 onPasswordChange = onPasswordChange,
                 onPasswordVisibilityChange = onPasswordVisibilityChange,
                 onLoginClick = onLoginClick,
-                onForgotPasswordClick = onForgotPasswordClick
+                onForgotPasswordClick = onForgotPasswordClick,
+                onFirstAccessClick = onFirstAccessClick
             )
             LoginSupportNotice()
         }
@@ -97,7 +101,8 @@ private fun LoginScreenPreview() {
             onPasswordChange = {},
             onPasswordVisibilityChange = {},
             onLoginClick = {},
-            onForgotPasswordClick = {}
+            onForgotPasswordClick = {},
+            onFirstAccessClick = {}
         )
     }
 }

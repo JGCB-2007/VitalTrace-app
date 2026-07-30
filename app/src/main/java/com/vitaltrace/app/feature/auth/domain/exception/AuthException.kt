@@ -4,5 +4,6 @@ class AuthException(
     message: String,
     cause: Throwable? = null,
     val httpCode: Int? = null,
-    val isNetworkError: Boolean = false
+    val isNetworkError: Boolean = false,
+    val errorCode: String? = null
 ) : Exception(message, cause)

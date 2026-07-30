@@ -1,8 +1,11 @@
-﻿package com.vitaltrace.app.navigation
+package com.vitaltrace.app.navigation
 
 import android.net.Uri
 
 sealed class AppRoute(val route: String) {
+    data object FirstAccessEmail : AppRoute("first_access_email")
+    data object ActivationCode : AppRoute("activation_code")
+    data object CreateInitialPassword : AppRoute("create_initial_password")
     data object Notifications : AppRoute("notifications")
     data object Splash : AppRoute("splash")
     data object Login : AppRoute("login")

@@ -8,6 +8,9 @@ import com.vitaltrace.app.feature.auth.data.remote.AuthApiService
 import com.vitaltrace.app.feature.auth.data.remote.dto.LoginRequestDto
 import com.vitaltrace.app.feature.auth.data.remote.dto.ForgotPasswordRequestDto
 import com.vitaltrace.app.feature.auth.data.remote.dto.ResetPasswordRequestDto
+import com.vitaltrace.app.feature.auth.data.remote.dto.ResendActivationCodeRequestDto
+import com.vitaltrace.app.feature.auth.data.remote.dto.SetInitialPasswordRequestDto
+import com.vitaltrace.app.feature.auth.data.remote.dto.VerifyActivationCodeRequestDto
 import com.vitaltrace.app.feature.auth.domain.exception.AuthException
 import com.vitaltrace.app.feature.auth.domain.repository.AuthRepository
 import retrofit2.HttpException
@@ -50,11 +53,18 @@ class AuthRepositoryImpl @Inject constructor(
 
             Result.success(data.user.toAuthenticatedUser())
         } catch (exception: HttpException) {
+            val responseBody = exception.response()?.errorBody()?.string()
+            val activationRequired = responseBody?.contains("ACCOUNT_ACTIVATION_REQUIRED") == true
             Result.failure(
                 AuthException(
-                    message = getHttpErrorMessage(exception),
+                    message = if (activationRequired) {
+                        "Debes completar tu primer acceso antes de iniciar sesión."
+                    } else {
+                        getHttpErrorMessage(exception)
+                    },
                     cause = exception,
-                    httpCode = exception.code()
+                    httpCode = exception.code(),
+                    errorCode = if (activationRequired) "ACCOUNT_ACTIVATION_REQUIRED" else null
                 )
             )
         } catch (exception: IOException) {
@@ -209,6 +219,28 @@ class AuthRepositoryImpl @Inject constructor(
                 message = exception.message ?: "The authentication request failed.",
                 cause = exception
             )
+        )
+    }
+
+    override suspend fun verifyActivationCode(email: String, code: String): Result<String> {
+        return runCatching {
+            authApiService.verifyActivationCode(
+                VerifyActivationCodeRequestDto(email, code)
+            ).data?.activationToken ?: throw IllegalStateException()
+        }
+    }
+
+    override suspend fun resendActivationCode(email: String): Result<Unit> = executePublicRequest {
+        authApiService.resendActivationCode(ResendActivationCodeRequestDto(email))
+    }
+
+    override suspend fun setInitialPassword(
+        activationToken: String,
+        password: String,
+        passwordConfirmation: String
+    ): Result<Unit> = executePublicRequest {
+        authApiService.setInitialPassword(
+            SetInitialPasswordRequestDto(activationToken, password, passwordConfirmation)
         )
     }
 

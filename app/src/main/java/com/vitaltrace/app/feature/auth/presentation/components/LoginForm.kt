@@ -59,6 +59,7 @@ fun LoginForm(
     onPasswordVisibilityChange: () -> Unit,
     onLoginClick: () -> Unit,
     onForgotPasswordClick: () -> Unit,
+    onFirstAccessClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     var shouldRemember by remember { mutableStateOf(true) }
@@ -236,6 +237,19 @@ fun LoginForm(
                     style = MaterialTheme.typography.titleLarge
                 )
             }
+        }
+
+        TextButton(
+            onClick = onFirstAccessClick,
+            enabled = !uiState.isLoading,
+            modifier = Modifier.fillMaxWidth().padding(top = 8.dp)
+        ) {
+            Text(
+                text = "¿Es tu primer acceso?",
+                color = VitalTraceTeal,
+                fontWeight = FontWeight.Bold,
+                style = MaterialTheme.typography.bodyLarge
+            )
         }
     }
 }

@@ -10,6 +10,9 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.vitaltrace.app.feature.auth.presentation.LoginScreen
+import com.vitaltrace.app.feature.auth.presentation.activation.ActivationCodeScreen
+import com.vitaltrace.app.feature.auth.presentation.activation.CreateInitialPasswordScreen
+import com.vitaltrace.app.feature.auth.presentation.activation.FirstAccessEmailScreen
 import com.vitaltrace.app.feature.auth.presentation.recovery.ForgotPasswordScreen
 import com.vitaltrace.app.feature.auth.presentation.recovery.ResetPasswordScreen
 import com.vitaltrace.app.feature.appointments.presentation.AppointmentsScreen
@@ -89,6 +92,37 @@ fun AppNavHost(
                 },
                 onForgotPasswordClick = {
                     navController.navigate(AppRoute.ForgotPassword.route) {
+                        launchSingleTop = true
+                    }
+                },
+                onFirstAccessClick = {
+                    navController.navigate(AppRoute.FirstAccessEmail.route) {
+                        launchSingleTop = true
+                    }
+                }
+            )
+        }
+
+        composable(AppRoute.FirstAccessEmail.route) {
+            FirstAccessEmailScreen(
+                onBack = { navController.popBackStack() },
+                onContinue = { navController.navigate(AppRoute.ActivationCode.route) }
+            )
+        }
+
+        composable(AppRoute.ActivationCode.route) {
+            ActivationCodeScreen(
+                onBack = { navController.popBackStack() },
+                onVerified = { navController.navigate(AppRoute.CreateInitialPassword.route) }
+            )
+        }
+
+        composable(AppRoute.CreateInitialPassword.route) {
+            CreateInitialPasswordScreen(
+                onBack = { navController.popBackStack() },
+                onSuccess = {
+                    navController.navigate(AppRoute.Login.route) {
+                        popUpTo(AppRoute.FirstAccessEmail.route) { inclusive = true }
                         launchSingleTop = true
                     }
                 }
