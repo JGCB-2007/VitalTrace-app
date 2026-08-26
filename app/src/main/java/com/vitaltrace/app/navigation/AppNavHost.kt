@@ -1,4 +1,4 @@
-﻿package com.vitaltrace.app.navigation
+package com.vitaltrace.app.navigation
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
@@ -88,6 +88,11 @@ fun AppNavHost(
                         popUpTo(AppRoute.Login.route) {
                             inclusive = true
                         }
+                    }
+                },
+                onActivationRequired = {
+                    navController.navigate(AppRoute.FirstAccessEmail.route) {
+                        launchSingleTop = true
                     }
                 },
                 onForgotPasswordClick = {

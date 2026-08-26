@@ -7,10 +7,20 @@ import javax.inject.Singleton
 class AccountActivationSession @Inject constructor() {
     var email: String = ""
         private set
-    var token: String = ""
+    var code: String = ""
         private set
 
-    fun begin(email: String) { this.email = email.trim().lowercase(); token = "" }
-    fun verified(token: String) { this.token = token }
-    fun clear() { email = ""; token = "" }
+    fun begin(email: String) {
+        this.email = email.trim().lowercase()
+        code = ""
+    }
+
+    fun codeEntered(code: String) {
+        this.code = code
+    }
+
+    fun clear() {
+        email = ""
+        code = ""
+    }
 }

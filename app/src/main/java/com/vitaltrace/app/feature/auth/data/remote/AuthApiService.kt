@@ -1,16 +1,13 @@
 package com.vitaltrace.app.feature.auth.data.remote
 
 import com.vitaltrace.app.core.network.ApiResponse
+import com.vitaltrace.app.feature.auth.data.remote.dto.ActivateAccountRequestDto
+import com.vitaltrace.app.feature.auth.data.remote.dto.ForgotPasswordRequestDto
 import com.vitaltrace.app.feature.auth.data.remote.dto.LoginDataDto
 import com.vitaltrace.app.feature.auth.data.remote.dto.LoginRequestDto
-import com.vitaltrace.app.feature.auth.data.remote.dto.UserDto
-import com.vitaltrace.app.feature.auth.data.remote.dto.ForgotPasswordRequestDto
-import com.vitaltrace.app.feature.auth.data.remote.dto.ResetPasswordRequestDto
-import com.vitaltrace.app.feature.auth.data.remote.dto.ActivationCompletedDto
-import com.vitaltrace.app.feature.auth.data.remote.dto.ActivationTokenDto
 import com.vitaltrace.app.feature.auth.data.remote.dto.ResendActivationCodeRequestDto
-import com.vitaltrace.app.feature.auth.data.remote.dto.SetInitialPasswordRequestDto
-import com.vitaltrace.app.feature.auth.data.remote.dto.VerifyActivationCodeRequestDto
+import com.vitaltrace.app.feature.auth.data.remote.dto.ResetPasswordRequestDto
+import com.vitaltrace.app.feature.auth.data.remote.dto.UserDto
 import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.POST
@@ -38,12 +35,13 @@ interface AuthApiService {
         @Body request: ResetPasswordRequestDto
     ): ApiResponse<Unit>
 
-    @POST("auth/activation/verify-code")
-    suspend fun verifyActivationCode(@Body request: VerifyActivationCodeRequestDto): ApiResponse<ActivationTokenDto>
+    @POST("auth/resend-code")
+    suspend fun resendActivationCode(
+        @Body request: ResendActivationCodeRequestDto
+    ): ApiResponse<Unit>
 
-    @POST("auth/activation/resend-code")
-    suspend fun resendActivationCode(@Body request: ResendActivationCodeRequestDto): ApiResponse<Unit>
-
-    @POST("auth/activation/set-password")
-    suspend fun setInitialPassword(@Body request: SetInitialPasswordRequestDto): ApiResponse<ActivationCompletedDto>
+    @POST("auth/activate-account")
+    suspend fun activateAccount(
+        @Body request: ActivateAccountRequestDto
+    ): ApiResponse<UserDto>
 }

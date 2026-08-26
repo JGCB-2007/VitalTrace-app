@@ -1,7 +1,7 @@
 package com.vitaltrace.app.feature.auth.domain.usecase
 
 import com.vitaltrace.app.core.session.SessionManager
-import com.vitaltrace.app.feature.auth.domain.repository.AuthException
+import com.vitaltrace.app.feature.auth.domain.exception.AuthException
 import javax.inject.Inject
 
 class LoginUseCase @Inject constructor(

@@ -33,7 +33,7 @@ fun FirstAccessEmailScreen(onBack: () -> Unit, onContinue: () -> Unit, viewModel
         Spacer(Modifier.height(24.dp))
         RecoveryTextField(state.email, viewModel::onEmailChange, "Correo electrónico", Icons.Outlined.Email, true, keyboardType = KeyboardType.Email, imeAction = ImeAction.Done)
         ErrorText(state.error)
-        RecoveryPrimaryButton("Continuar", false, viewModel::continueToCode, Modifier.padding(top = 20.dp))
+        RecoveryPrimaryButton("Solicitar código", state.isLoading, viewModel::continueToCode, Modifier.padding(top = 20.dp))
     }
 }
 
@@ -47,7 +47,7 @@ fun ActivationCodeScreen(onBack: () -> Unit, onVerified: () -> Unit, viewModel: 
         RecoveryTextField(state.code, viewModel::onCodeChange, "Código de acceso", Icons.Outlined.Key, !state.isLoading, keyboardType = KeyboardType.Number, imeAction = ImeAction.Done)
         ErrorText(state.error)
         state.resendMessage?.let { Text(it, color = Color(0xFF1D6B4C), modifier = Modifier.padding(top = 10.dp)) }
-        RecoveryPrimaryButton("Verificar código", state.isLoading, viewModel::verify, Modifier.padding(top = 20.dp))
+        RecoveryPrimaryButton("Continuar", state.isLoading, viewModel::continueToPassword, Modifier.padding(top = 20.dp))
         RecoverySecondaryButton("Reenviar código", viewModel::resend)
     }
 }

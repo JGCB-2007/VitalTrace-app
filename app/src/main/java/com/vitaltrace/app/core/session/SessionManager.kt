@@ -15,6 +15,12 @@ class SessionManager @Inject constructor(
     private val authRepository: AuthRepository,
     private val tokenStore: TokenStore
 ) {
+    private companion object {
+        const val PATIENT_ACCESS_REQUIRED = "PATIENT_ACCESS_REQUIRED"
+        const val PATIENT_ACCESS_MESSAGE =
+            "Este usuario no tiene acceso a la aplicación móvil de pacientes."
+    }
+
     private val operationMutex = Mutex()
     private val _state = MutableStateFlow<SessionState>(SessionState.Loading)
     val state: StateFlow<SessionState> = _state.asStateFlow()
@@ -29,7 +35,14 @@ class SessionManager @Inject constructor(
         }
 
         authRepository.getCurrentUser()
-            .onSuccess { user -> _state.value = SessionState.Authenticated(user) }
+            .onSuccess { user ->
+                if (UserRole.PATIENT in user.roles) {
+                    _state.value = SessionState.Authenticated(user)
+                } else {
+                    revokeUnsupportedSession()
+                    _state.value = SessionState.Unauthenticated
+                }
+            }
             .onFailure { error ->
                 _state.value = if ((error as? AuthException)?.httpCode == 401) {
                     tokenStore.clearToken()
@@ -45,10 +58,42 @@ class SessionManager @Inject constructor(
 
     suspend fun login(email: String, password: String): Result<Unit> = operationMutex.withLock {
         _state.value = SessionState.Loading
-        authRepository.login(email, password)
-            .onSuccess { user -> _state.value = SessionState.Authenticated(user) }
-            .onFailure { _state.value = SessionState.Unauthenticated }
-            .map { Unit }
+        val result = authRepository.login(email, password)
+        val user = result.getOrElse { error ->
+            _state.value = SessionState.Unauthenticated
+            return@withLock Result.failure(error)
+        }
+
+        if (UserRole.PATIENT !in user.roles) {
+            revokeUnsupportedSession()
+            _state.value = SessionState.Unauthenticated
+            return@withLock Result.failure(
+                AuthException(
+                    message = PATIENT_ACCESS_MESSAGE,
+                    errorCode = PATIENT_ACCESS_REQUIRED
+                )
+            )
+        }
+
+        val verifiedUser = authRepository.getCurrentUser().getOrElse { error ->
+            revokeUnsupportedSession()
+            _state.value = SessionState.Unauthenticated
+            return@withLock Result.failure(error)
+        }
+
+        if (UserRole.PATIENT !in verifiedUser.roles) {
+            revokeUnsupportedSession()
+            _state.value = SessionState.Unauthenticated
+            return@withLock Result.failure(
+                AuthException(
+                    message = PATIENT_ACCESS_MESSAGE,
+                    errorCode = PATIENT_ACCESS_REQUIRED
+                )
+            )
+        }
+
+        _state.value = SessionState.Authenticated(verifiedUser)
+        Result.success(Unit)
     }
 
     suspend fun logout(): Result<Unit> = operationMutex.withLock {
@@ -56,5 +101,10 @@ class SessionManager @Inject constructor(
         tokenStore.clearToken()
         _state.value = SessionState.Unauthenticated
         Result.success(Unit)
+    }
+
+    private suspend fun revokeUnsupportedSession() {
+        authRepository.logout()
+        tokenStore.clearToken()
     }
 }

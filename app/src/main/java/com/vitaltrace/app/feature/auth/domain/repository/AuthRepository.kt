@@ -22,7 +22,12 @@ interface AuthRepository {
         passwordConfirmation: String
     ): Result<Unit>
 
-    suspend fun verifyActivationCode(email: String, code: String): Result<String>
     suspend fun resendActivationCode(email: String): Result<Unit>
-    suspend fun setInitialPassword(activationToken: String, password: String, passwordConfirmation: String): Result<Unit>
+
+    suspend fun activateAccount(
+        email: String,
+        code: String,
+        password: String,
+        passwordConfirmation: String
+    ): Result<Unit>
 }

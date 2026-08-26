@@ -2,6 +2,8 @@ package com.vitaltrace.app.feature.auth.presentation
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.vitaltrace.app.feature.auth.domain.AccountActivationSession
+import com.vitaltrace.app.feature.auth.domain.exception.AuthException
 import com.vitaltrace.app.feature.auth.domain.usecase.LoginUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
@@ -15,7 +17,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class LoginViewModel @Inject constructor(
-    private val loginUseCase: LoginUseCase
+    private val loginUseCase: LoginUseCase,
+    private val activationSession: AccountActivationSession
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(LoginUiState())
@@ -79,6 +82,13 @@ class LoginViewModel @Inject constructor(
                     LoginUiEffect.NavigateToHome
                 )
             }.onFailure { exception ->
+                val authException = exception as? AuthException
+                if (authException?.errorCode == "ACCOUNT_ACTIVATION_REQUIRED") {
+                    activationSession.begin(currentState.email)
+                    _uiState.update { it.copy(isLoading = false, errorMessage = null) }
+                    _uiEffect.send(LoginUiEffect.NavigateToFirstAccess)
+                    return@onFailure
+                }
                 _uiState.update {
                     it.copy(
                         isLoading = false,

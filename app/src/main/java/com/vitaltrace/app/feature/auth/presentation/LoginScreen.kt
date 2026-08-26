@@ -24,6 +24,7 @@ import com.vitaltrace.app.ui.theme.VitalTraceWarmBackground
 @Composable
 fun LoginScreen(
     onLoginSuccess: () -> Unit,
+    onActivationRequired: () -> Unit,
     onForgotPasswordClick: () -> Unit = {},
     onFirstAccessClick: () -> Unit = {},
     viewModel: LoginViewModel = hiltViewModel()
@@ -35,6 +36,7 @@ fun LoginScreen(
         viewModel.uiEffect.collect { effect ->
             when (effect) {
                 LoginUiEffect.NavigateToHome -> onLoginSuccess()
+                LoginUiEffect.NavigateToFirstAccess -> onActivationRequired()
             }
         }
     }

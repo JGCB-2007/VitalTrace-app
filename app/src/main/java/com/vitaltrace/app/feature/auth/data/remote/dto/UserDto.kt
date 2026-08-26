@@ -27,6 +27,8 @@ data class UserDto(
 
     val person: PersonDto,
 
+    val roles: List<UserRoleDto> = emptyList(),
+
     @SerialName("created_at")
     val createdAt: String? = null,
 
@@ -44,4 +46,10 @@ data class UserDto(
 
     @SerialName("deleted_by")
     val deletedBy: Int? = null
+)
+
+@Serializable
+data class UserRoleDto(
+    val id: Int,
+    val name: String
 )
