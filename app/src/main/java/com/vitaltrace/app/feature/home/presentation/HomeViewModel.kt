@@ -59,6 +59,7 @@ class HomeViewModel @Inject constructor(
         refreshUnreadNotificationsCount()
     }
 
+
     fun refreshAfterMeasurementCreated() {
         summaryRequest?.cancel()
         summaryRequest = null

@@ -13,6 +13,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.vitaltrace.app.feature.appointments.reminders.AppointmentNotificationPermissionEffect
 import com.vitaltrace.app.feature.home.presentation.components.FollowUpStatusCard
 import com.vitaltrace.app.feature.home.presentation.components.HomeBackground
 import com.vitaltrace.app.feature.home.presentation.components.HomeBottomBar
@@ -38,6 +39,8 @@ fun HomeScreen(
     viewModel: HomeViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+
+    AppointmentNotificationPermissionEffect()
 
     LaunchedEffect(viewModel) {
         viewModel.effects.collectLatest { effect ->
