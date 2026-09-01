@@ -83,6 +83,7 @@ class SessionManagerTest {
     @Test
     fun `known role maps exactly`() {
         assertSame(UserRole.PATIENT, UserRole.fromApiValue("PATIENT"))
+        assertSame(UserRole.RELATIVE, UserRole.fromApiValue("relative"))
         assertSame(UserRole.SYSTEM_ADMIN, UserRole.fromApiValue("system_admin"))
     }
 

@@ -12,6 +12,7 @@ sealed class AppRoute(val route: String) {
     data object ForgotPassword : AppRoute("forgot_password")
     data object ResetPassword : AppRoute("reset_password")
     data object Home : AppRoute("home")
+    data object RelativePortal : AppRoute("relative_portal")
     data object Measurements : AppRoute("measurements")
     data object MeasurementForm : AppRoute("measurement_form")
     data object Appointments : AppRoute("appointments")

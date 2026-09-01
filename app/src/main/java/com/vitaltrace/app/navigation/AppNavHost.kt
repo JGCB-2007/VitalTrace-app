@@ -1,4 +1,4 @@
-﻿package com.vitaltrace.app.navigation
+package com.vitaltrace.app.navigation
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -29,6 +29,7 @@ import com.vitaltrace.app.feature.measurements.presentation.form.MeasurementForm
 import com.vitaltrace.app.feature.notifications.presentation.NotificationsScreen
 import com.vitaltrace.app.feature.profile.presentation.ProfileScreen
 import com.vitaltrace.app.feature.relatives.presentation.RelativesScreen
+import com.vitaltrace.app.feature.relativeportal.presentation.RelativePortalScreen
 import com.vitaltrace.app.feature.splash.presentation.SplashScreen
 import com.vitaltrace.app.feature.treatments.presentation.TreatmentDetailScreen
 import com.vitaltrace.app.feature.treatments.presentation.TreatmentsScreen
@@ -78,9 +79,12 @@ fun AppNavHost(
                 },
                 onNavigateToHome = {
                     navController.navigate(AppRoute.Home.route) {
-                        popUpTo(AppRoute.Splash.route) {
-                            inclusive = true
-                        }
+                        popUpTo(AppRoute.Splash.route) { inclusive = true }
+                    }
+                },
+                onNavigateToRelativePortal = {
+                    navController.navigate(AppRoute.RelativePortal.route) {
+                        popUpTo(AppRoute.Splash.route) { inclusive = true }
                     }
                 }
             )
@@ -90,9 +94,12 @@ fun AppNavHost(
             LoginScreen(
                 onLoginSuccess = {
                     navController.navigate(AppRoute.Home.route) {
-                        popUpTo(AppRoute.Login.route) {
-                            inclusive = true
-                        }
+                        popUpTo(AppRoute.Login.route) { inclusive = true }
+                    }
+                },
+                onRelativeLoginSuccess = {
+                    navController.navigate(AppRoute.RelativePortal.route) {
+                        popUpTo(AppRoute.Login.route) { inclusive = true }
                     }
                 },
                 onForgotPasswordClick = {
@@ -104,6 +111,19 @@ fun AppNavHost(
                     navController.navigate(AppRoute.FirstAccessEmail.route) {
                         launchSingleTop = true
                     }
+                }
+            )
+        }
+
+        composable(AppRoute.RelativePortal.route) {
+            RelativePortalScreen(
+                onLogout = {
+                    navController.navigate(AppRoute.Login.route) {
+                        popUpTo(AppRoute.RelativePortal.route) { inclusive = true }
+                    }
+                },
+                onEducationClick = { cieCode, diagnosisName ->
+                    navController.navigate(AppRoute.DiagnosisEducation.create(cieCode, diagnosisName))
                 }
             )
         }
