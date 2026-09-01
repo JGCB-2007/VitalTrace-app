@@ -111,8 +111,8 @@ class AppointmentsViewModelTest {
 
     private fun appointmentsPage() = Page(
         items = listOf(
-            appointment(1, "2026-08-05 09:00:00", "CONFIRMED"),
-            appointment(2, "2026-07-30 09:00:00", "SCHEDULED"),
+            appointment(1, "2099-08-05 09:00:00", "CONFIRMED"),
+            appointment(2, "2099-07-30 09:00:00", "SCHEDULED"),
             appointment(3, "2026-06-25 10:30:00", "ATTENDED")
         ),
         links = PaginationLinks("first", "last", null, null),

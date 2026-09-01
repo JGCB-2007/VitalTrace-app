@@ -3,6 +3,7 @@ package com.vitaltrace.app.feature.home.presentation
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.vitaltrace.app.feature.auth.domain.usecase.LogoutUseCase
+import com.vitaltrace.app.feature.patient.domain.usecase.GetPatientMeasurementsUseCase
 import com.vitaltrace.app.feature.patient.domain.usecase.GetPatientSummaryUseCase
 import com.vitaltrace.app.feature.patient.domain.usecase.GetUnreadNotificationsCountUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -19,6 +20,7 @@ import javax.inject.Inject
 class HomeViewModel @Inject constructor(
     private val logoutUseCase: LogoutUseCase,
     private val getPatientSummary: GetPatientSummaryUseCase,
+    private val getPatientMeasurements: GetPatientMeasurementsUseCase,
     private val getUnreadNotificationsCount: GetUnreadNotificationsCountUseCase,
     private val summaryMapper: HomeSummaryMapper
 ) : ViewModel() {
@@ -57,6 +59,12 @@ class HomeViewModel @Inject constructor(
         refreshUnreadNotificationsCount()
     }
 
+    fun refreshAfterMeasurementCreated() {
+        summaryRequest?.cancel()
+        summaryRequest = null
+        loadSummary()
+    }
+
     fun refreshUnreadNotificationsCount() {
         if (notificationsCountRequest?.isActive == true) return
         notificationsCountRequest = viewModelScope.launch {
@@ -79,6 +87,17 @@ class HomeViewModel @Inject constructor(
                                 summaryMapper.map(summary)
                             )
                         )
+                    }
+                    if (summary.latestMeasurements.isNotEmpty()) {
+                        getPatientMeasurements().onSuccess { page ->
+                            _uiState.update {
+                                it.copy(
+                                    contentState = HomeContentState.Success(
+                                        summaryMapper.map(summary, page.items)
+                                    )
+                                )
+                            }
+                        }
                     }
                 }
                 .onFailure {

@@ -69,7 +69,7 @@ enum class AppointmentStatus(val isUpcoming: Boolean) {
 
     companion object {
         fun fromApiValue(value: String): AppointmentStatus {
-            return entries.firstOrNull { it.name == value } ?: UNKNOWN
+            return entries.firstOrNull { it.name == value.trim().uppercase() } ?: UNKNOWN
         }
     }
 }

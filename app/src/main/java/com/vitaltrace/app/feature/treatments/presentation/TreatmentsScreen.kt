@@ -6,7 +6,14 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.rounded.ArrowBack
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -28,8 +35,10 @@ import com.vitaltrace.app.feature.treatments.presentation.components.TreatmentsL
 import com.vitaltrace.app.ui.theme.VitalTraceNavy
 import com.vitaltrace.app.ui.theme.VitalTraceWarmBackground
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TreatmentsScreen(
+    onNavigateBack: () -> Unit,
     onTreatmentClick: (Long) -> Unit,
     onHomeClick: () -> Unit,
     onMeasurementsClick: () -> Unit,
@@ -40,6 +49,31 @@ fun TreatmentsScreen(
     val state by viewModel.uiState.collectAsStateWithLifecycle()
     Scaffold(
         containerColor = VitalTraceWarmBackground,
+        topBar = {
+            TopAppBar(
+                title = {
+                    Text(
+                        text = stringResource(R.string.treatments_title),
+                        fontFamily = FontFamily.Serif,
+                        fontSize = 25.sp,
+                        fontWeight = FontWeight.Bold
+                    )
+                },
+                navigationIcon = {
+                    IconButton(onClick = onNavigateBack) {
+                        Icon(
+                            imageVector = Icons.AutoMirrored.Rounded.ArrowBack,
+                            contentDescription = stringResource(R.string.treatment_detail_back)
+                        )
+                    }
+                },
+                colors = TopAppBarDefaults.topAppBarColors(
+                    containerColor = VitalTraceWarmBackground,
+                    titleContentColor = VitalTraceNavy,
+                    navigationIconContentColor = VitalTraceNavy
+                )
+            )
+        },
         bottomBar = {
             HomeBottomBar(
                 selectedDestination = HomeBottomDestination.HOME,
@@ -66,15 +100,6 @@ fun TreatmentsScreen(
                         contentPadding = PaddingValues(24.dp, 30.dp, 24.dp, 30.dp),
                         verticalArrangement = Arrangement.spacedBy(18.dp)
                     ) {
-                        item {
-                            Text(
-                                text = stringResource(R.string.treatments_title),
-                                color = VitalTraceNavy,
-                                fontFamily = FontFamily.Serif,
-                                fontSize = 34.sp,
-                                fontWeight = FontWeight.Bold
-                            )
-                        }
                         items(contentState.content.treatments, key = TreatmentUiModel::id) { treatment ->
                             TreatmentCard(
                                 treatment = treatment,

@@ -78,7 +78,6 @@ fun NextAppointmentCard(
                         R.string.home_appointment_summary,
                         appointment.reason,
                         appointment.date,
-                        "\n",
                         appointment.time
                     ),
                     color = HomeSupportingText,

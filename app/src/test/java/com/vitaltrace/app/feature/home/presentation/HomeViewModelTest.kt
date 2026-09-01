@@ -52,9 +52,9 @@ class HomeViewModelTest {
             val success = assertType<HomeContentState.Success>(viewModel.uiState.value.contentState)
             assertEquals("Ana Martinez", success.content.patientName)
             assertEquals("AM", success.content.patientInitials)
-            assertEquals("CONFIRMED", success.content.nextAppointment?.status)
+            assertEquals("Confirmada", success.content.nextAppointment?.status)
             assertEquals("120", success.content.recentMeasurement?.value)
-            assertEquals(emptyList<Float>(), success.content.recentMeasurement?.chartValues)
+            assertEquals(listOf(0.65f), success.content.recentMeasurement?.chartValues)
             assertEquals(null, success.content.followUpStatus)
         }
     }

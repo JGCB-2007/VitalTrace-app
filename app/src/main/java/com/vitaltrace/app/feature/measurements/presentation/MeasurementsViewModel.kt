@@ -26,6 +26,12 @@ class MeasurementsViewModel @Inject constructor(
 
     fun retry() = loadMeasurements()
 
+    fun refreshAfterMeasurementCreated() {
+        measurementsRequest?.cancel()
+        measurementsRequest = null
+        loadMeasurements()
+    }
+
     fun selectFilter(filter: MeasurementFilter) {
         _uiState.update { it.copy(selectedFilter = filter) }
     }

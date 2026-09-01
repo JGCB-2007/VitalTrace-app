@@ -40,7 +40,7 @@
     <string name="home_no_follow_up">No hay información de seguimiento</string>
     <string name="home_no_appointments">No hay citas próximas</string>
     <string name="home_no_measurements">No hay mediciones registradas</string>
-    <string name="home_appointment_summary">%1$s · %2$s,%3$s%4$s</string>
+    <string name="home_appointment_summary">%1$s &#183; %2$s &#183; %3$s</string>
     <string name="home_measurement_summary">%1$s · %2$s</string>
     <string name="home_bottom_home">Inicio</string>
     <string name="home_bottom_measurements">Mediciones</string>
