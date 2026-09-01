@@ -3,7 +3,6 @@ package com.vitaltrace.app.feature.measurements.presentation.form
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.vitaltrace.app.feature.patient.domain.usecase.CreatePatientMeasurementUseCase
-import com.vitaltrace.app.feature.patient.domain.usecase.GetPatientMeasurementsUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.channels.Channel
@@ -20,19 +19,14 @@ import javax.inject.Inject
 
 @HiltViewModel
 class MeasurementFormViewModel @Inject constructor(
-    private val getPatientMeasurements: GetPatientMeasurementsUseCase,
     private val createPatientMeasurement: CreatePatientMeasurementUseCase
 ) : ViewModel() {
-    private val _uiState = MutableStateFlow(MeasurementFormUiState())
+    private val localMeasurementTypes = LocalMeasurementTypeCatalog.types
+    private val _uiState = MutableStateFlow(initialState())
     val uiState = _uiState.asStateFlow()
     private val effectChannel = Channel<MeasurementFormUiEffect>(Channel.BUFFERED)
     val effects = effectChannel.receiveAsFlow()
-    private var typesRequest: Job? = null
     private var saveRequest: Job? = null
-
-    init {
-        loadMeasurementTypes()
-    }
 
     fun selectType(id: Long) {
         _uiState.update { it.copy(selectedTypeId = id, typeError = null, errorMessage = null) }
@@ -78,7 +72,7 @@ class MeasurementFormViewModel @Inject constructor(
                     .format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")),
                 observation = state.note.trim().ifBlank { null }
             ).onSuccess {
-                _uiState.value = MeasurementFormUiState()
+                _uiState.value = initialState()
                 effectChannel.send(MeasurementFormUiEffect.MeasurementSaved)
             }.onFailure {
                 _uiState.update {
@@ -91,33 +85,9 @@ class MeasurementFormViewModel @Inject constructor(
         }
     }
 
-    private fun loadMeasurementTypes() {
-        if (typesRequest?.isActive == true) return
-        typesRequest = viewModelScope.launch {
-            getPatientMeasurements().onSuccess { page ->
-                val types = page.items.mapNotNull { measurement ->
-                    measurement.measurementType?.let {
-                        MeasurementTypeOption(it.id, it.name, it.baseUnit)
-                    }
-                }.distinctBy(MeasurementTypeOption::id)
-                _uiState.update {
-                    it.copy(
-                        availableTypes = types,
-                        selectedTypeId = types.firstOrNull()?.id,
-                        isLoadingTypes = false,
-                        errorMessage = if (types.isEmpty()) {
-                            "No hay tipos de medición disponibles para registrar."
-                        } else null
-                    )
-                }
-            }.onFailure {
-                _uiState.update {
-                    it.copy(
-                        isLoadingTypes = false,
-                        errorMessage = "No pudimos cargar los tipos de medición."
-                    )
-                }
-            }
-        }
-    }
+    private fun initialState() = MeasurementFormUiState(
+        availableTypes = localMeasurementTypes,
+        selectedTypeId = localMeasurementTypes.firstOrNull()?.id,
+        isLoadingTypes = false
+    )
 }
