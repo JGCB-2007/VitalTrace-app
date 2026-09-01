@@ -37,6 +37,19 @@ android {
             )
         }
 
+        create("local") {
+            initWith(getByName("debug"))
+            applicationIdSuffix = ".local"
+            versionNameSuffix = "-local"
+            isDebuggable = true
+            matchingFallbacks += listOf("debug")
+            buildConfigField(
+                "String",
+                "BASE_URL",
+                "\"http://192.168.1.12:8000/api/v1/\""
+            )
+        }
+
         release {
             optimization {
                 enable = false
