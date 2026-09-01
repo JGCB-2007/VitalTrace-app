@@ -5,8 +5,13 @@ import com.vitaltrace.app.feature.patient.domain.model.Treatment
 import javax.inject.Inject
 
 class TreatmentsMapper @Inject constructor() {
-    fun map(page: Page<Treatment>) = TreatmentsContentUiModel(
-        treatments = page.items.map { treatment ->
+    fun map(page: Page<Treatment>) = map(page.items).copy(
+        currentPage = page.meta.currentPage,
+        lastPage = page.meta.lastPage
+    )
+
+    fun map(items: List<Treatment>) = TreatmentsContentUiModel(
+        treatments = items.map { treatment ->
             TreatmentUiModel(
                 id = treatment.id,
                 diagnosisDescription = treatment.diagnosis?.description,
@@ -20,7 +25,7 @@ class TreatmentsMapper @Inject constructor() {
                 specialtyName = treatment.prescriber?.specialty?.name
             )
         },
-        currentPage = page.meta.currentPage,
-        lastPage = page.meta.lastPage
+        currentPage = 1,
+        lastPage = 1
     )
 }

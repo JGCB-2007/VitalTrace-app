@@ -26,6 +26,7 @@ import com.vitaltrace.app.feature.home.presentation.NextAppointmentUiModel
 fun NextAppointmentCard(
     appointment: NextAppointmentUiModel?,
     onDetailClick: () -> Unit,
+    showDetailAction: Boolean = true,
     modifier: Modifier = Modifier
 ) {
     Card(
@@ -43,12 +44,14 @@ fun NextAppointmentCard(
                     style = MaterialTheme.typography.labelLarge,
                     modifier = Modifier.weight(1f)
                 )
-                TextButton(onClick = onDetailClick) {
-                    Text(
-                        text = stringResource(R.string.home_view_detail),
-                        color = HomeTeal,
-                        fontWeight = FontWeight.Bold
-                    )
+                if (showDetailAction && appointment != null) {
+                    TextButton(onClick = onDetailClick) {
+                        Text(
+                            text = stringResource(R.string.home_view_detail),
+                            color = HomeTeal,
+                            fontWeight = FontWeight.Bold
+                        )
+                    }
                 }
             }
             if (appointment == null) {

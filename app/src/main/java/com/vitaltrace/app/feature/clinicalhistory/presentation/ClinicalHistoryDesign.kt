@@ -65,16 +65,17 @@ internal fun ClinicalHistoryDesign(
             ClinicalHistoryUiState.Loading -> ClinicalLoading(Modifier.padding(padding))
             is ClinicalHistoryUiState.Empty -> ClinicalEmpty(Modifier.padding(padding))
             is ClinicalHistoryUiState.Error -> ClinicalError(state.message, onRetry, Modifier.padding(padding))
-            is ClinicalHistoryUiState.Success -> ClinicalHistoryList(state.history, onEducationClick, Modifier.padding(padding))
+            is ClinicalHistoryUiState.Success -> ClinicalHistoryContent(state.history, onEducationClick, Modifier.padding(padding))
         }
     }
 }
 
 @Composable
-private fun ClinicalHistoryList(
+internal fun ClinicalHistoryContent(
     history: ClinicalHistory,
     onEducationClick: (String, String) -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    showEducationActions: Boolean = true
 ) {
     LazyColumn(
         modifier = modifier.fillMaxSize(),
@@ -84,7 +85,9 @@ private fun ClinicalHistoryList(
         item { RecordBadge(history.recordNumber) }
         if (history.diagnoses.isNotEmpty()) {
             item { ClinicalSectionHeader(Icons.Rounded.HealthAndSafety, "Diagnósticos") }
-            items(history.diagnoses, key = { "diagnosis-${it.id}" }) { DiagnosisCard(it, onEducationClick) }
+            items(history.diagnoses, key = { "diagnosis-${it.id}" }) {
+                DiagnosisCard(it, onEducationClick, showEducationActions)
+            }
         }
         if (history.clinicalEvolutions.isNotEmpty()) {
             item { ClinicalSectionHeader(Icons.Rounded.HistoryEdu, "Evoluciones clínicas") }
@@ -133,7 +136,11 @@ private fun ClinicalSectionHeader(icon: ImageVector, title: String) {
 }
 
 @Composable
-private fun DiagnosisCard(item: ClinicalDiagnosis, onEducationClick: (String, String) -> Unit) = VitalTraceClinicalCard {
+private fun DiagnosisCard(
+    item: ClinicalDiagnosis,
+    onEducationClick: (String, String) -> Unit,
+    showEducationAction: Boolean
+) = VitalTraceClinicalCard {
     Text(item.description, color = VitalTraceNavy, fontFamily = FontFamily.Serif, fontSize = 21.sp, fontWeight = FontWeight.Bold)
     Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween, verticalAlignment = Alignment.CenterVertically) {
         item.cieCode?.takeIf(String::isNotBlank)?.let { DetailLabel("Código CIE", it) }
@@ -141,7 +148,7 @@ private fun DiagnosisCard(item: ClinicalDiagnosis, onEducationClick: (String, St
     }
     DetailLine(Icons.Rounded.CalendarMonth, item.diagnosisDate)
     professionalName(item.professional)?.let { DetailLine(Icons.Rounded.MedicalServices, it) }
-    item.cieCode?.takeIf(String::isNotBlank)?.let { code ->
+    item.cieCode?.takeIf(String::isNotBlank)?.takeIf { showEducationAction }?.let { code ->
         Surface(
             modifier = Modifier.fillMaxWidth().clickable { onEducationClick(code, item.description) },
             color = Color(0xFFF3FAF9),

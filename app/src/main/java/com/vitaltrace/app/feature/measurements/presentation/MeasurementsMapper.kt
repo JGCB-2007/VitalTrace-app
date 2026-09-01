@@ -6,12 +6,19 @@ import javax.inject.Inject
 
 class MeasurementsMapper @Inject constructor() {
     fun map(page: Page<Measurement>): MeasurementsContentUiModel {
-        val measurements = page.items.map { it.toUiModel() }
+        return map(page.items).copy(
+            currentPage = page.meta.currentPage,
+            lastPage = page.meta.lastPage
+        )
+    }
+
+    fun map(items: List<Measurement>): MeasurementsContentUiModel {
+        val measurements = items.map { it.toUiModel() }
         return MeasurementsContentUiModel(
             latestMeasurement = measurements.firstOrNull(),
             measurements = measurements.drop(1),
-            currentPage = page.meta.currentPage,
-            lastPage = page.meta.lastPage
+            currentPage = 1,
+            lastPage = 1
         )
     }
 

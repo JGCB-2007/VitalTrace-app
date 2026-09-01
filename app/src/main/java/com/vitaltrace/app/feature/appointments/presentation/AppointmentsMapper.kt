@@ -8,7 +8,14 @@ import javax.inject.Inject
 
 class AppointmentsMapper @Inject constructor() {
     fun map(page: Page<Appointment>): AppointmentsContentUiModel {
-        val appointments = page.items.map { it.toUiModel() }
+        return map(page.items).copy(
+            currentPage = page.meta.currentPage,
+            lastPage = page.meta.lastPage
+        )
+    }
+
+    fun map(items: List<Appointment>): AppointmentsContentUiModel {
+        val appointments = items.map { it.toUiModel() }
         val now = LocalDateTime.now()
         val upcoming = appointments.filter { it.status.isUpcoming && it.scheduledAtDateTime() >= now }
         val upcomingIds = upcoming.mapTo(mutableSetOf(), AppointmentUiModel::id)
@@ -21,8 +28,8 @@ class AppointmentsMapper @Inject constructor() {
                 .filterNot { it.id == nextAppointment?.id }
                 .sortedBy(AppointmentUiModel::scheduledAt),
             previousAppointments = previous,
-            currentPage = page.meta.currentPage,
-            lastPage = page.meta.lastPage
+            currentPage = 1,
+            lastPage = 1
         )
     }
 
