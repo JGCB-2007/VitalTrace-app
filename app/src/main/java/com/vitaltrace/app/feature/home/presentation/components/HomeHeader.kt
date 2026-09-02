@@ -19,6 +19,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Notifications
+import androidx.compose.material.icons.automirrored.rounded.ExitToApp
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -33,6 +34,7 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.vitaltrace.app.R
 
 @Composable
@@ -47,6 +49,7 @@ fun HomeHeader(
     modifier: Modifier = Modifier
 ) {
     var isMenuExpanded by remember { mutableStateOf(false) }
+    var showLogoutConfirmation by remember { mutableStateOf(false) }
     val accountOptionsDescription = stringResource(R.string.home_account_options)
 
     Row(
@@ -121,17 +124,44 @@ fun HomeHeader(
 
             DropdownMenu(
                 expanded = isMenuExpanded,
-                onDismissRequest = { isMenuExpanded = false }
+                onDismissRequest = { isMenuExpanded = false },
+                shape = RoundedCornerShape(18.dp),
+                containerColor = Color.White,
+                shadowElevation = 8.dp
             ) {
                 DropdownMenuItem(
-                    text = { Text(stringResource(R.string.home_logout)) },
+                    text = {
+                        Text(
+                            text = stringResource(R.string.home_logout),
+                            color = HomeNavy,
+                            fontSize = 15.sp,
+                            fontWeight = FontWeight.SemiBold
+                        )
+                    },
+                    leadingIcon = {
+                        Icon(
+                            Icons.AutoMirrored.Rounded.ExitToApp,
+                            contentDescription = null,
+                            tint = HomeTeal
+                        )
+                    },
                     onClick = {
                         isMenuExpanded = false
-                        onLogoutClick()
+                        showLogoutConfirmation = true
                     }
                 )
             }
         }
+    }
+
+    if (showLogoutConfirmation) {
+        LogoutConfirmationDialog(
+            onConfirm = {
+                showLogoutConfirmation = false
+                onLogoutClick()
+            },
+            onDismiss = { showLogoutConfirmation = false }
+        )
     }
 }
 

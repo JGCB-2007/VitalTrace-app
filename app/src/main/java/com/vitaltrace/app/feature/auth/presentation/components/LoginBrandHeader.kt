@@ -15,6 +15,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -23,7 +24,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.vitaltrace.app.R
 import com.vitaltrace.app.ui.theme.VitalTraceNavy
-import com.vitaltrace.app.ui.theme.VitalTraceTeal
 
 @Composable
 fun LoginBrandHeader(
@@ -34,8 +34,14 @@ fun LoginBrandHeader(
             .fillMaxWidth()
             .heightIn(min = 300.dp)
             .background(
-                Brush.horizontalGradient(
-                    colors = listOf(VitalTraceNavy, VitalTraceTeal)
+                Brush.linearGradient(
+                    colors = listOf(
+                        Color(0xFF0A5968),
+                        VitalTraceNavy,
+                        Color(0xFF006B70)
+                    ),
+                    start = Offset.Zero,
+                    end = Offset.Infinite
                 )
             )
             .padding(
@@ -47,14 +53,14 @@ fun LoginBrandHeader(
     ) {
         Image(
             painter = painterResource(R.drawable.vitaltrace_logo),
-            contentDescription = stringResource(
-                R.string.login_logo_description
-            ),
+            contentDescription = stringResource(R.string.login_logo_description),
             modifier = Modifier
-                .width(150.dp)
-                .height(60.dp),
+                .width(220.dp)
+                .height(64.dp),
             alignment = Alignment.CenterStart,
-            contentScale = ContentScale.Crop
+            contentScale = ContentScale.Crop,
+            colorFilter = null,
+            alpha = 1f
         )
 
         Text(
