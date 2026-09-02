@@ -2,6 +2,8 @@ package com.vitaltrace.app.feature.clinicalhistory.presentation
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.vitaltrace.app.core.session.SessionManager
+import com.vitaltrace.app.core.session.SessionState
 import com.vitaltrace.app.feature.patient.domain.usecase.GetClinicalHistoryUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
@@ -11,9 +13,14 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
 @HiltViewModel
-class ClinicalHistoryViewModel @Inject constructor(private val getClinicalHistory: GetClinicalHistoryUseCase) : ViewModel() {
+class ClinicalHistoryViewModel @Inject constructor(
+    private val getClinicalHistory: GetClinicalHistoryUseCase,
+    private val sessionManager: SessionManager
+) : ViewModel() {
     private val _uiState = MutableStateFlow<ClinicalHistoryUiState>(ClinicalHistoryUiState.Loading)
     val uiState = _uiState.asStateFlow()
+    val patientName: String
+        get() = (sessionManager.state.value as? SessionState.Authenticated)?.user?.fullName.orEmpty()
     private var request: Job? = null
 
     init { load() }
