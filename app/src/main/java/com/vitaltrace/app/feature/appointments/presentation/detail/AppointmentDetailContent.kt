@@ -176,6 +176,13 @@ private fun AppointmentInformationCard(detail: AppointmentDetailUiModel) {
                 label = stringResource(R.string.appointment_detail_time),
                 value = detail.time
             )
+            if (detail.durationMinutes > 0) {
+                HorizontalDivider(color = Color(0xFFE5E0D7))
+                AppointmentDetailRow(
+                    label = "Duración",
+                    value = detail.durationMinutes.toString() + " min"
+                )
+            }
             HorizontalDivider(color = Color(0xFFE5E0D7))
             AppointmentDetailRow(
                 label = stringResource(R.string.appointment_detail_status),

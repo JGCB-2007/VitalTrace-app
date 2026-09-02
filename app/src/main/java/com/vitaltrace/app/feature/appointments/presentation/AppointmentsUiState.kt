@@ -33,6 +33,7 @@ data class AppointmentDetailUiModel(
     val reason: String,
     val date: String,
     val time: String,
+    val durationMinutes: Int = 0,
     val status: AppointmentStatus
 )
 
@@ -45,6 +46,7 @@ data class AppointmentUiModel(
     val date: String,
     val time: String,
     val scheduledAt: String,
+    val durationMinutes: Int = 0,
     val status: AppointmentStatus
 ) {
     fun toDetail(): AppointmentDetailUiModel = AppointmentDetailUiModel(
@@ -55,6 +57,7 @@ data class AppointmentUiModel(
         reason = reason,
         date = date,
         time = time,
+        durationMinutes = durationMinutes,
         status = status
     )
 }

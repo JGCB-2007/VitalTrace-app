@@ -45,6 +45,7 @@ class AppointmentsMapper @Inject constructor() {
             date = dateTimeParts.firstOrNull().orEmpty(),
             time = dateTimeParts.getOrNull(1).orEmpty(),
             scheduledAt = scheduledAt,
+            durationMinutes = durationMinutes,
             status = AppointmentStatus.fromApiValue(status)
         )
     }
