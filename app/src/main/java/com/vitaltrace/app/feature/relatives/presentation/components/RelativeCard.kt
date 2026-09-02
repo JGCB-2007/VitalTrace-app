@@ -1,10 +1,6 @@
 package com.vitaltrace.app.feature.relatives.presentation.components
 
-import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.animateContentSize
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
-import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -38,7 +34,7 @@ import com.vitaltrace.app.ui.theme.VitalTraceNavy
 fun RelativeCard(
     relative: RelativeUiModel,
     isActionInProgress: Boolean,
-    onAction: () -> Unit,
+    onAuthorize: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     Card(
@@ -90,27 +86,13 @@ fun RelativeCard(
                 }
             }
 
-            AnimatedContent(
-                targetState = relative.status,
-                transitionSpec = { fadeIn() togetherWith fadeOut() },
-                label = "relativeAction"
-            ) { status ->
-                when (status) {
-                    "PENDING" -> RelativeActionButton(
-                        label = stringResource(R.string.relatives_authorize),
-                        loading = isActionInProgress,
-                        containerColor = VitalTraceNavy,
-                        onClick = onAction
-                    )
-                    "ACTIVE" -> RelativeActionButton(
-                        label = stringResource(R.string.relatives_revoke),
-                        loading = isActionInProgress,
-                        containerColor = Color(0xFFB5484D),
-                        onClick = onAction
-                    )
-                    "REVOKED", "EXPIRED" -> Unit
-                    else -> Unit
-                }
+            if (relative.status == "PENDING") {
+                RelativeActionButton(
+                    label = stringResource(R.string.relatives_authorize),
+                    loading = isActionInProgress,
+                    containerColor = VitalTraceNavy,
+                    onClick = onAuthorize
+                )
             }
         }
     }

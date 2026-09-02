@@ -8,42 +8,24 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.vitaltrace.app.R
-import com.vitaltrace.app.feature.relatives.presentation.RelativeAction
 
 @Composable
 fun RelativeConfirmationDialog(
-    action: RelativeAction,
     onConfirm: () -> Unit,
     onDismiss: () -> Unit
 ) {
-    val isAuthorize = action == RelativeAction.AUTHORIZE
     AlertDialog(
         onDismissRequest = onDismiss,
         shape = RoundedCornerShape(28.dp),
         title = {
-            Text(
-                stringResource(
-                    if (isAuthorize) R.string.relatives_authorize_title
-                    else R.string.relatives_revoke_title
-                )
-            )
+            Text(stringResource(R.string.relatives_authorize_title))
         },
         text = {
-            Text(
-                stringResource(
-                    if (isAuthorize) R.string.relatives_authorize_confirmation
-                    else R.string.relatives_revoke_confirmation
-                )
-            )
+            Text(stringResource(R.string.relatives_authorize_confirmation))
         },
         confirmButton = {
             TextButton(onClick = onConfirm) {
-                Text(
-                    stringResource(
-                        if (isAuthorize) R.string.relatives_authorize
-                        else R.string.relatives_revoke
-                    )
-                )
+                Text(stringResource(R.string.relatives_authorize))
             }
         },
         dismissButton = {

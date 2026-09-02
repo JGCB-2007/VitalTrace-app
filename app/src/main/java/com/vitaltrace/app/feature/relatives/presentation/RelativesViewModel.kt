@@ -4,7 +4,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.vitaltrace.app.feature.patient.domain.usecase.AuthorizePatientRelativeUseCase
 import com.vitaltrace.app.feature.patient.domain.usecase.GetPatientRelativesUseCase
-import com.vitaltrace.app.feature.patient.domain.usecase.RevokePatientRelativeUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -17,7 +16,6 @@ import javax.inject.Inject
 class RelativesViewModel @Inject constructor(
     private val getPatientRelatives: GetPatientRelativesUseCase,
     private val authorizePatientRelative: AuthorizePatientRelativeUseCase,
-    private val revokePatientRelative: RevokePatientRelativeUseCase,
     private val mapper: RelativesMapper
 ) : ViewModel() {
     private val _uiState = MutableStateFlow(RelativesUiState())
@@ -49,10 +47,7 @@ class RelativesViewModel @Inject constructor(
             it.copy(confirmation = null, actionInProgressId = confirmation.relativeId)
         }
         actionRequest = viewModelScope.launch {
-            val result = when (confirmation.action) {
-                RelativeAction.AUTHORIZE -> authorizePatientRelative(confirmation.relativeId)
-                RelativeAction.REVOKE -> revokePatientRelative(confirmation.relativeId)
-            }
+            val result = authorizePatientRelative(confirmation.relativeId)
             result.onSuccess { updated ->
                 val mapped = mapper.map(updated)
                 _uiState.update { state ->
@@ -64,11 +59,7 @@ class RelativesViewModel @Inject constructor(
                             )
                         } ?: state.content,
                         actionInProgressId = null,
-                        message = if (confirmation.action == RelativeAction.AUTHORIZE) {
-                            "Acceso autorizado correctamente."
-                        } else {
-                            "Acceso revocado correctamente."
-                        }
+                        message = "Acceso autorizado correctamente."
                     )
                 }
             }.onFailure {
