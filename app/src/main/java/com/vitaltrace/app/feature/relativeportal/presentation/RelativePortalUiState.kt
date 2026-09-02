@@ -26,6 +26,7 @@ sealed interface RelativePortalUiState {
         val patients: List<LinkedPatient>,
         val selected: LinkedPatient,
         val portal: RelativePortalContent,
+        val relativeName: String,
         val section: RelativeSection = RelativeSection.HOME
     ) : RelativePortalUiState
     data class Error(val message: String) : RelativePortalUiState

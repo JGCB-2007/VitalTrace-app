@@ -4,6 +4,8 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.vitaltrace.app.BuildConfig
+import com.vitaltrace.app.core.session.SessionManager
+import com.vitaltrace.app.core.session.SessionState
 import com.vitaltrace.app.feature.auth.domain.usecase.LogoutUseCase
 import com.vitaltrace.app.feature.relativeportal.data.repository.RelativePortalException
 import com.vitaltrace.app.feature.relativeportal.domain.model.LinkedPatient
@@ -21,7 +23,8 @@ import javax.inject.Inject
 class RelativePortalViewModel @Inject constructor(
     private val repository: RelativeRepository,
     private val selection: RelativePatientSelection,
-    private val logoutUseCase: LogoutUseCase
+    private val logoutUseCase: LogoutUseCase,
+    private val sessionManager: SessionManager
 ) : ViewModel() {
     private val mutableState = MutableStateFlow<RelativePortalUiState>(RelativePortalUiState.Loading)
     val state = mutableState.asStateFlow()
@@ -111,7 +114,11 @@ class RelativePortalViewModel @Inject constructor(
                 .getOrElse { return@launch portalFailure(it) }
             mutableState.value = RelativePortalUiState.Content(
                 patients, patient,
-                RelativePortalContent(summary, appointments.items, measurements.items, treatments.items, history)
+                RelativePortalContent(summary, appointments.items, measurements.items, treatments.items, history),
+                relativeName = (sessionManager.state.value as? SessionState.Authenticated)
+                    ?.user
+                    ?.fullName
+                    .orEmpty()
             )
         }
     }

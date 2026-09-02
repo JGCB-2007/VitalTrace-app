@@ -29,6 +29,7 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Scaffold
@@ -64,6 +65,7 @@ import com.vitaltrace.app.feature.home.presentation.HomeSummaryMapper
 import com.vitaltrace.app.feature.home.presentation.components.FollowUpStatusCard
 import com.vitaltrace.app.feature.home.presentation.components.HomeErrorState
 import com.vitaltrace.app.feature.home.presentation.components.LoadingState
+import com.vitaltrace.app.feature.home.presentation.components.LogoutConfirmationDialog
 import com.vitaltrace.app.feature.home.presentation.components.NextAppointmentCard
 import com.vitaltrace.app.feature.home.presentation.components.RecentPressureCard
 import com.vitaltrace.app.feature.measurements.presentation.MeasurementsMapper
@@ -86,11 +88,21 @@ fun RelativePortalScreen(
     viewModel: RelativePortalViewModel = hiltViewModel()
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
+    var showLogoutConfirmation by remember { mutableStateOf(false) }
     LaunchedEffect(viewModel) {
         viewModel.effects.collect { if (it == RelativePortalEffect.NavigateToLogin) onLogout() }
     }
 
     val content = state as? RelativePortalUiState.Content
+    if (showLogoutConfirmation) {
+        LogoutConfirmationDialog(
+            onConfirm = {
+                showLogoutConfirmation = false
+                viewModel.logout()
+            },
+            onDismiss = { showLogoutConfirmation = false }
+        )
+    }
     Scaffold(
         containerColor = VitalTraceWarmBackground,
         topBar = {
@@ -104,7 +116,7 @@ fun RelativePortalScreen(
                     )
                 },
                 actions = {
-                    IconButton(onClick = viewModel::logout) {
+                    IconButton(onClick = { showLogoutConfirmation = true }) {
                         Icon(Icons.AutoMirrored.Rounded.ExitToApp, "Cerrar sesión")
                     }
                 },
@@ -173,6 +185,7 @@ private fun RelativePortalContent(
         RelativeSection.TREATMENTS -> RelativeTreatments(state.portal, modifier)
         RelativeSection.HISTORY -> ClinicalHistoryContent(
             history = state.portal.clinicalHistory,
+            patientName = state.selected.fullName,
             onEducationClick = onEducationClick,
             modifier = modifier,
             showEducationActions = true
@@ -193,6 +206,17 @@ private fun RelativeHome(
     val treatments = remember(state.portal.treatments) {
         TreatmentsMapper().map(state.portal.treatments).treatments
     }
+    val nextAppointmentDetail = remember(state.portal.summary.nextAppointment) {
+        state.portal.summary.nextAppointment?.let { appointment ->
+            AppointmentsMapper().map(listOf(appointment)).nextAppointment?.toDetail()
+        }
+    }
+    var selectedAppointment by remember(state.portal.summary.nextAppointment) {
+        mutableStateOf<com.vitaltrace.app.feature.appointments.presentation.AppointmentDetailUiModel?>(null)
+    }
+    selectedAppointment?.let { detail ->
+        AppointmentDetailSheet(detail = detail, onDismiss = { selectedAppointment = null })
+    }
     LazyColumn(
         modifier = modifier.fillMaxSize(),
         contentPadding = PaddingValues(start = 24.dp, top = 22.dp, end = 24.dp, bottom = 28.dp),
@@ -200,6 +224,8 @@ private fun RelativeHome(
     ) {
         item {
             ObservedPatientHeader(
+                greeting = home.greeting,
+                relativeName = state.relativeName,
                 patient = state.selected,
                 canChange = state.patients.size > 1,
                 onChange = onChangePatient
@@ -215,8 +241,8 @@ private fun RelativeHome(
         item {
             NextAppointmentCard(
                 appointment = home.nextAppointment,
-                onDetailClick = {},
-                showDetailAction = false
+                onDetailClick = { selectedAppointment = nextAppointmentDetail },
+                showDetailAction = nextAppointmentDetail != null
             )
         }
         item {
@@ -339,42 +365,56 @@ private fun RelativeTreatments(content: RelativePortalContent, modifier: Modifie
 
 @Composable
 private fun ObservedPatientHeader(
+    greeting: String,
+    relativeName: String,
     patient: LinkedPatient,
     canChange: Boolean,
     onChange: () -> Unit
 ) {
-    Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
-        Surface(modifier = Modifier.size(58.dp), shape = CircleShape, color = VitalTraceNavy) {
-            Box(contentAlignment = Alignment.Center) {
-                Text(
-                    initials(patient.fullName),
-                    color = Color.White,
-                    fontFamily = FontFamily.Serif,
-                    fontSize = 20.sp,
-                    fontWeight = FontWeight.Bold
-                )
+    val displayedRelativeName = relativeName.ifBlank { "Familiar" }
+    Card(
+        colors = CardDefaults.cardColors(containerColor = Color.White),
+        shape = RoundedCornerShape(24.dp),
+        elevation = CardDefaults.cardElevation(3.dp)
+    ) {
+        Column(Modifier.fillMaxWidth().padding(20.dp), verticalArrangement = Arrangement.spacedBy(14.dp)) {
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Column(Modifier.weight(1f)) {
+                    Text(greeting, color = Color(0xFF53636D), fontWeight = FontWeight.SemiBold)
+                    Text(
+                        displayedRelativeName,
+                        color = VitalTraceNavy,
+                        fontFamily = FontFamily.Serif,
+                        fontSize = 25.sp,
+                        fontWeight = FontWeight.Bold
+                    )
+                }
+                Surface(modifier = Modifier.size(50.dp), shape = CircleShape, color = VitalTraceTeal) {
+                    Box(contentAlignment = Alignment.Center) {
+                        Text(initials(displayedRelativeName), color = Color.White, fontWeight = FontWeight.Bold)
+                    }
+                }
             }
-        }
-        Column(Modifier.weight(1f).padding(start = 15.dp)) {
-            Text("Estás viendo a", color = VitalTraceTeal, fontWeight = FontWeight.Bold)
-            Text(
-                patient.fullName,
-                color = VitalTraceNavy,
-                fontFamily = FontFamily.Serif,
-                fontSize = 25.sp,
-                lineHeight = 29.sp,
-                fontWeight = FontWeight.Bold,
-                maxLines = 2,
-                overflow = TextOverflow.Ellipsis
-            )
-            Text(
-                "${relationshipLabel(patient.relationship)} · Familiar autorizado",
-                color = Color(0xFF53636D),
-                fontSize = 14.sp
-            )
-        }
-        if (canChange) {
-            TextButton(onClick = onChange) { Text("Cambiar", color = VitalTraceTeal, fontWeight = FontWeight.Bold) }
+            HorizontalDivider(color = Color(0xFFE5E0D7))
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Column(Modifier.weight(1f)) {
+                    Text("Estás viendo a", color = VitalTraceTeal, fontWeight = FontWeight.Bold)
+                    Text(
+                        patient.fullName,
+                        color = VitalTraceNavy,
+                        fontFamily = FontFamily.Serif,
+                        fontSize = 22.sp,
+                        fontWeight = FontWeight.Bold,
+                        maxLines = 2,
+                        overflow = TextOverflow.Ellipsis
+                    )
+                }
+                if (canChange) {
+                    TextButton(onClick = onChange) {
+                        Text("Cambiar", color = VitalTraceTeal, fontWeight = FontWeight.Bold)
+                    }
+                }
+            }
         }
     }
 }
