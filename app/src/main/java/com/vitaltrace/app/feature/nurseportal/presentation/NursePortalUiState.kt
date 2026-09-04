@@ -1,0 +1,8 @@
+package com.vitaltrace.app.feature.nurseportal.presentation
+
+import com.vitaltrace.app.feature.nurseportal.domain.model.*
+
+enum class NurseSection(val label: String) { HOME("Inicio"), PATIENTS("Pacientes"), ALERTS("Alertas"), APPOINTMENTS("Citas"), PROFILE("Perfil") }
+enum class NursePatientSection(val label: String) { SUMMARY("Resumen"), MEASUREMENTS("Mediciones"), TREATMENTS("Tratamientos"), HISTORY("Historial"), ALERTS("Alertas"), DIAGNOSES("Diagnósticos") }
+data class NursePortalUiState(val loading: Boolean = true, val section: NurseSection = NurseSection.HOME, val patientSection: NursePatientSection = NursePatientSection.SUMMARY, val summary: NurseSummary? = null, val patients: List<NursePatient> = emptyList(), val selectedPatient: NursePatient? = null, val profile: NurseProfile? = null, val patientSummary: NursePatientSummary? = null, val measurements: List<NurseMeasurement> = emptyList(), val measurementTypes: List<NurseMeasurementType> = emptyList(), val appointments: List<NurseAppointment> = emptyList(), val selectedAppointment: NurseAppointment? = null, val diagnoses: List<NurseDiagnosis> = emptyList(), val treatments: List<NurseTreatment> = emptyList(), val history: NurseHistory? = null, val alerts: List<NurseAlert> = emptyList(), val selectedAlert: NurseAlert? = null, val error: String? = null, val search: String = "", val mutationMessage: String? = null)
+sealed interface NursePortalEffect { data object NavigateToLogin : NursePortalEffect }
