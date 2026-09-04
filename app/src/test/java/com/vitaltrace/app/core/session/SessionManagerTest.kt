@@ -171,5 +171,27 @@ class SessionManagerTest {
         }
 
         override suspend fun logout(): Result<Unit> = logoutResult
+
+        override suspend fun forgotPassword(email: String): Result<Unit> = unsupported()
+
+        override suspend fun resetPassword(
+            email: String,
+            token: String,
+            password: String,
+            passwordConfirmation: String
+        ): Result<Unit> = unsupported()
+
+        override suspend fun verifyActivationCode(email: String, code: String): Result<String> =
+            unsupported()
+
+        override suspend fun resendActivationCode(email: String): Result<Unit> = unsupported()
+
+        override suspend fun setInitialPassword(
+            activationToken: String,
+            password: String,
+            passwordConfirmation: String
+        ): Result<Unit> = unsupported()
+
+        private fun <T> unsupported(): Result<T> = Result.failure(UnsupportedOperationException())
     }
 }
