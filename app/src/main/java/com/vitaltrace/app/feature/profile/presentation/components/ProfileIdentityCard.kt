@@ -35,9 +35,10 @@ import com.vitaltrace.app.ui.theme.VitalTraceTeal
 @Composable
 fun ProfileIdentityCard(
     user: ProfileUserUiModel,
+    roleLabel: String? = null,
     modifier: Modifier = Modifier
 ) {
-    val role = stringResource(R.string.profile_role_patient)
+    val role = roleLabel ?: stringResource(R.string.profile_role_patient)
     val description = stringResource(
         R.string.profile_identity_description,
         user.fullName,

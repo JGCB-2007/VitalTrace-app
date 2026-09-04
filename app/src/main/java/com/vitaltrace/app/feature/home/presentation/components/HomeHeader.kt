@@ -1,4 +1,4 @@
-﻿package com.vitaltrace.app.feature.home.presentation.components
+package com.vitaltrace.app.feature.home.presentation.components
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -46,6 +46,8 @@ fun HomeHeader(
     onLogoutClick: () -> Unit,
     unreadNotificationsCount: Int,
     onNotificationsClick: () -> Unit,
+    subtitle: String? = null,
+    showNotifications: Boolean = true,
     modifier: Modifier = Modifier
 ) {
     var isMenuExpanded by remember { mutableStateOf(false) }
@@ -71,23 +73,33 @@ fun HomeHeader(
                 style = MaterialTheme.typography.headlineLarge,
                 modifier = Modifier.padding(top = 2.dp)
             )
+            subtitle?.takeIf(String::isNotBlank)?.let {
+                Text(
+                    text = it,
+                    color = HomeSupportingText,
+                    style = MaterialTheme.typography.bodyLarge,
+                    modifier = Modifier.padding(top = 4.dp)
+                )
+            }
         }
 
-        BadgedBox(
-            badge = {
-                if (unreadNotificationsCount > 0) {
-                    Badge {
-                        Text(if (unreadNotificationsCount > 99) "99+" else unreadNotificationsCount.toString())
+        if (showNotifications) {
+            BadgedBox(
+                badge = {
+                    if (unreadNotificationsCount > 0) {
+                        Badge {
+                            Text(if (unreadNotificationsCount > 99) "99+" else unreadNotificationsCount.toString())
+                        }
                     }
                 }
-            }
-        ) {
-            IconButton(onClick = onNotificationsClick) {
-                Icon(
-                    imageVector = Icons.Outlined.Notifications,
-                    contentDescription = "Notificaciones",
-                    tint = HomeNavy
-                )
+            ) {
+                IconButton(onClick = onNotificationsClick) {
+                    Icon(
+                        imageVector = Icons.Outlined.Notifications,
+                        contentDescription = "Notificaciones",
+                        tint = HomeNavy
+                    )
+                }
             }
         }
 

@@ -162,6 +162,10 @@ private fun AppointmentInformationCard(detail: AppointmentDetailUiModel) {
         elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
     ) {
         Column(modifier = Modifier.padding(horizontal = 22.dp, vertical = 8.dp)) {
+            detail.contextName?.takeIf(String::isNotBlank)?.let {
+                AppointmentDetailRow(label = "Paciente", value = it)
+                HorizontalDivider(color = Color(0xFFE5E0D7))
+            }
             AppointmentDetailRow(
                 label = stringResource(R.string.appointment_detail_reason),
                 value = detail.reason

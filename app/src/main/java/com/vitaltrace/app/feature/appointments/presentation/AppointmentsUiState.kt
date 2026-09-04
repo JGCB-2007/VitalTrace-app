@@ -34,7 +34,8 @@ data class AppointmentDetailUiModel(
     val date: String,
     val time: String,
     val durationMinutes: Int = 0,
-    val status: AppointmentStatus
+    val status: AppointmentStatus,
+    val contextName: String? = null
 )
 
 data class AppointmentUiModel(
