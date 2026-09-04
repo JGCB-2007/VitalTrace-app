@@ -2,9 +2,11 @@ package com.vitaltrace.app.feature.auth.presentation
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.vitaltrace.app.core.session.PortalTarget
 import com.vitaltrace.app.core.session.SessionManager
 import com.vitaltrace.app.core.session.SessionState
-import com.vitaltrace.app.core.session.UserRole
+import com.vitaltrace.app.core.session.availablePortals
+import com.vitaltrace.app.core.session.resolvePostAuthDestination
 import com.vitaltrace.app.feature.auth.domain.usecase.LoginUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
@@ -82,11 +84,17 @@ class LoginViewModel @Inject constructor(
                 val roles = (sessionManager?.state?.value as? SessionState.Authenticated)
                     ?.user?.roles.orEmpty()
                 _uiEffect.send(
-                    if (UserRole.PATIENT !in roles && UserRole.RELATIVE in roles) {
-                        LoginUiEffect.NavigateToRelativePortal
-                    } else {
-                        LoginUiEffect.NavigateToHome
-                    }
+                    roles.availablePortals().resolvePostAuthDestination(
+                        onNone = { LoginUiEffect.NavigateToHome },
+                        onSingle = { portal ->
+                            when (portal) {
+                                PortalTarget.PATIENT -> LoginUiEffect.NavigateToHome
+                                PortalTarget.RELATIVE -> LoginUiEffect.NavigateToRelativePortal
+                                PortalTarget.NURSE -> LoginUiEffect.NavigateToNursePortal
+                            }
+                        },
+                        onMultiple = { LoginUiEffect.NavigateToPortalSelector }
+                    )
                 )
             }.onFailure { exception ->
                 _uiState.update {

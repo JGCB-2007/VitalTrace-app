@@ -26,10 +26,13 @@ import com.vitaltrace.app.feature.home.presentation.HomeViewModel
 import com.vitaltrace.app.feature.measurements.presentation.MeasurementsScreen
 import com.vitaltrace.app.feature.measurements.presentation.MeasurementsViewModel
 import com.vitaltrace.app.feature.measurements.presentation.form.MeasurementFormScreen
+import com.vitaltrace.app.core.session.PortalTarget
 import com.vitaltrace.app.feature.notifications.presentation.NotificationsScreen
+import com.vitaltrace.app.feature.portalselector.presentation.PortalSelectorScreen
 import com.vitaltrace.app.feature.profile.presentation.ProfileScreen
 import com.vitaltrace.app.feature.relatives.presentation.RelativesScreen
 import com.vitaltrace.app.feature.relativeportal.presentation.RelativePortalScreen
+import com.vitaltrace.app.feature.nurseportal.presentation.NursePortalScreen
 import com.vitaltrace.app.feature.splash.presentation.SplashScreen
 import com.vitaltrace.app.feature.treatments.presentation.TreatmentDetailScreen
 import com.vitaltrace.app.feature.treatments.presentation.TreatmentsScreen
@@ -86,6 +89,16 @@ fun AppNavHost(
                     navController.navigate(AppRoute.RelativePortal.route) {
                         popUpTo(AppRoute.Splash.route) { inclusive = true }
                     }
+                },
+                onNavigateToNursePortal = {
+                    navController.navigate(AppRoute.NursePortal.route) {
+                        popUpTo(AppRoute.Splash.route) { inclusive = true }
+                    }
+                },
+                onNavigateToPortalSelector = {
+                    navController.navigate(AppRoute.PortalSelector.route) {
+                        popUpTo(AppRoute.Splash.route) { inclusive = true }
+                    }
                 }
             )
         }
@@ -102,6 +115,16 @@ fun AppNavHost(
                         popUpTo(AppRoute.Login.route) { inclusive = true }
                     }
                 },
+                onNurseLoginSuccess = {
+                    navController.navigate(AppRoute.NursePortal.route) {
+                        popUpTo(AppRoute.Login.route) { inclusive = true }
+                    }
+                },
+                onPortalSelectorRequired = {
+                    navController.navigate(AppRoute.PortalSelector.route) {
+                        popUpTo(AppRoute.Login.route) { inclusive = true }
+                    }
+                },
                 onForgotPasswordClick = {
                     navController.navigate(AppRoute.ForgotPassword.route) {
                         launchSingleTop = true
@@ -111,6 +134,39 @@ fun AppNavHost(
                     navController.navigate(AppRoute.FirstAccessEmail.route) {
                         launchSingleTop = true
                     }
+                }
+            )
+        }
+
+        composable(AppRoute.PortalSelector.route) {
+            PortalSelectorScreen(
+                onSelectPortal = { portal ->
+                    val destination = when (portal) {
+                        PortalTarget.PATIENT -> AppRoute.Home.route
+                        PortalTarget.RELATIVE -> AppRoute.RelativePortal.route
+                        PortalTarget.NURSE -> AppRoute.NursePortal.route
+                    }
+                    navController.navigate(destination) {
+                        popUpTo(AppRoute.PortalSelector.route) { inclusive = true }
+                    }
+                },
+                onLoggedOut = {
+                    navController.navigate(AppRoute.Login.route) {
+                        popUpTo(AppRoute.PortalSelector.route) { inclusive = true }
+                    }
+                }
+            )
+        }
+
+        composable(AppRoute.NursePortal.route) {
+            NursePortalScreen(
+                onLogout = {
+                    navController.navigate(AppRoute.Login.route) {
+                        popUpTo(AppRoute.NursePortal.route) { inclusive = true }
+                    }
+                },
+                onEducationClick = { cieCode, diagnosisName ->
+                    navController.navigate(AppRoute.DiagnosisEducation.create(cieCode, diagnosisName))
                 }
             )
         }

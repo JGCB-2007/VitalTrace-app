@@ -26,6 +26,8 @@ fun SplashScreen(
     onNavigateToLogin: () -> Unit,
     onNavigateToHome: () -> Unit,
     onNavigateToRelativePortal: () -> Unit = onNavigateToHome,
+    onNavigateToNursePortal: () -> Unit = onNavigateToHome,
+    onNavigateToPortalSelector: () -> Unit = onNavigateToHome,
     viewModel: SplashViewModel = hiltViewModel()
 ) {
     LaunchedEffect(viewModel) {
@@ -34,6 +36,8 @@ fun SplashScreen(
                 SplashUiEffect.NavigateToLogin -> onNavigateToLogin()
                 SplashUiEffect.NavigateToHome -> onNavigateToHome()
                 SplashUiEffect.NavigateToRelativePortal -> onNavigateToRelativePortal()
+                SplashUiEffect.NavigateToNursePortal -> onNavigateToNursePortal()
+                SplashUiEffect.NavigateToPortalSelector -> onNavigateToPortalSelector()
             }
         }
     }
