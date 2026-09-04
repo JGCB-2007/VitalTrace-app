@@ -29,13 +29,11 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
@@ -51,11 +49,11 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.vitaltrace.app.core.presentation.components.ObservedPatientHeader
 import com.vitaltrace.app.feature.appointments.presentation.AppointmentsMapper
 import com.vitaltrace.app.feature.appointments.presentation.components.AppointmentSection
 import com.vitaltrace.app.feature.appointments.presentation.components.FeaturedAppointmentCard
@@ -225,8 +223,8 @@ private fun RelativeHome(
         item {
             ObservedPatientHeader(
                 greeting = home.greeting,
-                relativeName = state.relativeName,
-                patient = state.selected,
+                authenticatedName = state.relativeName,
+                patientName = state.selected.fullName,
                 canChange = state.patients.size > 1,
                 onChange = onChangePatient
             )
@@ -363,62 +361,6 @@ private fun RelativeTreatments(content: RelativePortalContent, modifier: Modifie
     }
 }
 
-@Composable
-private fun ObservedPatientHeader(
-    greeting: String,
-    relativeName: String,
-    patient: LinkedPatient,
-    canChange: Boolean,
-    onChange: () -> Unit
-) {
-    val displayedRelativeName = relativeName.ifBlank { "Familiar" }
-    Card(
-        colors = CardDefaults.cardColors(containerColor = Color.White),
-        shape = RoundedCornerShape(24.dp),
-        elevation = CardDefaults.cardElevation(3.dp)
-    ) {
-        Column(Modifier.fillMaxWidth().padding(20.dp), verticalArrangement = Arrangement.spacedBy(14.dp)) {
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                Column(Modifier.weight(1f)) {
-                    Text(greeting, color = Color(0xFF53636D), fontWeight = FontWeight.SemiBold)
-                    Text(
-                        displayedRelativeName,
-                        color = VitalTraceNavy,
-                        fontFamily = FontFamily.Serif,
-                        fontSize = 25.sp,
-                        fontWeight = FontWeight.Bold
-                    )
-                }
-                Surface(modifier = Modifier.size(50.dp), shape = CircleShape, color = VitalTraceTeal) {
-                    Box(contentAlignment = Alignment.Center) {
-                        Text(initials(displayedRelativeName), color = Color.White, fontWeight = FontWeight.Bold)
-                    }
-                }
-            }
-            HorizontalDivider(color = Color(0xFFE5E0D7))
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                Column(Modifier.weight(1f)) {
-                    Text("Estás viendo a", color = VitalTraceTeal, fontWeight = FontWeight.Bold)
-                    Text(
-                        patient.fullName,
-                        color = VitalTraceNavy,
-                        fontFamily = FontFamily.Serif,
-                        fontSize = 22.sp,
-                        fontWeight = FontWeight.Bold,
-                        maxLines = 2,
-                        overflow = TextOverflow.Ellipsis
-                    )
-                }
-                if (canChange) {
-                    TextButton(onClick = onChange) {
-                        Text("Cambiar", color = VitalTraceTeal, fontWeight = FontWeight.Bold)
-                    }
-                }
-            }
-        }
-    }
-}
-
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun PatientSelectorSheet(
@@ -530,8 +472,6 @@ private val RelativeSection.title: String
         RelativeSection.HISTORY -> "Historial clínico"
     }
 
-private fun initials(name: String): String = name.trim().split(Regex("\\s+"))
-    .filter(String::isNotBlank).take(2).mapNotNull { it.firstOrNull()?.uppercase() }.joinToString("")
 
 private fun relationshipLabel(value: String): String = when (value.trim().uppercase()) {
     "DAUGHTER" -> "Hija"
