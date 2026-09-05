@@ -1,5 +1,6 @@
 package com.vitaltrace.app.feature.nurseportal.data.repository
 
+import com.vitaltrace.app.core.presentation.localization.HttpMessagesEs
 import com.vitaltrace.app.feature.nurseportal.data.dto.*
 import com.vitaltrace.app.feature.nurseportal.data.mapper.*
 import com.vitaltrace.app.feature.nurseportal.data.remote.NursePortalApiService
@@ -31,6 +32,7 @@ class NurseRepositoryImpl @Inject constructor(private val api: NursePortalApiSer
     override suspend fun classifyAlert(id: Long, comment: String?) = execute { api.classifyAlert(id, NurseAlertActionDto(comment)).data?.toDomain() ?: error("No se pudo clasificar la alerta.") }
     override suspend fun escalateAlert(id: Long, comment: String?) = execute { api.escalateAlert(id, NurseAlertActionDto(comment)).data?.toDomain() ?: error("No se pudo escalar la alerta.") }
 
-    private suspend fun <T> execute(block: suspend () -> T): Result<T> = try { Result.success(block()) } catch (e: HttpException) { Result.failure(NursePortalException(e.code(), messageFor(e.code()), e)) } catch (e: IOException) { Result.failure(NursePortalException(null, "No se pudo conectar con el servidor.", e)) } catch (e: Exception) { Result.failure(NursePortalException(null, e.message ?: "Ocurrió un error inesperado.", e)) }
-    private fun messageFor(code: Int) = when (code) { 401 -> "Tu sesión ha expirado."; 403 -> "No tienes autorización para consultar este recurso."; 404 -> "El recurso solicitado no está disponible."; 422 -> "Revisa los datos ingresados."; else -> "No pudimos cargar la información solicitada." }
+    private suspend fun <T> execute(block: suspend () -> T): Result<T> = try { Result.success(block()) } catch (e: HttpException) { Result.failure(NursePortalException(e.code(), messageFor(e.code()), e)) } catch (e: IOException) { Result.failure(NursePortalException(null, HttpMessagesEs.NETWORK, e)) } catch (e: IllegalStateException) { Result.failure(NursePortalException(null, e.message ?: HttpMessagesEs.UNEXPECTED, e)) } catch (e: Exception) { Result.failure(NursePortalException(null, HttpMessagesEs.UNEXPECTED, e)) }
+    // Feature-specific wording for 403/422; the rest uses the shared mapping.
+    private fun messageFor(code: Int) = when (code) { 403 -> "No tienes autorización para consultar este recurso."; 422 -> "Revisa los datos ingresados."; else -> HttpMessagesEs.forStatus(code) }
 }

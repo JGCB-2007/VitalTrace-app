@@ -1,6 +1,7 @@
 package com.vitaltrace.app.feature.patient.data.repository
 
 import com.vitaltrace.app.core.cache.PatientMemoryCache
+import com.vitaltrace.app.core.presentation.localization.HttpMessagesEs
 import com.vitaltrace.app.feature.patient.data.dto.measurements.CreateMeasurementRequestDto
 import com.vitaltrace.app.feature.patient.data.mapper.toDomain
 import com.vitaltrace.app.feature.patient.data.remote.PatientPortalApiService
@@ -26,19 +27,19 @@ class PatientRepositoryImpl @Inject constructor(
 ) : PatientRepository {
     override suspend fun getSummary(): Result<PatientSummary> = execute {
         apiService.getSummary().data?.toDomain()
-            ?: throw PatientException("Patient summary data was not received.")
+            ?: throw PatientException("No recibimos el resumen del paciente. Intenta de nuevo.")
     }
 
     override suspend fun getProfile(): Result<PatientProfile> = execute {
         cache.get<PatientProfile>("profile")?.let { return@execute it }
         apiService.getProfile().data?.toDomain()?.also { cache.put("profile", it) }
-            ?: throw PatientException("Patient profile data was not received.")
+            ?: throw PatientException("No recibimos el perfil del paciente. Intenta de nuevo.")
     }
 
     override suspend fun getClinicalHistory(): Result<ClinicalHistory> = execute {
         cache.get<ClinicalHistory>("clinical-history")?.let { return@execute it }
         apiService.getClinicalHistory().data?.toDomain()?.also { cache.put("clinical-history", it) }
-            ?: throw PatientException("Patient clinical history data was not received.")
+            ?: throw PatientException("No recibimos el historial clínico del paciente. Intenta de nuevo.")
     }
 
     override suspend fun getAppointments(
@@ -67,7 +68,7 @@ class PatientRepositoryImpl @Inject constructor(
                 cache.invalidate("summary")
                 cache.invalidate("clinical-history")
             }
-            ?: throw PatientException("The registered measurement was not received.")
+            ?: throw PatientException("No recibimos la medición registrada. Intenta de nuevo.")
     }
 
     override suspend fun getTreatments(
@@ -85,12 +86,12 @@ class PatientRepositoryImpl @Inject constructor(
 
     override suspend fun authorizeRelative(id: Long): Result<PatientRelative> = execute {
         apiService.authorizeRelative(id).data?.toDomain()
-            ?: throw PatientException("The authorized relative was not received.")
+            ?: throw PatientException("No recibimos los datos del familiar autorizado. Intenta de nuevo.")
     }
 
     override suspend fun revokeRelative(id: Long): Result<PatientRelative> = execute {
         apiService.revokeRelative(id).data?.toDomain()
-            ?: throw PatientException("The revoked relative was not received.")
+            ?: throw PatientException("No recibimos los datos del familiar revocado. Intenta de nuevo.")
     }
 
     override suspend fun getNotifications(
@@ -104,19 +105,19 @@ class PatientRepositoryImpl @Inject constructor(
 
     override suspend fun getUnreadNotificationsCount(): Result<Int> = execute {
         apiService.getUnreadNotificationsCount().data?.unreadCount
-            ?: throw PatientException("The unread notification count was not received.")
+            ?: throw PatientException("No recibimos el número de notificaciones sin leer. Intenta de nuevo.")
     }
 
     override suspend fun markNotificationAsRead(id: Long): Result<PatientNotification> = execute {
         apiService.markNotificationAsRead(id).data?.toDomain()
             ?.also { cache.invalidate("notifications") }
-            ?: throw PatientException("The updated notification was not received.")
+            ?: throw PatientException("No recibimos la notificación actualizada. Intenta de nuevo.")
     }
 
     override suspend fun markAllNotificationsAsRead(): Result<MarkAllNotificationsReadResult> = execute {
         apiService.markAllNotificationsAsRead().data?.let {
             MarkAllNotificationsReadResult(it.updatedCount, it.unreadCount)
-        } ?: throw PatientException("The notification update result was not received.")
+        } ?: throw PatientException("No recibimos el resultado de la actualización de notificaciones. Intenta de nuevo.")
     }
 
     private suspend fun <T> execute(block: suspend () -> T): Result<T> = try {
@@ -126,23 +127,11 @@ class PatientRepositoryImpl @Inject constructor(
     } catch (exception: HttpException) {
         Result.failure(PatientException(getHttpErrorMessage(exception.code()), exception))
     } catch (exception: IOException) {
-        Result.failure(PatientException(exception.message ?: "Could not connect to the server.", exception))
+        Result.failure(PatientException(HttpMessagesEs.NETWORK, exception))
     } catch (exception: Exception) {
-        Result.failure(PatientException(exception.message ?: "An unexpected patient portal error occurred.", exception))
+        Result.failure(PatientException(HttpMessagesEs.UNEXPECTED, exception))
     }
 
-    private fun getHttpErrorMessage(code: Int): String = when (code) {
-        400 -> "The request could not be processed."
-        401 -> "Your session has expired."
-        403 -> "You do not have permission to perform this action."
-        404 -> "The requested patient resource was not found."
-        408 -> "The server took too long to respond."
-        409 -> "The request conflicts with the current server state."
-        422 -> "The information provided is invalid."
-        429 -> "Too many requests. Please try again later."
-        500 -> "The server encountered an internal error."
-        502, 503 -> "The server is temporarily unavailable."
-        else -> "The patient portal request failed."
-    }
+    private fun getHttpErrorMessage(code: Int): String = HttpMessagesEs.forStatus(code)
 }
 

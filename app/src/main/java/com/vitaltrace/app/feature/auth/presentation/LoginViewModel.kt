@@ -2,6 +2,7 @@ package com.vitaltrace.app.feature.auth.presentation
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.vitaltrace.app.core.presentation.localization.AuthMessagesEs
 import com.vitaltrace.app.core.session.PortalTarget
 import com.vitaltrace.app.core.session.SessionManager
 import com.vitaltrace.app.core.session.SessionState
@@ -110,8 +111,8 @@ class LoginViewModel @Inject constructor(
                 _uiState.update {
                     it.copy(
                         isLoading = false,
-                        errorMessage = exception.message
-                            ?: "An unexpected error occurred."
+                        errorMessage = (exception as? AuthException)?.message?.takeIf(String::isNotBlank)
+                            ?: AuthMessagesEs.UNEXPECTED
                     )
                 }
             }

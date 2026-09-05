@@ -19,6 +19,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.vitaltrace.app.core.presentation.components.ObservedPatientHeader
+import com.vitaltrace.app.core.presentation.localization.EnumDisplayEs
 import com.vitaltrace.app.feature.appointments.presentation.detail.AppointmentDetailSheet
 import com.vitaltrace.app.feature.home.presentation.FollowUpStatusUiModel
 import com.vitaltrace.app.feature.home.presentation.components.FollowUpStatusCard
@@ -162,7 +163,7 @@ private fun NurseDiagnosisCard(item: NurseDiagnosis, onEducationClick: (String, 
     Card(Modifier.fillMaxWidth(), shape = RoundedCornerShape(26.dp), colors = CardDefaults.cardColors(Color.White), elevation = CardDefaults.cardElevation(5.dp)) {
         Column(Modifier.padding(22.dp), verticalArrangement = Arrangement.spacedBy(10.dp)) {
             Text(item.description, color = VitalTraceNavy, fontFamily = FontFamily.Serif, fontSize = 20.sp, fontWeight = FontWeight.Bold)
-            Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) { item.cieCode?.let { NurseStatusChip(it, Color(0xFFDDF4F2), VitalTraceTeal) }; NurseStatusChip(item.status, Color(0xFFDDF1E7), Color(0xFF23805F)) }
+            Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) { item.cieCode?.let { NurseStatusChip(it, Color(0xFFDDF4F2), VitalTraceTeal) }; NurseStatusChip(EnumDisplayEs.clinicalStatus(item.status), Color(0xFFDDF1E7), Color(0xFF23805F)) }
             item.cieCode?.let { code -> TextButton({ onEducationClick(code, item.description) }) { Text("Ver información educativa", color = VitalTraceTeal, fontWeight = FontWeight.Bold) } }
         }
     }

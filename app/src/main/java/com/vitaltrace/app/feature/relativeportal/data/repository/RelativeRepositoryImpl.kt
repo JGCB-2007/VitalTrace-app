@@ -1,5 +1,6 @@
 package com.vitaltrace.app.feature.relativeportal.data.repository
 
+import com.vitaltrace.app.core.presentation.localization.HttpMessagesEs
 import com.vitaltrace.app.feature.patient.data.mapper.toDomain
 import com.vitaltrace.app.feature.patient.domain.model.*
 import com.vitaltrace.app.feature.relativeportal.data.remote.RelativePortalApiService
@@ -48,15 +49,17 @@ class RelativeRepositoryImpl @Inject constructor(
         if (exception.code() == 403) selection.clear()
         Result.failure(RelativePortalException(exception.code(), messageFor(exception.code()), exception))
     } catch (exception: IOException) {
-        Result.failure(RelativePortalException(null, "No se pudo conectar con el servidor.", exception))
+        Result.failure(RelativePortalException(null, HttpMessagesEs.NETWORK, exception))
+    } catch (exception: IllegalStateException) {
+        // Our own error("…") guards are already written in Spanish.
+        Result.failure(RelativePortalException(null, exception.message ?: HttpMessagesEs.UNEXPECTED, exception))
     } catch (exception: Exception) {
-        Result.failure(RelativePortalException(null, exception.message ?: "Ocurrió un error inesperado.", exception))
+        Result.failure(RelativePortalException(null, HttpMessagesEs.UNEXPECTED, exception))
     }
 
+    // Feature-specific wording for 403; everything else uses the shared mapping.
     private fun messageFor(code: Int): String = when (code) {
-        401 -> "Tu sesión ha expirado."
         403 -> "No tienes autorización para ver la información de este paciente."
-        404 -> "El recurso solicitado no está disponible."
-        else -> "No pudimos cargar la información del paciente."
+        else -> HttpMessagesEs.forStatus(code)
     }
 }

@@ -15,9 +15,9 @@ import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
 import com.vitaltrace.app.MainActivity
 import com.vitaltrace.app.R
+import com.vitaltrace.app.core.presentation.localization.SpanishDateTime
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
-import java.time.format.FormatStyle
 
 class AppointmentReminderWorker(
     appContext: Context,
@@ -87,7 +87,7 @@ class AppointmentReminderWorker(
         3 -> applicationContext.getString(R.string.appointment_reminder_3_days)
         1 -> applicationContext.getString(
             R.string.appointment_reminder_1_day,
-            scheduledAt.format(DateTimeFormatter.ofLocalizedTime(FormatStyle.SHORT))
+            SpanishDateTime.formatTime(scheduledAt)
         )
         else -> ""
     }

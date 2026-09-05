@@ -2,6 +2,8 @@ package com.vitaltrace.app.feature.auth.presentation.recovery
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.vitaltrace.app.core.presentation.localization.AuthMessagesEs
+import com.vitaltrace.app.feature.auth.domain.exception.AuthException
 import com.vitaltrace.app.feature.auth.domain.usecase.ResetPasswordUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
@@ -44,14 +46,10 @@ class ResetPasswordViewModel @Inject constructor(
                 _uiState.update { it.copy(isLoading = false, isSuccess = true) }
                 _effects.send(ResetPasswordEffect.NavigateToLogin)
             }.onFailure { exception ->
-                val message = when (exception.message) {
-                    "Enter a valid email address." -> "Ingresa un correo electrónico válido."
-                    "Token is required." -> "Ingresa el token recibido por correo."
-                    "Passwords do not match." -> "Las contraseñas no coinciden."
-                    "Password must contain at least 8 characters, letters, numbers and a symbol." ->
-                        "Usa al menos 8 caracteres, letras, números y un símbolo."
-                    else -> "No pudimos restablecer la contraseña. Verifica el token e inténtalo de nuevo."
-                }
+                // Upstream (use case + repository) already emits localized Spanish
+                // text; anything else falls back to a neutral reset message.
+                val message = (exception as? AuthException)?.message?.takeIf(String::isNotBlank)
+                    ?: AuthMessagesEs.RESET_FAILED
                 _uiState.update { it.copy(isLoading = false, errorMessage = message) }
             }
         }

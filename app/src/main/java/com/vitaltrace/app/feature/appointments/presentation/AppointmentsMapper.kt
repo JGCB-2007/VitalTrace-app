@@ -1,5 +1,6 @@
 package com.vitaltrace.app.feature.appointments.presentation
 
+import com.vitaltrace.app.core.presentation.localization.SpanishDateTime
 import com.vitaltrace.app.feature.patient.domain.model.Appointment
 import com.vitaltrace.app.feature.patient.domain.model.Page
 import java.time.LocalDateTime
@@ -34,7 +35,7 @@ class AppointmentsMapper @Inject constructor() {
     }
 
     private fun Appointment.toUiModel(): AppointmentUiModel {
-        val dateTimeParts = scheduledAt.trim().split(" ", limit = 2)
+        val (displayDate, displayTime) = SpanishDateTime.formatApiDateTime(scheduledAt)
         val professionalName = professional?.fullName.orEmpty()
         return AppointmentUiModel(
             id = id,
@@ -42,8 +43,8 @@ class AppointmentsMapper @Inject constructor() {
             professionalInitials = initialsFor(professionalName),
             specialty = professional?.specialty?.name.orEmpty(),
             reason = reason,
-            date = dateTimeParts.firstOrNull().orEmpty(),
-            time = dateTimeParts.getOrNull(1).orEmpty(),
+            date = displayDate,
+            time = displayTime,
             scheduledAt = scheduledAt,
             durationMinutes = durationMinutes,
             status = AppointmentStatus.fromApiValue(status)

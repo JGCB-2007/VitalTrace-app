@@ -1,13 +1,12 @@
 package com.vitaltrace.app.feature.home.presentation
 
+import com.vitaltrace.app.core.presentation.localization.EnumDisplayEs
+import com.vitaltrace.app.core.presentation.localization.SpanishDateTime
 import com.vitaltrace.app.feature.patient.domain.model.Appointment
 import com.vitaltrace.app.feature.patient.domain.model.Measurement
 import com.vitaltrace.app.feature.patient.domain.model.PatientSummary
 import java.math.RoundingMode
-import java.time.LocalDateTime
 import java.time.LocalTime
-import java.time.format.DateTimeFormatter
-import java.util.Locale
 import javax.inject.Inject
 
 class HomeSummaryMapper @Inject constructor() {
@@ -43,7 +42,7 @@ class HomeSummaryMapper @Inject constructor() {
             reason = reason,
             date = formatted.first,
             time = formatted.second,
-            status = appointmentStatusLabel(status)
+            status = EnumDisplayEs.appointmentStatus(status)
         )
     }
 
@@ -92,24 +91,8 @@ class HomeSummaryMapper @Inject constructor() {
         }
     }
 
-    private fun formatAppointmentDateTime(value: String): Pair<String, String> {
-        val parsed = runCatching {
-            LocalDateTime.parse(value.trim(), API_DATE_TIME_FORMAT)
-        }.getOrNull() ?: return value.substringBefore(" ") to value.substringAfter(" ", "")
-        val locale = Locale.getDefault()
-        val date = parsed.format(DateTimeFormatter.ofPattern("d MMM uuuu", locale)).lowercase(locale)
-        val time = parsed.format(DateTimeFormatter.ofPattern("h:mm a", locale)).lowercase(locale)
-        return date to time
-    }
-
-    private fun appointmentStatusLabel(value: String): String = when (value.trim().uppercase()) {
-        "SCHEDULED" -> "Programada"
-        "CONFIRMED" -> "Confirmada"
-        "ATTENDED" -> "Atendida"
-        "NO_SHOW" -> "No asisti\u00f3"
-        "CANCELLED" -> "Cancelada"
-        else -> value
-    }
+    private fun formatAppointmentDateTime(value: String): Pair<String, String> =
+        SpanishDateTime.formatApiDateTime(value)
 
     private fun initialsFor(fullName: String?): String {
         return fullName
@@ -128,10 +111,5 @@ class HomeSummaryMapper @Inject constructor() {
             in 12..18 -> "Buenas tardes"
             else -> "Buenas noches"
         }
-    }
-
-    private companion object {
-        val API_DATE_TIME_FORMAT: DateTimeFormatter =
-            DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
     }
 }

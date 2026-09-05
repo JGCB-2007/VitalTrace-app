@@ -1,5 +1,7 @@
 package com.vitaltrace.app.feature.nurseportal.presentation
 
+import com.vitaltrace.app.core.presentation.localization.EnumDisplayEs
+import com.vitaltrace.app.core.presentation.localization.SpanishDateTime
 import com.vitaltrace.app.feature.appointments.presentation.AppointmentDetailUiModel
 import com.vitaltrace.app.feature.appointments.presentation.AppointmentStatus
 import com.vitaltrace.app.feature.appointments.presentation.AppointmentUiModel
@@ -70,15 +72,15 @@ internal fun NurseHistory.toPatientClinicalHistory() = ClinicalHistory(
 )
 
 internal fun NurseAppointment.toAppointmentUiModel(patientName: String): AppointmentUiModel {
-    val parts = scheduledAt.trim().split(" ", limit = 2)
+    val (displayDate, displayTime) = SpanishDateTime.formatApiDateTime(scheduledAt)
     return AppointmentUiModel(
         id = id,
         professionalName = patientName,
         professionalInitials = initials(patientName),
         specialty = professional?.specialty.orEmpty(),
         reason = reason,
-        date = parts.firstOrNull().orEmpty(),
-        time = parts.getOrNull(1).orEmpty(),
+        date = displayDate,
+        time = displayTime,
         scheduledAt = scheduledAt,
         durationMinutes = durationMinutes,
         status = AppointmentStatus.fromApiValue(status)
@@ -87,15 +89,18 @@ internal fun NurseAppointment.toAppointmentUiModel(patientName: String): Appoint
 
 internal fun NurseAppointment.toAppointmentDetailUiModel(patientName: String? = null): AppointmentDetailUiModel {
     val name = professional?.fullName.orEmpty().ifBlank { "Profesional de enfermería" }
-    val parts = scheduledAt.trim().split(" ", limit = 2)
+    val (displayDate, displayTime) = SpanishDateTime.formatApiDateTime(scheduledAt)
     return AppointmentDetailUiModel(
         id = id,
         professionalName = name,
         professionalInitials = initials(name),
-        specialty = listOfNotNull(professional?.type, professional?.specialty).filter(String::isNotBlank).joinToString(" · "),
+        specialty = listOfNotNull(
+            professional?.type?.takeIf(String::isNotBlank)?.let { EnumDisplayEs.professionalType(it) },
+            professional?.specialty
+        ).filter(String::isNotBlank).joinToString(" · "),
         reason = reason,
-        date = parts.firstOrNull().orEmpty(),
-        time = parts.getOrNull(1).orEmpty(),
+        date = displayDate,
+        time = displayTime,
         durationMinutes = durationMinutes,
         status = AppointmentStatus.fromApiValue(status),
         contextName = patientName

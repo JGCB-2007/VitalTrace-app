@@ -9,10 +9,10 @@ import android.graphics.RectF
 import android.graphics.Typeface
 import android.graphics.pdf.PdfDocument
 import android.net.Uri
+import com.vitaltrace.app.core.presentation.localization.EnumDisplayEs
+import com.vitaltrace.app.core.presentation.localization.SpanishDateTime
 import com.vitaltrace.app.feature.patient.domain.model.ClinicalHistory
 import java.time.LocalDateTime
-import java.time.format.DateTimeFormatter
-import java.util.Locale
 
 object ClinicalHistoryPdfExporter {
     fun export(
@@ -111,17 +111,7 @@ object ClinicalHistoryPdfExporter {
         .filter { it.code !in 0..8 && it.code !in 11..12 && it.code !in 14..31 }
         .trim()
 
-    private fun statusLabel(value: String): String = when (value.trim().uppercase()) {
-        "ACTIVE" -> "Activo"
-        "RESOLVED" -> "Resuelto"
-        "UNDER_REVIEW" -> "En revisión"
-        "STABLE" -> "Estable"
-        "OBSERVATION" -> "En observación"
-        "DELICATE" -> "Delicado"
-        "CRITICAL" -> "Crítico"
-        "RECOVERY" -> "En recuperación"
-        else -> clean(value)
-    }
+    private fun statusLabel(value: String): String = EnumDisplayEs.clinicalStatus(value)
 }
 
 private data class ReportCard(
@@ -151,8 +141,8 @@ private class ClinicalHistoryTemplate(
         private set
 
     private val generatedAt = LocalDateTime.now()
-    private val generatedDate = generatedAt.format(DateTimeFormatter.ofPattern("d MMM uuuu", Locale.getDefault()))
-    private val generatedTime = generatedAt.format(DateTimeFormatter.ofPattern("h:mm a", Locale.getDefault()))
+    private val generatedDate = SpanishDateTime.formatDate(generatedAt)
+    private val generatedTime = SpanishDateTime.formatTime(generatedAt)
 
     private val navy = Color.rgb(23, 44, 58)
     private val teal = Color.rgb(24, 137, 133)

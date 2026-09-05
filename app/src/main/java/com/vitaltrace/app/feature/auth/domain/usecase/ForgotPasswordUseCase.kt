@@ -1,5 +1,6 @@
 package com.vitaltrace.app.feature.auth.domain.usecase
 
+import com.vitaltrace.app.core.presentation.localization.AuthMessagesEs
 import com.vitaltrace.app.feature.auth.domain.exception.AuthException
 import com.vitaltrace.app.feature.auth.domain.repository.AuthRepository
 import javax.inject.Inject
@@ -9,9 +10,9 @@ class ForgotPasswordUseCase @Inject constructor(
 ) {
     suspend operator fun invoke(email: String): Result<Unit> {
         val normalized = email.trim().lowercase()
-        if (normalized.isBlank()) return Result.failure(AuthException("Email is required."))
+        if (normalized.isBlank()) return Result.failure(AuthException(AuthMessagesEs.EMAIL_REQUIRED))
         if (!EMAIL_REGEX.matches(normalized)) {
-            return Result.failure(AuthException("Enter a valid email address."))
+            return Result.failure(AuthException(AuthMessagesEs.EMAIL_INVALID))
         }
         return repository.forgotPassword(normalized)
     }

@@ -1,17 +1,13 @@
 ﻿package com.vitaltrace.app.feature.notifications.presentation
 
+import com.vitaltrace.app.core.presentation.localization.SpanishDateTime
 import java.time.Instant
 import java.time.LocalDate
 import java.time.OffsetDateTime
 import java.time.ZoneId
 import java.time.ZonedDateTime
-import java.time.format.DateTimeFormatter
-import java.util.Locale
 
 object NotificationDateFormatter {
-    private val locale = Locale.forLanguageTag("es-NI")
-    private val timeFormatter = DateTimeFormatter.ofPattern("h:mm a", locale)
-    private val dateFormatter = DateTimeFormatter.ofPattern("d MMM uuuu", locale)
 
     fun format(value: String?): String {
         if (value.isNullOrBlank()) return ""
@@ -20,7 +16,7 @@ object NotificationDateFormatter {
         return when (dateTime.toLocalDate()) {
             today -> "Hoy"
             today.minusDays(1) -> "Ayer"
-            else -> dateTime.format(dateFormatter).lowercase(locale)
+            else -> SpanishDateTime.formatDate(dateTime.toLocalDateTime())
         }
     }
 

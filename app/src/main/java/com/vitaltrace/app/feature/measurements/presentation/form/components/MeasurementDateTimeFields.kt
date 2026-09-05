@@ -28,11 +28,10 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.vitaltrace.app.R
+import com.vitaltrace.app.core.presentation.localization.SpanishDateTime
 import com.vitaltrace.app.ui.theme.VitalTraceNavy
 import java.time.LocalDate
 import java.time.LocalTime
-import java.time.format.DateTimeFormatter
-import java.util.Locale
 
 @Composable
 fun MeasurementDateTimeFields(
@@ -42,10 +41,8 @@ fun MeasurementDateTimeFields(
     onTimeChange: (LocalTime) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val locale = Locale.forLanguageTag("es")
-    val dateText = date.format(DateTimeFormatter.ofPattern("d MMM uuuu", locale))
-    val timeText = time.format(DateTimeFormatter.ofPattern("h:mm a", locale))
-        .lowercase(locale)
+    val dateText = SpanishDateTime.formatDate(date)
+    val timeText = SpanishDateTime.formatTime(time)
     val context = LocalContext.current
 
     Row(

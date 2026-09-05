@@ -1,5 +1,6 @@
 package com.vitaltrace.app.feature.auth.domain.usecase
 
+import com.vitaltrace.app.core.presentation.localization.AuthMessagesEs
 import com.vitaltrace.app.core.session.SessionManager
 import com.vitaltrace.app.feature.auth.domain.exception.AuthException
 import javax.inject.Inject
@@ -16,19 +17,19 @@ class LoginUseCase @Inject constructor(
 
         if (normalizedEmail.isBlank()) {
             return Result.failure(
-                AuthException("Email is required.")
+                AuthException(AuthMessagesEs.EMAIL_REQUIRED)
             )
         }
 
         if (!EMAIL_REGEX.matches(normalizedEmail)) {
             return Result.failure(
-                AuthException("Enter a valid email address.")
+                AuthException(AuthMessagesEs.EMAIL_INVALID)
             )
         }
 
         if (password.isBlank()) {
             return Result.failure(
-                AuthException("Password is required.")
+                AuthException(AuthMessagesEs.PASSWORD_REQUIRED)
             )
         }
 

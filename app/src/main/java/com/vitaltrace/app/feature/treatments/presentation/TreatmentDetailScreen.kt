@@ -32,6 +32,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.vitaltrace.app.R
+import com.vitaltrace.app.core.presentation.localization.EnumDisplayEs
 import com.vitaltrace.app.feature.treatments.presentation.components.TreatmentStatusChip
 import com.vitaltrace.app.ui.theme.VitalTraceNavy
 import com.vitaltrace.app.ui.theme.VitalTraceWarmBackground
@@ -114,7 +115,10 @@ private fun TreatmentDetailsCard(treatment: TreatmentUiModel) {
             }
             treatment.professionalType?.takeIf(String::isNotBlank)?.let {
                 HorizontalDivider(color = Color(0xFFE5E0D7))
-                DetailRow(stringResource(R.string.treatment_detail_professional_type), it)
+                DetailRow(
+                    stringResource(R.string.treatment_detail_professional_type),
+                    EnumDisplayEs.professionalType(it)
+                )
             }
             treatment.specialtyName?.takeIf(String::isNotBlank)?.let {
                 HorizontalDivider(color = Color(0xFFE5E0D7))

@@ -2,6 +2,7 @@ package com.vitaltrace.app.feature.auth.data.repository
 
 import com.vitaltrace.app.core.network.AuthInterceptor
 import com.vitaltrace.app.core.cache.PatientMemoryCache
+import com.vitaltrace.app.core.presentation.localization.AuthMessagesEs
 import com.vitaltrace.app.core.session.AuthenticatedUser
 import com.vitaltrace.app.core.session.TokenStore
 import com.vitaltrace.app.feature.auth.data.mapper.toAuthenticatedUser
@@ -42,14 +43,14 @@ class AuthRepositoryImpl @Inject constructor(
             )
 
             val data = response.data ?: return Result.failure(
-                AuthException("Authentication data was not received.")
+                AuthException(AuthMessagesEs.AUTH_DATA_MISSING)
             )
             val token = data.token
 
             if (token.isNullOrBlank()) {
                 return Result.failure(
                     AuthException(
-                        message = "Authentication token was not received."
+                        message = AuthMessagesEs.TOKEN_MISSING
                     )
                 )
             }
@@ -63,7 +64,7 @@ class AuthRepositoryImpl @Inject constructor(
         } catch (exception: IOException) {
             Result.failure(
                 AuthException(
-                    message = "No pudimos conectar con VitalTrace. Revisa tu conexión e intenta de nuevo.",
+                    message = AuthMessagesEs.NETWORK,
                     cause = exception,
                     isNetworkError = true
                 )
@@ -71,8 +72,7 @@ class AuthRepositoryImpl @Inject constructor(
         } catch (exception: Exception) {
             Result.failure(
                 AuthException(
-                    message = exception.message
-                        ?: "An unexpected authentication error occurred.",
+                    message = AuthMessagesEs.UNEXPECTED,
                     cause = exception
                 )
             )
@@ -86,7 +86,7 @@ class AuthRepositoryImpl @Inject constructor(
             if (token.isNullOrBlank()) {
                 return Result.failure(
                     AuthException(
-                        message = "No active session was found."
+                        message = AuthMessagesEs.NO_ACTIVE_SESSION
                     )
                 )
             }
@@ -94,7 +94,7 @@ class AuthRepositoryImpl @Inject constructor(
             authInterceptor.updateToken(token)
 
             val user = authApiService.getAuthenticatedUser().data
-                ?: return Result.failure(AuthException("Authenticated user data was not received."))
+                ?: return Result.failure(AuthException(AuthMessagesEs.USER_DATA_MISSING))
 
             Result.success(user.toAuthenticatedUser())
         } catch (exception: HttpException) {
@@ -112,7 +112,7 @@ class AuthRepositoryImpl @Inject constructor(
         } catch (exception: IOException) {
             Result.failure(
                 AuthException(
-                    message = "No pudimos conectar con VitalTrace. Revisa tu conexión e intenta de nuevo.",
+                    message = AuthMessagesEs.NETWORK,
                     cause = exception,
                     isNetworkError = true
                 )
@@ -120,8 +120,7 @@ class AuthRepositoryImpl @Inject constructor(
         } catch (exception: Exception) {
             Result.failure(
                 AuthException(
-                    message = exception.message
-                        ?: "Could not validate the current session.",
+                    message = AuthMessagesEs.SESSION_INVALID,
                     cause = exception
                 )
             )
@@ -147,7 +146,7 @@ class AuthRepositoryImpl @Inject constructor(
         } catch (exception: IOException) {
             Result.failure(
                 AuthException(
-                    message = "No pudimos conectar con VitalTrace. Revisa tu conexión e intenta de nuevo.",
+                    message = AuthMessagesEs.NETWORK,
                     cause = exception,
                     isNetworkError = true
                 )
@@ -155,7 +154,7 @@ class AuthRepositoryImpl @Inject constructor(
         } catch (exception: Exception) {
             Result.failure(
                 AuthException(
-                    message = exception.message ?: "Could not close the remote session.",
+                    message = AuthMessagesEs.LOGOUT_FAILED,
                     cause = exception
                 )
             )
@@ -199,7 +198,7 @@ class AuthRepositoryImpl @Inject constructor(
     } catch (exception: IOException) {
         Result.failure(
             AuthException(
-                message = "No pudimos conectar con VitalTrace. Revisa tu conexión e intenta de nuevo.",
+                message = AuthMessagesEs.NETWORK,
                 cause = exception,
                 isNetworkError = true
             )
@@ -207,7 +206,7 @@ class AuthRepositoryImpl @Inject constructor(
     } catch (exception: Exception) {
         Result.failure(
             AuthException(
-                message = exception.message ?: "The authentication request failed.",
+                message = AuthMessagesEs.UNEXPECTED,
                 cause = exception
             )
         )
@@ -244,7 +243,7 @@ class AuthRepositoryImpl @Inject constructor(
     } catch (exception: IOException) {
         Result.failure(
             AuthException(
-                message = "No pudimos conectar con VitalTrace. Revisa tu conexión e intenta de nuevo.",
+                message = AuthMessagesEs.NETWORK,
                 cause = exception,
                 isNetworkError = true
             )
