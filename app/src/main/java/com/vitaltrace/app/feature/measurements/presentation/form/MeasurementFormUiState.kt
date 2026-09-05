@@ -23,7 +23,8 @@ data class MeasurementFormUiState(
 data class MeasurementTypeOption(
     val id: Long,
     val name: String,
-    val unit: String
+    val unit: String,
+    val decimals: Int
 )
 
 enum class MeasurementFieldError {

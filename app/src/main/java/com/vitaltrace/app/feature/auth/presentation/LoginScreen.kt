@@ -25,6 +25,9 @@ import com.vitaltrace.app.ui.theme.VitalTraceWarmBackground
 fun LoginScreen(
     onLoginSuccess: () -> Unit,
     onActivationRequired: () -> Unit,
+    onRelativeLoginSuccess: () -> Unit = onLoginSuccess,
+    onNurseLoginSuccess: () -> Unit = onLoginSuccess,
+    onPortalSelectorRequired: () -> Unit = onLoginSuccess,
     onForgotPasswordClick: () -> Unit = {},
     onFirstAccessClick: () -> Unit = {},
     viewModel: LoginViewModel = hiltViewModel()
@@ -37,6 +40,9 @@ fun LoginScreen(
             when (effect) {
                 LoginUiEffect.NavigateToHome -> onLoginSuccess()
                 LoginUiEffect.NavigateToFirstAccess -> onActivationRequired()
+                LoginUiEffect.NavigateToRelativePortal -> onRelativeLoginSuccess()
+                LoginUiEffect.NavigateToNursePortal -> onNurseLoginSuccess()
+                LoginUiEffect.NavigateToPortalSelector -> onPortalSelectorRequired()
             }
         }
     }

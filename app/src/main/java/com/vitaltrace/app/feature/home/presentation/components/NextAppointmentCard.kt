@@ -1,5 +1,6 @@
 package com.vitaltrace.app.feature.home.presentation.components
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -26,10 +27,11 @@ import com.vitaltrace.app.feature.home.presentation.NextAppointmentUiModel
 fun NextAppointmentCard(
     appointment: NextAppointmentUiModel?,
     onDetailClick: () -> Unit,
+    showDetailAction: Boolean = true,
     modifier: Modifier = Modifier
 ) {
     Card(
-        modifier = modifier.fillMaxWidth(),
+        modifier = modifier.fillMaxWidth().clickable(enabled = appointment != null, onClick = onDetailClick),
         shape = RoundedCornerShape(26.dp),
         colors = CardDefaults.cardColors(containerColor = Color.White),
         elevation = CardDefaults.cardElevation(defaultElevation = 5.dp)
@@ -43,12 +45,14 @@ fun NextAppointmentCard(
                     style = MaterialTheme.typography.labelLarge,
                     modifier = Modifier.weight(1f)
                 )
-                TextButton(onClick = onDetailClick) {
-                    Text(
-                        text = stringResource(R.string.home_view_detail),
-                        color = HomeTeal,
-                        fontWeight = FontWeight.Bold
-                    )
+                if (showDetailAction && appointment != null) {
+                    TextButton(onClick = onDetailClick) {
+                        Text(
+                            text = stringResource(R.string.home_view_detail),
+                            color = HomeTeal,
+                            fontWeight = FontWeight.Bold
+                        )
+                    }
                 }
             }
             if (appointment == null) {
@@ -78,7 +82,6 @@ fun NextAppointmentCard(
                         R.string.home_appointment_summary,
                         appointment.reason,
                         appointment.date,
-                        "\n",
                         appointment.time
                     ),
                     color = HomeSupportingText,

@@ -1,10 +1,15 @@
 package com.vitaltrace.app.feature.appointments.presentation
 
 import com.vitaltrace.app.feature.patient.domain.model.Appointment
+import com.vitaltrace.app.feature.patient.domain.model.ClinicalHistory
+import com.vitaltrace.app.feature.patient.domain.model.MarkAllNotificationsReadResult
 import com.vitaltrace.app.feature.patient.domain.model.Measurement
 import com.vitaltrace.app.feature.patient.domain.model.Page
 import com.vitaltrace.app.feature.patient.domain.model.PaginationLinks
 import com.vitaltrace.app.feature.patient.domain.model.PaginationMeta
+import com.vitaltrace.app.feature.patient.domain.model.PatientNotification
+import com.vitaltrace.app.feature.patient.domain.model.PatientProfile
+import com.vitaltrace.app.feature.patient.domain.model.PatientRelative
 import com.vitaltrace.app.feature.patient.domain.model.PatientSummary
 import com.vitaltrace.app.feature.patient.domain.model.Treatment
 import com.vitaltrace.app.feature.patient.domain.repository.PatientRepository
@@ -111,8 +116,8 @@ class AppointmentsViewModelTest {
 
     private fun appointmentsPage() = Page(
         items = listOf(
-            appointment(1, "2026-08-05 09:00:00", "CONFIRMED"),
-            appointment(2, "2026-07-30 09:00:00", "SCHEDULED"),
+            appointment(1, "2099-08-05 09:00:00", "CONFIRMED"),
+            appointment(2, "2099-07-30 09:00:00", "SCHEDULED"),
             appointment(3, "2026-06-25 10:30:00", "ATTENDED")
         ),
         links = PaginationLinks("first", "last", null, null),
@@ -163,6 +168,28 @@ class AppointmentsViewModelTest {
         override suspend fun getTreatments(
             status: String?, dateFrom: String?, dateTo: String?, active: Boolean?, page: Int?
         ): Result<Page<Treatment>> = unsupported()
+
+        override suspend fun getProfile(): Result<PatientProfile> = unsupported()
+
+        override suspend fun getClinicalHistory(): Result<ClinicalHistory> = unsupported()
+
+        override suspend fun getRelatives(page: Int?): Result<Page<PatientRelative>> = unsupported()
+
+        override suspend fun authorizeRelative(id: Long): Result<PatientRelative> = unsupported()
+
+        override suspend fun revokeRelative(id: Long): Result<PatientRelative> = unsupported()
+
+        override suspend fun getNotifications(
+            read: String, type: String?, page: Int
+        ): Result<Page<PatientNotification>> = unsupported()
+
+        override suspend fun getUnreadNotificationsCount(): Result<Int> = unsupported()
+
+        override suspend fun markNotificationAsRead(id: Long): Result<PatientNotification> =
+            unsupported()
+
+        override suspend fun markAllNotificationsAsRead(): Result<MarkAllNotificationsReadResult> =
+            unsupported()
 
         private fun <T> unsupported(): Result<T> = Result.failure(UnsupportedOperationException())
     }

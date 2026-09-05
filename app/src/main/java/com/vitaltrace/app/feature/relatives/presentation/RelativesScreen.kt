@@ -67,7 +67,6 @@ fun RelativesScreen(
 
     state.confirmation?.let {
         RelativeConfirmationDialog(
-            action = it.action,
             onConfirm = viewModel::confirmAction,
             onDismiss = viewModel::dismissConfirmation
         )
@@ -143,15 +142,8 @@ fun RelativesScreen(
                                 RelativeCard(
                                     relative = relative,
                                     isActionInProgress = state.actionInProgressId == relative.id,
-                                    onAction = {
-                                        viewModel.requestAction(
-                                            relative.id,
-                                            if (relative.isAuthorized) {
-                                                RelativeAction.REVOKE
-                                            } else {
-                                                RelativeAction.AUTHORIZE
-                                            }
-                                        )
+                                    onAuthorize = {
+                                        viewModel.requestAction(relative.id, RelativeAction.AUTHORIZE)
                                     }
                                 )
                             }

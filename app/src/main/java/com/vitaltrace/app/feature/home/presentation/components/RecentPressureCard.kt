@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -102,16 +103,16 @@ private fun PressureBarChart(
         modifier = modifier
             .fillMaxWidth()
             .height(82.dp),
-        horizontalArrangement = Arrangement.spacedBy(8.dp),
+        horizontalArrangement = Arrangement.spacedBy(18.dp, Alignment.CenterHorizontally),
         verticalAlignment = Alignment.Bottom
     ) {
-        values.forEachIndexed { index, value ->
+        values.takeLast(7).forEachIndexed { index, value ->
             Box(
                 modifier = Modifier
-                    .weight(1f)
+                    .width(22.dp)
                     .height(82.dp * value.coerceIn(0.1f, 1f))
                     .background(
-                        brush = if (index == values.lastIndex) {
+                        brush = if (index == values.takeLast(7).lastIndex) {
                             Brush.verticalGradient(
                                 listOf(Color(0xFFF2BD62), HomeAlertBar)
                             )

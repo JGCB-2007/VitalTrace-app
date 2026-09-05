@@ -25,8 +25,7 @@ class PatientRepositoryImpl @Inject constructor(
     private val cache: PatientMemoryCache
 ) : PatientRepository {
     override suspend fun getSummary(): Result<PatientSummary> = execute {
-        cache.get<PatientSummary>("summary")?.let { return@execute it }
-        apiService.getSummary().data?.toDomain()?.also { cache.put("summary", it) }
+        apiService.getSummary().data?.toDomain()
             ?: throw PatientException("Patient summary data was not received.")
     }
 
@@ -45,10 +44,8 @@ class PatientRepositoryImpl @Inject constructor(
     override suspend fun getAppointments(
         status: String?, dateFrom: String?, dateTo: String?, upcoming: Boolean?, page: Int?
     ): Result<Page<Appointment>> = execute {
-        val key = "appointments:$status:$dateFrom:$dateTo:$upcoming:$page"
-        cache.get<Page<Appointment>>(key)?.let { return@execute it }
         apiService.getAppointments(status, dateFrom, dateTo, upcoming, page)
-            .toDomain { it.toDomain() }.also { cache.put(key, it) }
+            .toDomain { it.toDomain() }
     }
 
     override suspend fun getMeasurements(

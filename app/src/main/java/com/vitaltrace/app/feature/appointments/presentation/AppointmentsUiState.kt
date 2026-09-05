@@ -33,7 +33,9 @@ data class AppointmentDetailUiModel(
     val reason: String,
     val date: String,
     val time: String,
-    val status: AppointmentStatus
+    val durationMinutes: Int = 0,
+    val status: AppointmentStatus,
+    val contextName: String? = null
 )
 
 data class AppointmentUiModel(
@@ -45,6 +47,7 @@ data class AppointmentUiModel(
     val date: String,
     val time: String,
     val scheduledAt: String,
+    val durationMinutes: Int = 0,
     val status: AppointmentStatus
 ) {
     fun toDetail(): AppointmentDetailUiModel = AppointmentDetailUiModel(
@@ -55,6 +58,7 @@ data class AppointmentUiModel(
         reason = reason,
         date = date,
         time = time,
+        durationMinutes = durationMinutes,
         status = status
     )
 }
@@ -69,7 +73,7 @@ enum class AppointmentStatus(val isUpcoming: Boolean) {
 
     companion object {
         fun fromApiValue(value: String): AppointmentStatus {
-            return entries.firstOrNull { it.name == value } ?: UNKNOWN
+            return entries.firstOrNull { it.name == value.trim().uppercase() } ?: UNKNOWN
         }
     }
 }

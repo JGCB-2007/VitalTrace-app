@@ -26,7 +26,13 @@ fun ClinicalHistoryScreen(
     viewModel: ClinicalHistoryViewModel = hiltViewModel()
 ) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
-    ClinicalHistoryDesign(state, onNavigateBack, onEducationClick, viewModel::retry)
+    ClinicalHistoryDesign(
+        state = state,
+        patientName = viewModel.patientName,
+        onNavigateBack = onNavigateBack,
+        onEducationClick = onEducationClick,
+        onRetry = viewModel::retry
+    )
 }
 
 @OptIn(ExperimentalMaterial3Api::class)

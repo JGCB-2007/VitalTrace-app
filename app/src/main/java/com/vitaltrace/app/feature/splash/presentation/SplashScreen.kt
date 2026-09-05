@@ -25,6 +25,9 @@ import kotlinx.coroutines.flow.collectLatest
 fun SplashScreen(
     onNavigateToLogin: () -> Unit,
     onNavigateToHome: () -> Unit,
+    onNavigateToRelativePortal: () -> Unit = onNavigateToHome,
+    onNavigateToNursePortal: () -> Unit = onNavigateToHome,
+    onNavigateToPortalSelector: () -> Unit = onNavigateToHome,
     viewModel: SplashViewModel = hiltViewModel()
 ) {
     LaunchedEffect(viewModel) {
@@ -32,6 +35,9 @@ fun SplashScreen(
             when (effect) {
                 SplashUiEffect.NavigateToLogin -> onNavigateToLogin()
                 SplashUiEffect.NavigateToHome -> onNavigateToHome()
+                SplashUiEffect.NavigateToRelativePortal -> onNavigateToRelativePortal()
+                SplashUiEffect.NavigateToNursePortal -> onNavigateToNursePortal()
+                SplashUiEffect.NavigateToPortalSelector -> onNavigateToPortalSelector()
             }
         }
     }

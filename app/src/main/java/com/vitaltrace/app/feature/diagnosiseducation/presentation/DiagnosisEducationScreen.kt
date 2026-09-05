@@ -129,12 +129,12 @@ private fun EducationArticleCard(title: String, summary: String, onOpen: () -> U
                 color = Color(0xFF53636D),
                 fontSize = 15.sp,
                 lineHeight = 22.sp,
-                maxLines = if (expanded) Int.MAX_VALUE else 9,
+                maxLines = if (expanded) Int.MAX_VALUE else 4,
                 overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis
             )
-            if (summary.length > 420) {
+            if (summary.length > 180) {
                 TextButton(onClick = { expanded = !expanded }, contentPadding = PaddingValues(0.dp)) {
-                    Text(if (expanded) "Mostrar menos" else "Mostrar más", fontWeight = FontWeight.Bold)
+                    Text(if (expanded) "Ver menos" else "Leer más", fontWeight = FontWeight.Bold)
                 }
             }
             Button(

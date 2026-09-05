@@ -40,7 +40,7 @@
     <string name="home_no_follow_up">No hay información de seguimiento</string>
     <string name="home_no_appointments">No hay citas próximas</string>
     <string name="home_no_measurements">No hay mediciones registradas</string>
-    <string name="home_appointment_summary">%1$s · %2$s,%3$s%4$s</string>
+    <string name="home_appointment_summary">%1$s &#183; %2$s &#183; %3$s</string>
     <string name="home_measurement_summary">%1$s · %2$s</string>
     <string name="home_bottom_home">Inicio</string>
     <string name="home_bottom_measurements">Mediciones</string>
@@ -218,5 +218,13 @@
     <string name="notifications_feedback_mark_all_success">Notificaciones marcadas como le&#237;das.</string>
     <string name="notifications_feedback_update_error">No pudimos actualizar las notificaciones.</string>
     <string name="notifications_feedback_load_more_error">No pudimos cargar m&#225;s notificaciones.</string>
+    <string name="appointment_reminder_channel_name">Recordatorios de citas</string>
+    <string name="appointment_reminder_channel_description">Recordatorios de próximas citas de VitalTrace</string>
+    <string name="appointment_reminder_title">VitalTrace</string>
+    <string name="appointment_reminder_10_days">Tienes una cita programada dentro de 10 días.</string>
+    <string name="appointment_reminder_7_days">Tu próxima cita es dentro de una semana.</string>
+    <string name="appointment_reminder_5_days">Recuerda que tienes una cita en 5 días.</string>
+    <string name="appointment_reminder_3_days">Faltan 3 días para tu próxima cita.</string>
+    <string name="appointment_reminder_1_day">Mañana tienes una cita programada a las %1$s.</string>
 </resources>
 

@@ -4,7 +4,7 @@ import com.vitaltrace.app.core.session.AuthenticatedUser
 import com.vitaltrace.app.core.session.UserRole
 import com.vitaltrace.app.feature.auth.data.remote.dto.UserDto
 
-fun UserDto.toAuthenticatedUser(): AuthenticatedUser {
+fun UserDto.toAuthenticatedUser(roleNames: Collection<String> = roles.map { it.name }): AuthenticatedUser {
     val fullName = listOf(
         person.firstName,
         person.middleName,
@@ -17,6 +17,6 @@ fun UserDto.toAuthenticatedUser(): AuthenticatedUser {
         email = email,
         personId = personId,
         fullName = fullName,
-        roles = roles.map { UserRole.fromApiValue(it.name) }.toSet()
+        roles = roleNames.map(UserRole::fromApiValue).toSet()
     )
 }

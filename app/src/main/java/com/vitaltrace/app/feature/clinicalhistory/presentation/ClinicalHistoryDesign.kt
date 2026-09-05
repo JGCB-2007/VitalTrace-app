@@ -1,5 +1,8 @@
 package com.vitaltrace.app.feature.clinicalhistory.presentation
 
+import android.widget.Toast
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.BorderStroke
@@ -19,6 +22,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -26,12 +30,17 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.vitaltrace.app.feature.patient.domain.model.*
+import com.vitaltrace.app.feature.clinicalhistory.export.ClinicalHistoryPdfExporter
 import com.vitaltrace.app.ui.theme.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 internal fun ClinicalHistoryDesign(
     state: ClinicalHistoryUiState,
+    patientName: String,
     onNavigateBack: () -> Unit,
     onEducationClick: (String, String) -> Unit,
     onRetry: () -> Unit
@@ -65,26 +74,65 @@ internal fun ClinicalHistoryDesign(
             ClinicalHistoryUiState.Loading -> ClinicalLoading(Modifier.padding(padding))
             is ClinicalHistoryUiState.Empty -> ClinicalEmpty(Modifier.padding(padding))
             is ClinicalHistoryUiState.Error -> ClinicalError(state.message, onRetry, Modifier.padding(padding))
-            is ClinicalHistoryUiState.Success -> ClinicalHistoryList(state.history, onEducationClick, Modifier.padding(padding))
+            is ClinicalHistoryUiState.Success -> ClinicalHistoryContent(
+                history = state.history,
+                patientName = patientName,
+                onEducationClick = onEducationClick,
+                modifier = Modifier.padding(padding)
+            )
         }
     }
 }
 
 @Composable
-private fun ClinicalHistoryList(
+internal fun ClinicalHistoryContent(
     history: ClinicalHistory,
+    patientName: String,
     onEducationClick: (String, String) -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    showEducationActions: Boolean = true
 ) {
+    val context = LocalContext.current
+    val scope = rememberCoroutineScope()
+    var isExporting by remember { mutableStateOf(false) }
+    val safeRecordNumber = remember(history.recordNumber) {
+        history.recordNumber.replace(Regex("[^A-Za-z0-9_-]"), "_").ifBlank { "expediente" }
+    }
+    val launcher = rememberLauncherForActivityResult(
+        ActivityResultContracts.CreateDocument("application/pdf")
+    ) { uri ->
+        if (uri != null) scope.launch {
+            isExporting = true
+            val result = withContext(Dispatchers.IO) {
+                ClinicalHistoryPdfExporter.export(context, uri, patientName, history)
+            }
+            isExporting = false
+            Toast.makeText(
+                context,
+                if (result.isSuccess) "Expediente guardado correctamente." else "No se pudo generar el expediente.",
+                Toast.LENGTH_LONG
+            ).show()
+        }
+    }
     LazyColumn(
         modifier = modifier.fillMaxSize(),
         contentPadding = PaddingValues(start = 24.dp, top = 16.dp, end = 24.dp, bottom = 30.dp),
         verticalArrangement = Arrangement.spacedBy(14.dp)
     ) {
-        item { RecordBadge(history.recordNumber) }
+        item {
+            RecordBadge(
+                recordNumber = history.recordNumber,
+                isExporting = isExporting,
+                onClick = {
+                    launcher.launch("VitalTrace-$safeRecordNumber.pdf")
+                }
+            )
+        }
         if (history.diagnoses.isNotEmpty()) {
             item { ClinicalSectionHeader(Icons.Rounded.HealthAndSafety, "Diagnósticos") }
-            items(history.diagnoses, key = { "diagnosis-${it.id}" }) { DiagnosisCard(it, onEducationClick) }
+            items(history.diagnoses, key = { "diagnosis-${it.id}" }) {
+                DiagnosisCard(it, onEducationClick, showEducationActions)
+            }
         }
         if (history.clinicalEvolutions.isNotEmpty()) {
             item { ClinicalSectionHeader(Icons.Rounded.HistoryEdu, "Evoluciones clínicas") }
@@ -102,8 +150,14 @@ private fun ClinicalHistoryList(
 }
 
 @Composable
-private fun RecordBadge(recordNumber: String) {
-    Surface(color = Color.White, shape = RoundedCornerShape(20.dp), shadowElevation = 3.dp) {
+private fun RecordBadge(recordNumber: String, isExporting: Boolean, onClick: () -> Unit) {
+    Surface(
+        onClick = onClick,
+        enabled = !isExporting,
+        color = Color.White,
+        shape = RoundedCornerShape(20.dp),
+        shadowElevation = 3.dp
+    ) {
         Row(
             Modifier.fillMaxWidth().padding(horizontal = 18.dp, vertical = 14.dp),
             horizontalArrangement = Arrangement.spacedBy(14.dp),
@@ -112,9 +166,14 @@ private fun RecordBadge(recordNumber: String) {
             Surface(color = Color(0xFFDDF4F2), shape = RoundedCornerShape(14.dp)) {
                 Icon(Icons.Rounded.FolderShared, null, Modifier.padding(11.dp), tint = VitalTraceTeal)
             }
-            Column {
+            Column(Modifier.weight(1f)) {
                 Text("Expediente", color = Color(0xFF53636D), fontSize = 13.sp)
                 Text(recordNumber, color = VitalTraceNavy, fontSize = 18.sp, fontWeight = FontWeight.Bold)
+            }
+            if (isExporting) {
+                CircularProgressIndicator(Modifier.size(22.dp), color = VitalTraceTeal, strokeWidth = 2.dp)
+            } else {
+                Icon(Icons.Rounded.Download, "Descargar expediente PDF", tint = VitalTraceTeal)
             }
         }
     }
@@ -133,7 +192,11 @@ private fun ClinicalSectionHeader(icon: ImageVector, title: String) {
 }
 
 @Composable
-private fun DiagnosisCard(item: ClinicalDiagnosis, onEducationClick: (String, String) -> Unit) = VitalTraceClinicalCard {
+private fun DiagnosisCard(
+    item: ClinicalDiagnosis,
+    onEducationClick: (String, String) -> Unit,
+    showEducationAction: Boolean
+) = VitalTraceClinicalCard {
     Text(item.description, color = VitalTraceNavy, fontFamily = FontFamily.Serif, fontSize = 21.sp, fontWeight = FontWeight.Bold)
     Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween, verticalAlignment = Alignment.CenterVertically) {
         item.cieCode?.takeIf(String::isNotBlank)?.let { DetailLabel("Código CIE", it) }
@@ -141,7 +204,7 @@ private fun DiagnosisCard(item: ClinicalDiagnosis, onEducationClick: (String, St
     }
     DetailLine(Icons.Rounded.CalendarMonth, item.diagnosisDate)
     professionalName(item.professional)?.let { DetailLine(Icons.Rounded.MedicalServices, it) }
-    item.cieCode?.takeIf(String::isNotBlank)?.let { code ->
+    item.cieCode?.takeIf(String::isNotBlank)?.takeIf { showEducationAction }?.let { code ->
         Surface(
             modifier = Modifier.fillMaxWidth().clickable { onEducationClick(code, item.description) },
             color = Color(0xFFF3FAF9),

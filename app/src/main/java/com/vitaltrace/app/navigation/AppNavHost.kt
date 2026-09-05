@@ -1,8 +1,11 @@
 package com.vitaltrace.app.navigation
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavType
 import androidx.navigation.NavHostController
 import androidx.navigation.navArgument
@@ -19,11 +22,17 @@ import com.vitaltrace.app.feature.appointments.presentation.AppointmentsScreen
 import com.vitaltrace.app.feature.clinicalhistory.presentation.ClinicalHistoryScreen
 import com.vitaltrace.app.feature.diagnosiseducation.presentation.DiagnosisEducationScreen
 import com.vitaltrace.app.feature.home.presentation.HomeScreen
+import com.vitaltrace.app.feature.home.presentation.HomeViewModel
 import com.vitaltrace.app.feature.measurements.presentation.MeasurementsScreen
+import com.vitaltrace.app.feature.measurements.presentation.MeasurementsViewModel
 import com.vitaltrace.app.feature.measurements.presentation.form.MeasurementFormScreen
+import com.vitaltrace.app.core.session.PortalTarget
 import com.vitaltrace.app.feature.notifications.presentation.NotificationsScreen
+import com.vitaltrace.app.feature.portalselector.presentation.PortalSelectorScreen
 import com.vitaltrace.app.feature.profile.presentation.ProfileScreen
 import com.vitaltrace.app.feature.relatives.presentation.RelativesScreen
+import com.vitaltrace.app.feature.relativeportal.presentation.RelativePortalScreen
+import com.vitaltrace.app.feature.nurseportal.presentation.NursePortalScreen
 import com.vitaltrace.app.feature.splash.presentation.SplashScreen
 import com.vitaltrace.app.feature.treatments.presentation.TreatmentDetailScreen
 import com.vitaltrace.app.feature.treatments.presentation.TreatmentsScreen
@@ -73,9 +82,22 @@ fun AppNavHost(
                 },
                 onNavigateToHome = {
                     navController.navigate(AppRoute.Home.route) {
-                        popUpTo(AppRoute.Splash.route) {
-                            inclusive = true
-                        }
+                        popUpTo(AppRoute.Splash.route) { inclusive = true }
+                    }
+                },
+                onNavigateToRelativePortal = {
+                    navController.navigate(AppRoute.RelativePortal.route) {
+                        popUpTo(AppRoute.Splash.route) { inclusive = true }
+                    }
+                },
+                onNavigateToNursePortal = {
+                    navController.navigate(AppRoute.NursePortal.route) {
+                        popUpTo(AppRoute.Splash.route) { inclusive = true }
+                    }
+                },
+                onNavigateToPortalSelector = {
+                    navController.navigate(AppRoute.PortalSelector.route) {
+                        popUpTo(AppRoute.Splash.route) { inclusive = true }
                     }
                 }
             )
@@ -85,9 +107,22 @@ fun AppNavHost(
             LoginScreen(
                 onLoginSuccess = {
                     navController.navigate(AppRoute.Home.route) {
-                        popUpTo(AppRoute.Login.route) {
-                            inclusive = true
-                        }
+                        popUpTo(AppRoute.Login.route) { inclusive = true }
+                    }
+                },
+                onRelativeLoginSuccess = {
+                    navController.navigate(AppRoute.RelativePortal.route) {
+                        popUpTo(AppRoute.Login.route) { inclusive = true }
+                    }
+                },
+                onNurseLoginSuccess = {
+                    navController.navigate(AppRoute.NursePortal.route) {
+                        popUpTo(AppRoute.Login.route) { inclusive = true }
+                    }
+                },
+                onPortalSelectorRequired = {
+                    navController.navigate(AppRoute.PortalSelector.route) {
+                        popUpTo(AppRoute.Login.route) { inclusive = true }
                     }
                 },
                 onActivationRequired = {
@@ -104,6 +139,52 @@ fun AppNavHost(
                     navController.navigate(AppRoute.FirstAccessEmail.route) {
                         launchSingleTop = true
                     }
+                }
+            )
+        }
+
+        composable(AppRoute.PortalSelector.route) {
+            PortalSelectorScreen(
+                onSelectPortal = { portal ->
+                    val destination = when (portal) {
+                        PortalTarget.PATIENT -> AppRoute.Home.route
+                        PortalTarget.RELATIVE -> AppRoute.RelativePortal.route
+                        PortalTarget.NURSE -> AppRoute.NursePortal.route
+                    }
+                    navController.navigate(destination) {
+                        popUpTo(AppRoute.PortalSelector.route) { inclusive = true }
+                    }
+                },
+                onLoggedOut = {
+                    navController.navigate(AppRoute.Login.route) {
+                        popUpTo(AppRoute.PortalSelector.route) { inclusive = true }
+                    }
+                }
+            )
+        }
+
+        composable(AppRoute.NursePortal.route) {
+            NursePortalScreen(
+                onLogout = {
+                    navController.navigate(AppRoute.Login.route) {
+                        popUpTo(AppRoute.NursePortal.route) { inclusive = true }
+                    }
+                },
+                onEducationClick = { cieCode, diagnosisName ->
+                    navController.navigate(AppRoute.DiagnosisEducation.create(cieCode, diagnosisName))
+                }
+            )
+        }
+
+        composable(AppRoute.RelativePortal.route) {
+            RelativePortalScreen(
+                onLogout = {
+                    navController.navigate(AppRoute.Login.route) {
+                        popUpTo(AppRoute.RelativePortal.route) { inclusive = true }
+                    }
+                },
+                onEducationClick = { cieCode, diagnosisName ->
+                    navController.navigate(AppRoute.DiagnosisEducation.create(cieCode, diagnosisName))
                 }
             )
         }
@@ -134,8 +215,19 @@ fun AppNavHost(
             )
         }
 
-        composable(AppRoute.Home.route) {
+        composable(AppRoute.Home.route) { backStackEntry ->
+            val viewModel: HomeViewModel = hiltViewModel(backStackEntry)
+            val measurementSaved by backStackEntry.savedStateHandle
+                .getStateFlow(MEASUREMENT_SAVED_KEY, false)
+                .collectAsStateWithLifecycle()
+            LaunchedEffect(measurementSaved) {
+                if (measurementSaved) {
+                    viewModel.refreshAfterMeasurementCreated()
+                    backStackEntry.savedStateHandle[MEASUREMENT_SAVED_KEY] = false
+                }
+            }
             HomeScreen(
+                viewModel = viewModel,
                 onNotificationsClick = {
                     navController.navigate(AppRoute.Notifications.route) {
                         launchSingleTop = true
@@ -250,6 +342,7 @@ fun AppNavHost(
 
         composable(AppRoute.Treatments.route) {
             TreatmentsScreen(
+                onNavigateBack = { navController.navigateUp() },
                 onTreatmentClick = { id ->
                     navController.navigate(AppRoute.TreatmentDetail.create(id))
                 },
@@ -289,8 +382,19 @@ fun AppNavHost(
             )
         }
 
-        composable(AppRoute.Measurements.route) {
+        composable(AppRoute.Measurements.route) { backStackEntry ->
+            val viewModel: MeasurementsViewModel = hiltViewModel(backStackEntry)
+            val measurementSaved by backStackEntry.savedStateHandle
+                .getStateFlow(MEASUREMENT_SAVED_KEY, false)
+                .collectAsStateWithLifecycle()
+            LaunchedEffect(measurementSaved) {
+                if (measurementSaved) {
+                    viewModel.refreshAfterMeasurementCreated()
+                    backStackEntry.savedStateHandle[MEASUREMENT_SAVED_KEY] = false
+                }
+            }
             MeasurementsScreen(
+                viewModel = viewModel,
                 onHomeClick = {
                     navController.popBackStack()
                 },
@@ -389,6 +493,12 @@ fun AppNavHost(
                     navController.popBackStack()
                 },
                 onMeasurementSaved = {
+                    navController.previousBackStackEntry?.savedStateHandle
+                        ?.set(MEASUREMENT_SAVED_KEY, true)
+                    runCatching { navController.getBackStackEntry(AppRoute.Home.route) }
+                        .getOrNull()
+                        ?.savedStateHandle
+                        ?.set(MEASUREMENT_SAVED_KEY, true)
                     navController.popBackStack()
                 }
             )
@@ -396,3 +506,4 @@ fun AppNavHost(
     }
 }
 
+private const val MEASUREMENT_SAVED_KEY = "measurement_saved"

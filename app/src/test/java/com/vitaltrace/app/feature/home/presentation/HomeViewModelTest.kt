@@ -7,13 +7,20 @@ import com.vitaltrace.app.feature.auth.domain.repository.AuthRepository
 import com.vitaltrace.app.feature.auth.domain.usecase.LogoutUseCase
 import com.vitaltrace.app.feature.patient.domain.model.AlertsSummary
 import com.vitaltrace.app.feature.patient.domain.model.Appointment
+import com.vitaltrace.app.feature.patient.domain.model.ClinicalHistory
+import com.vitaltrace.app.feature.patient.domain.model.MarkAllNotificationsReadResult
 import com.vitaltrace.app.feature.patient.domain.model.Measurement
 import com.vitaltrace.app.feature.patient.domain.model.Page
+import com.vitaltrace.app.feature.patient.domain.model.PatientNotification
+import com.vitaltrace.app.feature.patient.domain.model.PatientProfile
+import com.vitaltrace.app.feature.patient.domain.model.PatientRelative
 import com.vitaltrace.app.feature.patient.domain.model.PatientSummary
 import com.vitaltrace.app.feature.patient.domain.model.SummaryPatient
 import com.vitaltrace.app.feature.patient.domain.model.Treatment
 import com.vitaltrace.app.feature.patient.domain.repository.PatientRepository
+import com.vitaltrace.app.feature.patient.domain.usecase.GetPatientMeasurementsUseCase
 import com.vitaltrace.app.feature.patient.domain.usecase.GetPatientSummaryUseCase
+import com.vitaltrace.app.feature.patient.domain.usecase.GetUnreadNotificationsCountUseCase
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.StandardTestDispatcher
@@ -52,9 +59,9 @@ class HomeViewModelTest {
             val success = assertType<HomeContentState.Success>(viewModel.uiState.value.contentState)
             assertEquals("Ana Martinez", success.content.patientName)
             assertEquals("AM", success.content.patientInitials)
-            assertEquals("CONFIRMED", success.content.nextAppointment?.status)
+            assertEquals("Confirmada", success.content.nextAppointment?.status)
             assertEquals("120", success.content.recentMeasurement?.value)
-            assertEquals(emptyList<Float>(), success.content.recentMeasurement?.chartValues)
+            assertEquals(listOf(0.65f), success.content.recentMeasurement?.chartValues)
             assertEquals(null, success.content.followUpStatus)
         }
     }
@@ -116,6 +123,8 @@ class HomeViewModelTest {
         return HomeViewModel(
             logoutUseCase = LogoutUseCase(sessionManager),
             getPatientSummary = GetPatientSummaryUseCase(repository),
+            getPatientMeasurements = GetPatientMeasurementsUseCase(repository),
+            getUnreadNotificationsCount = GetUnreadNotificationsCountUseCase(repository),
             summaryMapper = HomeSummaryMapper()
         )
     }
@@ -141,6 +150,11 @@ class HomeViewModelTest {
                 origin = "PATIENT",
                 authorUserId = 3,
                 observation = null,
+                reviewStatus = "REVIEWED",
+                reviewedAt = null,
+                reviewedBy = null,
+                reviewObservation = null,
+                reviewer = null,
                 measurementType = null
             )
         ),
@@ -179,6 +193,28 @@ class HomeViewModelTest {
             status: String?, dateFrom: String?, dateTo: String?, active: Boolean?, page: Int?
         ): Result<Page<Treatment>> = unsupported()
 
+        override suspend fun getProfile(): Result<PatientProfile> = unsupported()
+
+        override suspend fun getClinicalHistory(): Result<ClinicalHistory> = unsupported()
+
+        override suspend fun getRelatives(page: Int?): Result<Page<PatientRelative>> = unsupported()
+
+        override suspend fun authorizeRelative(id: Long): Result<PatientRelative> = unsupported()
+
+        override suspend fun revokeRelative(id: Long): Result<PatientRelative> = unsupported()
+
+        override suspend fun getNotifications(
+            read: String, type: String?, page: Int
+        ): Result<Page<PatientNotification>> = unsupported()
+
+        override suspend fun getUnreadNotificationsCount(): Result<Int> = unsupported()
+
+        override suspend fun markNotificationAsRead(id: Long): Result<PatientNotification> =
+            unsupported()
+
+        override suspend fun markAllNotificationsAsRead(): Result<MarkAllNotificationsReadResult> =
+            unsupported()
+
         private fun <T> unsupported(): Result<T> = Result.failure(UnsupportedOperationException())
     }
 
@@ -190,6 +226,28 @@ class HomeViewModelTest {
             Result.failure(UnsupportedOperationException())
 
         override suspend fun logout(): Result<Unit> = Result.success(Unit)
+
+        override suspend fun forgotPassword(email: String): Result<Unit> =
+            Result.failure(UnsupportedOperationException())
+
+        override suspend fun resetPassword(
+            email: String,
+            token: String,
+            password: String,
+            passwordConfirmation: String
+        ): Result<Unit> = Result.failure(UnsupportedOperationException())
+
+        override suspend fun verifyActivationCode(email: String, code: String): Result<String> =
+            Result.failure(UnsupportedOperationException())
+
+        override suspend fun resendActivationCode(email: String): Result<Unit> =
+            Result.failure(UnsupportedOperationException())
+
+        override suspend fun setInitialPassword(
+            activationToken: String,
+            password: String,
+            passwordConfirmation: String
+        ): Result<Unit> = Result.failure(UnsupportedOperationException())
     }
 
     private class FakeTokenStore : TokenStore {

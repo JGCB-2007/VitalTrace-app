@@ -28,6 +28,5 @@ data class RelativeConfirmation(
 )
 
 enum class RelativeAction {
-    AUTHORIZE,
-    REVOKE
+    AUTHORIZE
 }

@@ -2,6 +2,11 @@ package com.vitaltrace.app.feature.auth.presentation
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.vitaltrace.app.core.session.PortalTarget
+import com.vitaltrace.app.core.session.SessionManager
+import com.vitaltrace.app.core.session.SessionState
+import com.vitaltrace.app.core.session.availablePortals
+import com.vitaltrace.app.core.session.resolvePostAuthDestination
 import com.vitaltrace.app.feature.auth.domain.AccountActivationSession
 import com.vitaltrace.app.feature.auth.domain.exception.AuthException
 import com.vitaltrace.app.feature.auth.domain.usecase.LoginUseCase
@@ -18,7 +23,8 @@ import javax.inject.Inject
 @HiltViewModel
 class LoginViewModel @Inject constructor(
     private val loginUseCase: LoginUseCase,
-    private val activationSession: AccountActivationSession
+    private val activationSession: AccountActivationSession,
+    private val sessionManager: SessionManager? = null
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(LoginUiState())
@@ -78,8 +84,20 @@ class LoginViewModel @Inject constructor(
                     it.copy(isLoading = false)
                 }
 
+                val roles = (sessionManager?.state?.value as? SessionState.Authenticated)
+                    ?.user?.roles.orEmpty()
                 _uiEffect.send(
-                    LoginUiEffect.NavigateToHome
+                    roles.availablePortals().resolvePostAuthDestination(
+                        onNone = { LoginUiEffect.NavigateToHome },
+                        onSingle = { portal ->
+                            when (portal) {
+                                PortalTarget.PATIENT -> LoginUiEffect.NavigateToHome
+                                PortalTarget.RELATIVE -> LoginUiEffect.NavigateToRelativePortal
+                                PortalTarget.NURSE -> LoginUiEffect.NavigateToNursePortal
+                            }
+                        },
+                        onMultiple = { LoginUiEffect.NavigateToPortalSelector }
+                    )
                 )
             }.onFailure { exception ->
                 val authException = exception as? AuthException

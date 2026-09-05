@@ -2,13 +2,24 @@ package com.vitaltrace.app.feature.appointments.presentation
 
 import com.vitaltrace.app.feature.patient.domain.model.Appointment
 import com.vitaltrace.app.feature.patient.domain.model.Page
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 import javax.inject.Inject
 
 class AppointmentsMapper @Inject constructor() {
     fun map(page: Page<Appointment>): AppointmentsContentUiModel {
-        val appointments = page.items.map { it.toUiModel() }
-        val upcoming = appointments.filter { it.status.isUpcoming }
-        val previous = appointments.filterNot { it.status.isUpcoming }
+        return map(page.items).copy(
+            currentPage = page.meta.currentPage,
+            lastPage = page.meta.lastPage
+        )
+    }
+
+    fun map(items: List<Appointment>): AppointmentsContentUiModel {
+        val appointments = items.map { it.toUiModel() }
+        val now = LocalDateTime.now()
+        val upcoming = appointments.filter { it.status.isUpcoming && it.scheduledAtDateTime() >= now }
+        val upcomingIds = upcoming.mapTo(mutableSetOf(), AppointmentUiModel::id)
+        val previous = appointments.filterNot { it.id in upcomingIds }
         val nextAppointment = upcoming.minByOrNull(AppointmentUiModel::scheduledAt)
 
         return AppointmentsContentUiModel(
@@ -17,8 +28,8 @@ class AppointmentsMapper @Inject constructor() {
                 .filterNot { it.id == nextAppointment?.id }
                 .sortedBy(AppointmentUiModel::scheduledAt),
             previousAppointments = previous,
-            currentPage = page.meta.currentPage,
-            lastPage = page.meta.lastPage
+            currentPage = 1,
+            lastPage = 1
         )
     }
 
@@ -34,8 +45,15 @@ class AppointmentsMapper @Inject constructor() {
             date = dateTimeParts.firstOrNull().orEmpty(),
             time = dateTimeParts.getOrNull(1).orEmpty(),
             scheduledAt = scheduledAt,
+            durationMinutes = durationMinutes,
             status = AppointmentStatus.fromApiValue(status)
         )
+    }
+
+    private fun AppointmentUiModel.scheduledAtDateTime(): LocalDateTime {
+        return runCatching {
+            LocalDateTime.parse(scheduledAt, DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))
+        }.getOrDefault(LocalDateTime.MIN)
     }
 
     private fun initialsFor(fullName: String): String {
