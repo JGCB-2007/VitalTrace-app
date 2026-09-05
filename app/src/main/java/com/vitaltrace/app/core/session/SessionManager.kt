@@ -1,5 +1,6 @@
 package com.vitaltrace.app.core.session
 
+import com.vitaltrace.app.core.presentation.localization.AuthMessagesEs
 import com.vitaltrace.app.feature.auth.domain.exception.AuthException
 import com.vitaltrace.app.feature.auth.domain.repository.AuthRepository
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -16,9 +17,9 @@ class SessionManager @Inject constructor(
     private val tokenStore: TokenStore
 ) {
     private companion object {
-        const val PATIENT_ACCESS_REQUIRED = "PATIENT_ACCESS_REQUIRED"
-        const val PATIENT_ACCESS_MESSAGE =
-            "Este usuario no tiene acceso a la aplicación móvil de pacientes."
+        const val NO_SUPPORTED_PORTAL = "NO_SUPPORTED_PORTAL"
+        const val NO_SUPPORTED_PORTAL_MESSAGE =
+            "Este usuario no tiene acceso a ningún portal de la aplicación móvil."
     }
 
     private val operationMutex = Mutex()
@@ -36,7 +37,7 @@ class SessionManager @Inject constructor(
 
         authRepository.getCurrentUser()
             .onSuccess { user ->
-                if (UserRole.PATIENT in user.roles) {
+                if (user.roles.availablePortals().isNotEmpty()) {
                     _state.value = SessionState.Authenticated(user)
                 } else {
                     revokeUnsupportedSession()
@@ -49,7 +50,8 @@ class SessionManager @Inject constructor(
                     SessionState.Unauthenticated
                 } else {
                     SessionState.Error(
-                        message = error.message ?: "Could not validate the current session.",
+                        message = (error as? AuthException)?.message?.takeIf(String::isNotBlank)
+                            ?: AuthMessagesEs.SESSION_INVALID,
                         hasStoredToken = true
                     )
                 }
@@ -64,13 +66,13 @@ class SessionManager @Inject constructor(
             return@withLock Result.failure(error)
         }
 
-        if (UserRole.PATIENT !in user.roles) {
+        if (user.roles.availablePortals().isEmpty()) {
             revokeUnsupportedSession()
             _state.value = SessionState.Unauthenticated
             return@withLock Result.failure(
                 AuthException(
-                    message = PATIENT_ACCESS_MESSAGE,
-                    errorCode = PATIENT_ACCESS_REQUIRED
+                    message = NO_SUPPORTED_PORTAL_MESSAGE,
+                    errorCode = NO_SUPPORTED_PORTAL
                 )
             )
         }
@@ -81,13 +83,13 @@ class SessionManager @Inject constructor(
             return@withLock Result.failure(error)
         }
 
-        if (UserRole.PATIENT !in verifiedUser.roles) {
+        if (verifiedUser.roles.availablePortals().isEmpty()) {
             revokeUnsupportedSession()
             _state.value = SessionState.Unauthenticated
             return@withLock Result.failure(
                 AuthException(
-                    message = PATIENT_ACCESS_MESSAGE,
-                    errorCode = PATIENT_ACCESS_REQUIRED
+                    message = NO_SUPPORTED_PORTAL_MESSAGE,
+                    errorCode = NO_SUPPORTED_PORTAL
                 )
             )
         }

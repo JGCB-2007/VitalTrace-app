@@ -1,5 +1,6 @@
 package com.vitaltrace.app.feature.auth.domain.usecase
 
+import com.vitaltrace.app.core.presentation.localization.AuthMessagesEs
 import com.vitaltrace.app.core.session.SessionManager
 import com.vitaltrace.app.core.session.SessionState
 import com.vitaltrace.app.feature.auth.domain.exception.AuthException
@@ -14,8 +15,8 @@ class ValidateSessionUseCase @Inject constructor(
         return when (val state = sessionManager.state.value) {
             is SessionState.Authenticated -> Result.success(Unit)
             is SessionState.Error -> Result.failure(AuthException(state.message))
-            SessionState.Loading -> Result.failure(AuthException("Session validation did not finish."))
-            SessionState.Unauthenticated -> Result.failure(AuthException("No active session was found."))
+            SessionState.Loading -> Result.failure(AuthException(AuthMessagesEs.SESSION_INVALID))
+            SessionState.Unauthenticated -> Result.failure(AuthException(AuthMessagesEs.NO_ACTIVE_SESSION))
         }
     }
 }

@@ -237,14 +237,12 @@ class HomeViewModelTest {
             passwordConfirmation: String
         ): Result<Unit> = Result.failure(UnsupportedOperationException())
 
-        override suspend fun verifyActivationCode(email: String, code: String): Result<String> =
-            Result.failure(UnsupportedOperationException())
-
         override suspend fun resendActivationCode(email: String): Result<Unit> =
             Result.failure(UnsupportedOperationException())
 
-        override suspend fun setInitialPassword(
-            activationToken: String,
+        override suspend fun activateAccount(
+            email: String,
+            code: String,
             password: String,
             passwordConfirmation: String
         ): Result<Unit> = Result.failure(UnsupportedOperationException())

@@ -5,6 +5,7 @@ import com.vitaltrace.app.core.session.FakeTokenStore
 import com.vitaltrace.app.core.session.SessionManager
 import com.vitaltrace.app.core.session.UserRole
 import com.vitaltrace.app.core.session.testUser
+import com.vitaltrace.app.feature.auth.domain.AccountActivationSession
 import com.vitaltrace.app.feature.auth.domain.usecase.LoginUseCase
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -61,7 +62,7 @@ class LoginViewModelTest {
         Dispatchers.setMain(StandardTestDispatcher(testScheduler))
         try {
             val session = SessionManager(FakeAuthRepository(testUser(roles)), FakeTokenStore(null))
-            val viewModel = LoginViewModel(LoginUseCase(session), session)
+            val viewModel = LoginViewModel(LoginUseCase(session), AccountActivationSession(), session)
             viewModel.onEmailChange("ana@example.com")
             viewModel.onPasswordChange("secret123")
             viewModel.login()

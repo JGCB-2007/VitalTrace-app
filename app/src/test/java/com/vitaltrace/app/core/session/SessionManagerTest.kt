@@ -117,6 +117,109 @@ class SessionManagerTest {
         assertSame(SessionState.Unauthenticated, fixture.manager.state.value)
     }
 
+    @Test
+    fun `login authenticates patient-only user`() = runBlocking {
+        val fixture = fixture(token = null)
+        val patient = user(roles = setOf(UserRole.PATIENT))
+        fixture.repository.loginResult = Result.success(patient)
+        fixture.repository.currentUserResult = Result.success(patient)
+
+        val result = fixture.manager.login("ana@example.com", "secret")
+
+        assertTrue(result.isSuccess)
+        assertEquals(SessionState.Authenticated(patient), fixture.manager.state.value)
+    }
+
+    @Test
+    fun `login authenticates relative-only user`() = runBlocking {
+        val fixture = fixture(token = null)
+        val relative = user(roles = setOf(UserRole.RELATIVE))
+        fixture.repository.loginResult = Result.success(relative)
+        fixture.repository.currentUserResult = Result.success(relative)
+
+        val result = fixture.manager.login("ana@example.com", "secret")
+
+        assertTrue(result.isSuccess)
+        assertEquals(SessionState.Authenticated(relative), fixture.manager.state.value)
+    }
+
+    @Test
+    fun `login authenticates nurse-only user`() = runBlocking {
+        val fixture = fixture(token = null)
+        val nurse = user(roles = setOf(UserRole.NURSE))
+        fixture.repository.loginResult = Result.success(nurse)
+        fixture.repository.currentUserResult = Result.success(nurse)
+
+        val result = fixture.manager.login("ana@example.com", "secret")
+
+        assertTrue(result.isSuccess)
+        assertEquals(SessionState.Authenticated(nurse), fixture.manager.state.value)
+    }
+
+    @Test
+    fun `login authenticates user with patient and nurse roles`() = runBlocking {
+        val fixture = fixture(token = null)
+        val multiRole = user(roles = setOf(UserRole.PATIENT, UserRole.NURSE))
+        fixture.repository.loginResult = Result.success(multiRole)
+        fixture.repository.currentUserResult = Result.success(multiRole)
+
+        val result = fixture.manager.login("ana@example.com", "secret")
+
+        assertTrue(result.isSuccess)
+        assertEquals(SessionState.Authenticated(multiRole), fixture.manager.state.value)
+    }
+
+    @Test
+    fun `login rejects and revokes user with no supported android portal role`() = runBlocking {
+        val fixture = fixture(token = null)
+        val unsupported = user(roles = setOf(UserRole.DOCTOR))
+        fixture.repository.loginResult = Result.success(unsupported)
+        fixture.repository.tokenSavedByLogin = "new-token"
+
+        val result = fixture.manager.login("ana@example.com", "secret")
+
+        assertFalse(result.isSuccess)
+        assertSame(SessionState.Unauthenticated, fixture.manager.state.value)
+        assertNull(fixture.tokenStore.token)
+    }
+
+    @Test
+    fun `restoreSession authenticates relative-only user`() = runBlocking {
+        val fixture = fixture(token = "valid-token")
+        fixture.repository.currentUserResult = Result.success(user(roles = setOf(UserRole.RELATIVE)))
+
+        fixture.manager.restoreSession()
+
+        assertEquals(
+            SessionState.Authenticated(user(roles = setOf(UserRole.RELATIVE))),
+            fixture.manager.state.value
+        )
+    }
+
+    @Test
+    fun `restoreSession authenticates nurse-only user`() = runBlocking {
+        val fixture = fixture(token = "valid-token")
+        fixture.repository.currentUserResult = Result.success(user(roles = setOf(UserRole.NURSE)))
+
+        fixture.manager.restoreSession()
+
+        assertEquals(
+            SessionState.Authenticated(user(roles = setOf(UserRole.NURSE))),
+            fixture.manager.state.value
+        )
+    }
+
+    @Test
+    fun `restoreSession rejects and revokes user with no supported android portal role`() = runBlocking {
+        val fixture = fixture(token = "valid-token")
+        fixture.repository.currentUserResult = Result.success(user(roles = setOf(UserRole.ADMISSION)))
+
+        fixture.manager.restoreSession()
+
+        assertSame(SessionState.Unauthenticated, fixture.manager.state.value)
+        assertNull(fixture.tokenStore.token)
+    }
+
     private suspend fun authenticatedFixture(): Fixture {
         val fixture = fixture(token = "valid-token")
         fixture.repository.currentUserResult = Result.success(user())
@@ -130,12 +233,12 @@ class SessionManagerTest {
         return Fixture(SessionManager(repository, tokenStore), repository, tokenStore)
     }
 
-    private fun user() = AuthenticatedUser(
+    private fun user(roles: Set<UserRole> = setOf(UserRole.PATIENT)) = AuthenticatedUser(
         id = 7,
         email = "ana@example.com",
         personId = 12,
         fullName = "Ana Martinez",
-        roles = emptySet()
+        roles = roles
     )
 
     private data class Fixture(
@@ -181,13 +284,11 @@ class SessionManagerTest {
             passwordConfirmation: String
         ): Result<Unit> = unsupported()
 
-        override suspend fun verifyActivationCode(email: String, code: String): Result<String> =
-            unsupported()
-
         override suspend fun resendActivationCode(email: String): Result<Unit> = unsupported()
 
-        override suspend fun setInitialPassword(
-            activationToken: String,
+        override suspend fun activateAccount(
+            email: String,
+            code: String,
             password: String,
             passwordConfirmation: String
         ): Result<Unit> = unsupported()

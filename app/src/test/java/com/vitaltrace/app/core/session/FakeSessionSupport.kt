@@ -42,12 +42,11 @@ internal class FakeAuthRepository(
         passwordConfirmation: String
     ): Result<Unit> = unsupported()
 
-    override suspend fun verifyActivationCode(email: String, code: String): Result<String> = unsupported()
-
     override suspend fun resendActivationCode(email: String): Result<Unit> = unsupported()
 
-    override suspend fun setInitialPassword(
-        activationToken: String,
+    override suspend fun activateAccount(
+        email: String,
+        code: String,
         password: String,
         passwordConfirmation: String
     ): Result<Unit> = unsupported()
