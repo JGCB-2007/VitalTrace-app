@@ -44,8 +44,11 @@ class NursePortalViewModel @Inject constructor(
         mutable.update { it.copy(selectedPatient = patient, section = NurseSection.PATIENTS, patientSection = NursePatientSection.SUMMARY, loading = true, error = null) }
         loadPatient(patient.id)
     }
-    fun clearPatient() { selection.clear(); mutable.update { it.copy(selectedPatient = null, profile = null, patientSummary = null, measurements = emptyList(), appointments = emptyList(), diagnoses = emptyList(), treatments = emptyList(), history = null, alerts = emptyList()) } }
+    fun clearPatient() { selection.clear(); mutable.update { it.copy(selectedPatient = null, profile = null, patientSummary = null, measurements = emptyList(), patientAppointments = emptyList(), diagnoses = emptyList(), treatments = emptyList(), history = null, patientAlerts = emptyList(), patientAlertsError = null) } }
     fun refresh() { loadDashboard(); loadPatients(mutable.value.search); selectedPatientId()?.let(::loadPatient) }
+    fun retryAppointments() = loadAppointments()
+    fun retryAlerts() = loadAlerts()
+    fun retryPatientAlerts() { selectedPatientId()?.let { loadPatientSection(it, NursePatientSection.ALERTS) } }
     fun loadAppointment(id: Long) = viewModelScope.launch { repository.getAppointmentDetail(id).onSuccess { appointment -> mutable.update { it.copy(selectedAppointment = appointment) } }.onFailure(::handleFailure) }
     fun loadAlert(id: Long) = viewModelScope.launch { repository.getAlertDetail(id).onSuccess { alert -> mutable.update { it.copy(selectedAlert = alert) } }.onFailure(::handleFailure) }
     fun dismissAppointment() { mutable.update { it.copy(selectedAppointment = null) } }
@@ -88,7 +91,7 @@ class NursePortalViewModel @Inject constructor(
         val results = listOf(profile, summary, measurements, appointments, diagnoses, treatments, history, alerts)
         val failure = results.firstOrNull { it.isFailure }?.exceptionOrNull()
         if (failure != null) { handleFailure(failure); return@launch }
-        mutable.update { it.copy(loading = false, profile = profile.getOrNull(), patientSummary = summary.getOrNull(), measurements = measurements.getOrNull()?.items.orEmpty(), appointments = appointments.getOrNull()?.items.orEmpty(), diagnoses = diagnoses.getOrNull()?.items.orEmpty(), treatments = treatments.getOrNull()?.items.orEmpty(), history = history.getOrNull(), alerts = alerts.getOrNull()?.items.orEmpty()) }
+        mutable.update { it.copy(loading = false, profile = profile.getOrNull(), patientSummary = summary.getOrNull(), measurements = measurements.getOrNull()?.items.orEmpty(), patientAppointments = appointments.getOrNull()?.items.orEmpty(), diagnoses = diagnoses.getOrNull()?.items.orEmpty(), treatments = treatments.getOrNull()?.items.orEmpty(), history = history.getOrNull(), patientAlerts = alerts.getOrNull()?.items.orEmpty()) }
         repository.getMeasurementTypes().onSuccess { types -> mutable.update { it.copy(measurementTypes = types) } }
     }
     private fun loadPatientSection(id: Long, section: NursePatientSection) = viewModelScope.launch {
@@ -97,14 +100,48 @@ class NursePortalViewModel @Inject constructor(
             NursePatientSection.DIAGNOSES -> repository.getDiagnoses(id).onSuccess { page -> mutable.update { it.copy(diagnoses = page.items) } }.onFailure(::handleFailure)
             NursePatientSection.TREATMENTS -> repository.getTreatments(id).onSuccess { page -> mutable.update { it.copy(treatments = page.items) } }.onFailure(::handleFailure)
             NursePatientSection.HISTORY -> repository.getClinicalHistory(id).onSuccess { history -> mutable.update { it.copy(history = history) } }.onFailure(::handleFailure)
-            NursePatientSection.ALERTS -> repository.getPatientAlerts(id).onSuccess { page -> mutable.update { it.copy(alerts = page.items) } }.onFailure(::handleFailure)
+            NursePatientSection.ALERTS -> repository.getPatientAlerts(id).onSuccess { page -> mutable.update { it.copy(patientAlerts = page.items, patientAlertsError = null) } }.onFailure(::handlePatientAlertsFailure)
             else -> Unit
         }
     }
-    private fun loadAppointments() = viewModelScope.launch { repository.getAppointments().onSuccess { page -> mutable.update { it.copy(appointments = page.items, loading = false) } }.onFailure(::handleFailure) }
-    private fun loadAlerts() = viewModelScope.launch { repository.getAlerts().onSuccess { page -> mutable.update { it.copy(alerts = page.items, loading = false) } }.onFailure(::handleFailure) }
-    private fun mutateAlert(block: suspend () -> Result<com.vitaltrace.app.feature.nurseportal.domain.model.NurseAlert>) = viewModelScope.launch { block().onSuccess { alert -> mutable.update { it.copy(selectedAlert = alert, mutationMessage = "Alerta actualizada correctamente.") }; loadAlerts() }.onFailure(::handleFailure) }
+    private fun loadAppointments() = viewModelScope.launch {
+        repository.getAppointments().onSuccess { page -> mutable.update { it.copy(nurseAppointments = page.items, appointmentsError = null, loading = false) } }.onFailure(::handleAppointmentsFailure)
+    }
+    private fun loadAlerts() = viewModelScope.launch {
+        repository.getAlerts().onSuccess { page -> mutable.update { it.copy(nurseAlerts = page.items, alertsError = null, loading = false) } }.onFailure(::handleAlertsFailure)
+    }
+    private fun mutateAlert(block: suspend () -> Result<com.vitaltrace.app.feature.nurseportal.domain.model.NurseAlert>) = viewModelScope.launch {
+        val section = mutable.value.section
+        val patientSection = mutable.value.patientSection
+        val patientId = selectedPatientId()
+        block().onSuccess { alert ->
+            mutable.update { it.copy(selectedAlert = alert, mutationMessage = "Alerta actualizada correctamente.") }
+            when {
+                section == NurseSection.ALERTS -> loadAlerts()
+                section == NurseSection.PATIENTS && patientSection == NursePatientSection.ALERTS && patientId != null -> loadPatientSection(patientId, NursePatientSection.ALERTS)
+            }
+        }.onFailure(::handleFailure)
+    }
     private fun selectedPatientId() = selection.selectedId.value ?: mutable.value.selectedPatient?.id
+    private fun handleAppointmentsFailure(error: Throwable) {
+        when ((error as? NursePortalException)?.httpCode) {
+            401 -> viewModelScope.launch { logoutUseCase(); selection.clear(); effectChannel.send(NursePortalEffect.NavigateToLogin) }
+            else -> mutable.update { it.copy(loading = false, appointmentsError = error.message ?: "No pudimos cargar las citas.") }
+        }
+    }
+    private fun handleAlertsFailure(error: Throwable) {
+        when ((error as? NursePortalException)?.httpCode) {
+            401 -> viewModelScope.launch { logoutUseCase(); selection.clear(); effectChannel.send(NursePortalEffect.NavigateToLogin) }
+            else -> mutable.update { it.copy(loading = false, alertsError = error.message ?: "No pudimos cargar las alertas.") }
+        }
+    }
+    private fun handlePatientAlertsFailure(error: Throwable) {
+        when ((error as? NursePortalException)?.httpCode) {
+            401 -> viewModelScope.launch { logoutUseCase(); selection.clear(); effectChannel.send(NursePortalEffect.NavigateToLogin) }
+            403 -> { selection.clear(); mutable.update { it.copy(selectedPatient = null, error = "No tienes autorización para consultar este paciente.", section = NurseSection.PATIENTS) } }
+            else -> mutable.update { it.copy(patientAlertsError = error.message ?: "No pudimos cargar las alertas del paciente.") }
+        }
+    }
     private fun handleFailure(error: Throwable) {
         when ((error as? NursePortalException)?.httpCode) {
             401 -> viewModelScope.launch { logoutUseCase(); selection.clear(); effectChannel.send(NursePortalEffect.NavigateToLogin) }

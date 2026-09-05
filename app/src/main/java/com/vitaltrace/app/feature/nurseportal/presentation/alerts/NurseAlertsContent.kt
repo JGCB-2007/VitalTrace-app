@@ -15,10 +15,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.vitaltrace.app.core.presentation.components.ObservedPatientHeader
+import com.vitaltrace.app.core.presentation.localization.EnumDisplayEs
+import com.vitaltrace.app.core.presentation.localization.SpanishDateTime
+import com.vitaltrace.app.feature.home.presentation.components.HomeErrorState
 import com.vitaltrace.app.feature.measurements.presentation.form.components.MeasurementNoteField
 import com.vitaltrace.app.feature.nurseportal.domain.model.NurseAlert
 import com.vitaltrace.app.feature.nurseportal.domain.model.NurseAlertHistory
@@ -26,8 +30,12 @@ import com.vitaltrace.app.ui.theme.*
 
 @Composable
 internal fun NurseAlertsContent(state: NursePortalUiState, viewModel: NursePortalViewModel, modifier: Modifier) {
-    if (state.alerts.isEmpty()) {
-        NurseCenteredEmpty(Icons.Rounded.Warning, "Sin alertas", "No hay alertas pendientes.", modifier)
+    if (state.alertsError != null && state.nurseAlerts.isEmpty()) {
+        HomeErrorState(state.alertsError, viewModel::retryAlerts, modifier.fillMaxSize())
+        return
+    }
+    if (state.nurseAlerts.isEmpty()) {
+        NurseAlertsEmptyCard(modifier)
         return
     }
     LazyColumn(
@@ -35,7 +43,7 @@ internal fun NurseAlertsContent(state: NursePortalUiState, viewModel: NursePorta
         contentPadding = PaddingValues(start = 24.dp, top = 20.dp, end = 24.dp, bottom = 30.dp),
         verticalArrangement = Arrangement.spacedBy(14.dp)
     ) {
-        items(state.alerts, key = NurseAlert::id) { alert ->
+        items(state.nurseAlerts, key = NurseAlert::id) { alert ->
             NurseAlertCard(alert, state.patients.firstOrNull { it.id == alert.patientId }?.fullName) { viewModel.loadAlert(alert.id) }
         }
     }
@@ -44,14 +52,54 @@ internal fun NurseAlertsContent(state: NursePortalUiState, viewModel: NursePorta
 
 @Composable
 internal fun NursePatientAlertsContent(state: NursePortalUiState, viewModel: NursePortalViewModel, modifier: Modifier) {
-    if (state.alerts.isEmpty()) {
+    if (state.patientAlertsError != null && state.patientAlerts.isEmpty()) {
+        HomeErrorState(state.patientAlertsError, viewModel::retryPatientAlerts, modifier.fillMaxSize())
+        return
+    }
+    if (state.patientAlerts.isEmpty()) {
         NurseCenteredEmpty(Icons.Rounded.Warning, "Sin alertas", "Este paciente no tiene alertas pendientes.", modifier)
         return
     }
     LazyColumn(modifier, contentPadding = PaddingValues(24.dp), verticalArrangement = Arrangement.spacedBy(14.dp)) {
-        items(state.alerts, key = NurseAlert::id) { alert -> NurseAlertCard(alert, state.selectedPatient?.fullName) { viewModel.loadAlert(alert.id) } }
+        items(state.patientAlerts, key = NurseAlert::id) { alert -> NurseAlertCard(alert, state.selectedPatient?.fullName) { viewModel.loadAlert(alert.id) } }
     }
     state.selectedAlert?.let { NurseAlertDetailSheet(it, state, viewModel) }
+}
+
+@Composable
+private fun NurseAlertsEmptyCard(modifier: Modifier = Modifier) {
+    Column(modifier.fillMaxSize()) {
+        Card(
+            modifier = Modifier.fillMaxWidth().padding(start = 24.dp, top = 20.dp, end = 24.dp),
+            shape = RoundedCornerShape(26.dp),
+            colors = CardDefaults.cardColors(Color.White),
+            elevation = CardDefaults.cardElevation(5.dp)
+        ) {
+            Column(
+                Modifier.fillMaxWidth().padding(28.dp),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.spacedBy(14.dp)
+            ) {
+                val colors = severityColors("")
+                Surface(color = colors.first, shape = RoundedCornerShape(18.dp)) {
+                    Icon(Icons.Rounded.Warning, null, Modifier.padding(16.dp), tint = colors.second)
+                }
+                Text(
+                    "Sin alertas",
+                    color = VitalTraceNavy,
+                    fontFamily = FontFamily.Serif,
+                    fontSize = 22.sp,
+                    fontWeight = FontWeight.Bold,
+                    textAlign = TextAlign.Center
+                )
+                Text(
+                    "No hay alertas pendientes.",
+                    color = Color(0xFF53636D),
+                    textAlign = TextAlign.Center
+                )
+            }
+        }
+    }
 }
 
 @Composable
@@ -68,10 +116,10 @@ internal fun NurseAlertCard(alert: NurseAlert, patientName: String? = null, onCl
             }
             Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween, verticalAlignment = Alignment.CenterVertically) {
                 Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                    NurseStatusChip(alert.severity, colors.first, colors.second)
-                    NurseStatusChip(alert.status, Color(0xFFDDF4F2), VitalTraceTeal)
+                    NurseStatusChip(EnumDisplayEs.alertSeverity(alert.severity), colors.first, colors.second)
+                    NurseStatusChip(EnumDisplayEs.alertStatus(alert.status), Color(0xFFDDF4F2), VitalTraceTeal)
                 }
-                Text(alert.generatedAt, color = Color(0xFF53636D), style = MaterialTheme.typography.bodySmall)
+                Text(spanishTimestamp(alert.generatedAt), color = Color(0xFF53636D), style = MaterialTheme.typography.bodySmall)
             }
         }
     }
@@ -102,12 +150,12 @@ internal fun NurseAlertDetailSheet(alert: NurseAlert, state: NursePortalUiState,
                     Column(Modifier.padding(22.dp), verticalArrangement = Arrangement.spacedBy(14.dp)) {
                         Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                             val colors = severityColors(alert.severity)
-                            NurseStatusChip(alert.severity, colors.first, colors.second)
-                            NurseStatusChip(alert.status, Color(0xFFDDF4F2), VitalTraceTeal)
+                            NurseStatusChip(EnumDisplayEs.alertSeverity(alert.severity), colors.first, colors.second)
+                            NurseStatusChip(EnumDisplayEs.alertStatus(alert.status), Color(0xFFDDF4F2), VitalTraceTeal)
                         }
                         Text(alert.description, color = VitalTraceNavy, fontFamily = FontFamily.Serif, fontSize = 21.sp, fontWeight = FontWeight.Bold)
-                        NurseDetailRow("Tipo", alert.type)
-                        NurseDetailRow("Fecha", alert.generatedAt)
+                        NurseDetailRow("Tipo", EnumDisplayEs.alertType(alert.type))
+                        NurseDetailRow("Fecha", spanishTimestamp(alert.generatedAt))
                         alert.measurementId?.let { NurseDetailRow("Medición asociada", "#$it") }
                     }
                 }
@@ -166,14 +214,26 @@ private fun AlertActionDialog(title: String, message: String, confirmLabel: Stri
 private fun AlertHistoryCard(item: NurseAlertHistory) {
     Card(Modifier.fillMaxWidth(), shape = RoundedCornerShape(20.dp), colors = CardDefaults.cardColors(Color.White), elevation = CardDefaults.cardElevation(3.dp)) {
         Column(Modifier.padding(18.dp), verticalArrangement = Arrangement.spacedBy(6.dp)) {
-            Text(item.action, color = VitalTraceNavy, fontWeight = FontWeight.Bold)
-            Text(listOfNotNull(item.previousStatus, item.newStatus).joinToString(" → "), color = VitalTraceTeal)
+            Text(EnumDisplayEs.alertAction(item.action), color = VitalTraceNavy, fontWeight = FontWeight.Bold)
+            Text(
+                listOfNotNull(item.previousStatus, item.newStatus)
+                    .map(EnumDisplayEs::alertStatus)
+                    .joinToString(" → "),
+                color = VitalTraceTeal
+            )
             item.comment?.let { Text(it, color = Color(0xFF53636D)) }
-            item.createdAt?.let { Text(it, color = Color(0xFF53636D), style = MaterialTheme.typography.bodySmall) }
+            item.createdAt?.let { Text(spanishTimestamp(it), color = Color(0xFF53636D), style = MaterialTheme.typography.bodySmall) }
         }
     }
 }
 
+/** Raw API `yyyy-MM-dd HH:mm:ss` -> localized "fecha · hora" for display only. */
+private fun spanishTimestamp(value: String): String {
+    val (date, time) = SpanishDateTime.formatApiDateTime(value)
+    return if (time.isBlank()) date else "$date · $time"
+}
+
+// Raw severity code drives the chip colors; the visible label is localized above.
 private fun severityColors(value: String): Pair<Color, Color> = when (value.uppercase()) {
     "CRITICAL" -> Color(0xFFF3E4E1) to Color(0xFF8C3D32)
     "HIGH" -> Color(0xFFFFE8D4) to Color(0xFF9A4F11)

@@ -17,6 +17,7 @@ import com.vitaltrace.app.feature.appointments.presentation.AppointmentUiModel
 import com.vitaltrace.app.feature.appointments.presentation.components.AppointmentSection
 import com.vitaltrace.app.feature.appointments.presentation.components.FeaturedAppointmentCard
 import com.vitaltrace.app.feature.appointments.presentation.detail.AppointmentDetailSheet
+import com.vitaltrace.app.feature.home.presentation.components.HomeErrorState
 import com.vitaltrace.app.feature.nurseportal.domain.model.NurseInfo
 import com.vitaltrace.app.feature.profile.presentation.ProfileUserUiModel
 import com.vitaltrace.app.feature.profile.presentation.components.ProfileIdentityCard
@@ -24,8 +25,12 @@ import com.vitaltrace.app.ui.theme.VitalTraceNavy
 
 @Composable
 internal fun NurseAppointmentsContent(state: NursePortalUiState, viewModel: NursePortalViewModel, modifier: Modifier) {
-    val appointments = remember(state.appointments, state.patients) {
-        state.appointments.map { appointment ->
+    if (state.appointmentsError != null && state.nurseAppointments.isEmpty()) {
+        HomeErrorState(state.appointmentsError, viewModel::retryAppointments, modifier.fillMaxSize())
+        return
+    }
+    val appointments = remember(state.nurseAppointments, state.patients) {
+        state.nurseAppointments.map { appointment ->
             appointment.toAppointmentUiModel(state.patients.firstOrNull { it.id == appointment.patientId }?.fullName ?: "Paciente")
         }
     }

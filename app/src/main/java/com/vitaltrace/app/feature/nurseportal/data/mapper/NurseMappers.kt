@@ -6,7 +6,7 @@ import com.vitaltrace.app.feature.patient.domain.model.*
 
 fun NurseInfoDto.toDomain() = NurseInfo(id, fullName, professionalCode, specialty)
 fun NurseSummaryDto.toDomain() = NurseSummary(nurse.toDomain(), assignedPatientsCount, NurseAlertsSummary(alerts.totalPending, alerts.new, alerts.critical), appointments.next.map { it.toDomain() })
-fun NurseAppointmentDto.toDomain() = NurseAppointment(id, patientId, scheduledAt, durationMinutes, reason, status, professional?.let { NurseProfessional(it.id, it.fullName, it.professionalType, it.specialty) })
+fun NurseAppointmentDto.toDomain() = NurseAppointment(id, patientId, scheduledAt, durationMinutes, reason, status, professional?.let { NurseProfessional(it.id, it.fullName, it.professionalType, it.specialty?.name) })
 fun NurseMeasurementDto.toDomain() = NurseMeasurement(id, patientId, measurementType?.id, measurementType?.name, measurementType?.baseUnit, value, unit, measuredAt, origin, observation, reviewStatus)
 fun NursePatientDto.toDomain() = NursePatient(patientId, recordNumber, fullName, birthDate, age, sex, administrativeStatus, activeAlertsCount, criticalAlertsCount, lastMeasurement?.toDomain(), nextAppointment?.toDomain())
 fun NursePatientProfileDto.toDomain() = NurseProfile(id, fullName, recordNumber, sex, birthDate, age, phone, emergencyContact?.name, emergencyContact?.phone, status)

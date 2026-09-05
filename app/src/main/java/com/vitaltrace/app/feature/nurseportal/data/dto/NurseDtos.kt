@@ -1,5 +1,6 @@
 package com.vitaltrace.app.feature.nurseportal.data.dto
 
+import com.vitaltrace.app.feature.patient.data.dto.appointments.SpecialtyDto
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -12,7 +13,7 @@ import kotlinx.serialization.Serializable
 @Serializable data class NurseEmergencyContactDto(val name: String? = null, val phone: String? = null)
 @Serializable data class NursePatientSummaryDto(val patient: NursePatientDto, @SerialName("recent_measurements") val recentMeasurements: List<NurseMeasurementDto> = emptyList(), val diagnoses: List<NurseDiagnosisDto> = emptyList(), @SerialName("active_treatments") val activeTreatments: List<NurseTreatmentDto> = emptyList(), @SerialName("upcoming_appointment") val upcomingAppointment: NurseAppointmentDto? = null, @SerialName("active_alerts") val activeAlerts: List<NurseAlertDto> = emptyList())
 @Serializable data class NurseAppointmentDto(val id: Long, @SerialName("patient_id") val patientId: Long, @SerialName("scheduled_at") val scheduledAt: String, @SerialName("duration_minutes") val durationMinutes: Int, val reason: String, val status: String, val professional: NurseProfessionalDto? = null)
-@Serializable data class NurseProfessionalDto(val id: Long, @SerialName("full_name") val fullName: String? = null, @SerialName("professional_type") val professionalType: String? = null, val specialty: String? = null)
+@Serializable data class NurseProfessionalDto(val id: Long, @SerialName("full_name") val fullName: String? = null, @SerialName("professional_type") val professionalType: String? = null, val specialty: SpecialtyDto? = null)
 @Serializable data class NurseMeasurementDto(val id: Long, @SerialName("patient_id") val patientId: Long, @SerialName("measurement_type") val measurementType: NurseMeasurementTypeRefDto? = null, val value: String, val unit: String, @SerialName("measured_at") val measuredAt: String, val origin: String, val observation: String? = null, @SerialName("review_status") val reviewStatus: String? = null)
 @Serializable data class NurseMeasurementTypeRefDto(val id: Long, val name: String, @SerialName("base_unit") val baseUnit: String, val decimals: Int)
 @Serializable data class NurseMeasurementTypeDto(val id: Long, val name: String, val unit: String, val decimals: Int, val active: Boolean)
