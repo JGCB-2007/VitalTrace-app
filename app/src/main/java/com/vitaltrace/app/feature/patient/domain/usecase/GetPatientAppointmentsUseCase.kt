@@ -11,8 +11,8 @@ class GetPatientAppointmentsUseCase @Inject constructor(
     private val appointmentReminderScheduler: AppointmentReminderScheduler? = null
 ) {
 
-    suspend operator fun invoke(page: Int? = null): Result<Page<Appointment>> {
-        return patientRepository.getAppointments(page = page).onSuccess { appointmentsPage ->
+    suspend operator fun invoke(page: Int? = null, forceRefresh: Boolean = false): Result<Page<Appointment>> {
+        return patientRepository.getAppointments(page = page, forceRefresh = forceRefresh).onSuccess { appointmentsPage ->
             appointmentReminderScheduler?.synchronize(
                 appointments = appointmentsPage.items,
                 isCompleteSnapshot = appointmentsPage.meta.currentPage == 1 &&

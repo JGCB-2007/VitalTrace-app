@@ -23,14 +23,16 @@ interface PatientRepository {
         dateFrom: String? = null,
         dateTo: String? = null,
         upcoming: Boolean? = null,
-        page: Int? = null
+        page: Int? = null,
+        forceRefresh: Boolean = false
     ): Result<Page<Appointment>>
 
     suspend fun getMeasurements(
         measurementTypeId: Long? = null,
         dateFrom: String? = null,
         dateTo: String? = null,
-        page: Int? = null
+        page: Int? = null,
+        forceRefresh: Boolean = false
     ): Result<Page<Measurement>>
 
     suspend fun createMeasurement(
@@ -46,7 +48,8 @@ interface PatientRepository {
         dateFrom: String? = null,
         dateTo: String? = null,
         active: Boolean? = null,
-        page: Int? = null
+        page: Int? = null,
+        forceRefresh: Boolean = false
     ): Result<Page<Treatment>>
 
     suspend fun getRelatives(page: Int? = null): Result<Page<PatientRelative>>

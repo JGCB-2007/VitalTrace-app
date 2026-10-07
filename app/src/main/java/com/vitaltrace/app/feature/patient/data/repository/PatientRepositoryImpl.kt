@@ -1,6 +1,7 @@
 package com.vitaltrace.app.feature.patient.data.repository
 
 import com.vitaltrace.app.core.cache.PatientMemoryCache
+import com.vitaltrace.app.core.cache.PatientDiskCache
 import com.vitaltrace.app.feature.patient.data.dto.measurements.CreateMeasurementRequestDto
 import com.vitaltrace.app.feature.patient.data.mapper.toDomain
 import com.vitaltrace.app.feature.patient.data.remote.PatientPortalApiService
@@ -22,7 +23,8 @@ import javax.inject.Inject
 
 class PatientRepositoryImpl @Inject constructor(
     private val apiService: PatientPortalApiService,
-    private val cache: PatientMemoryCache
+    private val cache: PatientMemoryCache,
+    private val diskCache: PatientDiskCache
 ) : PatientRepository {
     override suspend fun getSummary(): Result<PatientSummary> = execute {
         apiService.getSummary().data?.toDomain()
@@ -42,19 +44,33 @@ class PatientRepositoryImpl @Inject constructor(
     }
 
     override suspend fun getAppointments(
-        status: String?, dateFrom: String?, dateTo: String?, upcoming: Boolean?, page: Int?
-    ): Result<Page<Appointment>> = execute {
-        apiService.getAppointments(status, dateFrom, dateTo, upcoming, page)
-            .toDomain { it.toDomain() }
+        status: String?, dateFrom: String?, dateTo: String?, upcoming: Boolean?, page: Int?, forceRefresh: Boolean
+    ): Result<Page<Appointment>> {
+        val key = "appointments:$status:$dateFrom:$dateTo:$upcoming:$page"
+        if (!forceRefresh) cache.get<Page<Appointment>>(key)?.let { return Result.success(it) }
+        val remote = execute {
+            apiService.getAppointments(status, dateFrom, dateTo, upcoming, page)
+                .toDomain { it.toDomain() }
+                .also { cache.put(key, it); diskCache.putAppointments(key, it) }
+        }
+        return remote.takeIf { it.isSuccess }
+            ?: diskCache.getAppointments(key)?.let { Result.success(it) }
+            ?: remote
     }
 
     override suspend fun getMeasurements(
-        measurementTypeId: Long?, dateFrom: String?, dateTo: String?, page: Int?
-    ): Result<Page<Measurement>> = execute {
+        measurementTypeId: Long?, dateFrom: String?, dateTo: String?, page: Int?, forceRefresh: Boolean
+    ): Result<Page<Measurement>> {
         val key = "measurements:$measurementTypeId:$dateFrom:$dateTo:$page"
-        cache.get<Page<Measurement>>(key)?.let { return@execute it }
-        apiService.getMeasurements(measurementTypeId, dateFrom, dateTo, page)
-            .toDomain { it.toDomain() }.also { cache.put(key, it) }
+        if (!forceRefresh) cache.get<Page<Measurement>>(key)?.let { return Result.success(it) }
+        val remote = execute {
+            apiService.getMeasurements(measurementTypeId, dateFrom, dateTo, page)
+                .toDomain { it.toDomain() }
+                .also { cache.put(key, it); diskCache.putMeasurements(key, it) }
+        }
+        return remote.takeIf { it.isSuccess }
+            ?: diskCache.getMeasurements(key)?.let { Result.success(it) }
+            ?: remote
     }
 
     override suspend fun createMeasurement(
@@ -66,17 +82,24 @@ class PatientRepositoryImpl @Inject constructor(
                 cache.invalidate("measurements:")
                 cache.invalidate("summary")
                 cache.invalidate("clinical-history")
+                diskCache.invalidate("measurements:")
             }
             ?: throw PatientException("The registered measurement was not received.")
     }
 
     override suspend fun getTreatments(
-        status: String?, dateFrom: String?, dateTo: String?, active: Boolean?, page: Int?
-    ): Result<Page<Treatment>> = execute {
+        status: String?, dateFrom: String?, dateTo: String?, active: Boolean?, page: Int?, forceRefresh: Boolean
+    ): Result<Page<Treatment>> {
         val key = "treatments:$status:$dateFrom:$dateTo:$active:$page"
-        cache.get<Page<Treatment>>(key)?.let { return@execute it }
-        apiService.getTreatments(status, dateFrom, dateTo, active, page)
-            .toDomain { it.toDomain() }.also { cache.put(key, it) }
+        if (!forceRefresh) cache.get<Page<Treatment>>(key)?.let { return Result.success(it) }
+        val remote = execute {
+            apiService.getTreatments(status, dateFrom, dateTo, active, page)
+                .toDomain { it.toDomain() }
+                .also { cache.put(key, it); diskCache.putTreatments(key, it) }
+        }
+        return remote.takeIf { it.isSuccess }
+            ?: diskCache.getTreatments(key)?.let { Result.success(it) }
+            ?: remote
     }
 
     override suspend fun getRelatives(page: Int?): Result<Page<PatientRelative>> = execute {
