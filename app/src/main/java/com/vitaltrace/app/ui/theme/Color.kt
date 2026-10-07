@@ -2,15 +2,30 @@ package com.vitaltrace.app.ui.theme
 
 import androidx.compose.ui.graphics.Color
 
-val Purple80 = Color(0xFFD0BCFF)
-val PurpleGrey80 = Color(0xFFCCC2DC)
-val Pink80 = Color(0xFFEFB8C8)
-
-val Purple40 = Color(0xFF6650a4)
-val PurpleGrey40 = Color(0xFF625b71)
-val Pink40 = Color(0xFF7D5260)
-
 val VitalTraceNavy = Color(0xFF01305E)
 val VitalTraceTeal = Color(0xFF017D84)
 val VitalTraceMint = Color(0xFF60CEC8)
 val VitalTraceWarmBackground = Color(0xFFF3F0E9)
+val VitalTraceSurface = Color(0xFFFFFDF8)
+val VitalTraceText = Color(0xFF172C3A)
+val VitalTraceSupportingText = Color(0xFF53636D)
+val VitalTraceOutline = Color(0xFFD8D4CA)
+val VitalTraceNavyContainer = Color(0xFFDCE8EE)
+val VitalTraceTealContainer = Color(0xFFD9EFEC)
+val VitalTraceMintContainer = Color(0xFFE4F3EE)
+val VitalTraceSurfaceVariant = Color(0xFFECEFEA)
+val VitalTraceOutlineVariant = Color(0xFFE5E0D7)
+val VitalTraceError = Color(0xFFB42318)
+
+internal val VitalTraceDarkNavy = Color(0xFF061E33)
+internal val VitalTraceDarkSurface = Color(0xFF102B3B)
+internal val VitalTraceDarkText = Color(0xFFE8F2F5)
+internal val VitalTraceDarkSupporting = Color(0xFFB7C8CE)
+internal val VitalTraceDarkNavyContainer = Color(0xFF123F5A)
+internal val VitalTraceDarkTealContainer = Color(0xFF0B4F55)
+internal val VitalTraceDarkMintContainer = Color(0xFF245853)
+internal val VitalTraceDarkSurfaceVariant = Color(0xFF183746)
+internal val VitalTraceDarkOutlineVariant = Color(0xFF35515E)
+internal val VitalTraceDarkTeal = Color(0xFF7ADDD8)
+internal val VitalTraceDarkErrorContainer = Color(0xFF8C1D18)
+internal val VitalTraceDarkOnErrorContainer = Color(0xFFFFDAD6)
