@@ -12,6 +12,7 @@ import androidx.compose.material.icons.rounded.Group
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -35,7 +36,7 @@ fun RelativesAccessCard(
     Card(
         modifier = modifier.fillMaxWidth().clickable(onClick = onClick),
         shape = RoundedCornerShape(26.dp),
-        colors = CardDefaults.cardColors(containerColor = Color.White),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
         elevation = CardDefaults.cardElevation(defaultElevation = 5.dp)
     ) {
         Row(
@@ -43,18 +44,18 @@ fun RelativesAccessCard(
             horizontalArrangement = Arrangement.spacedBy(16.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Icon(icon, null, tint = VitalTraceNavy)
+            Icon(icon, null, tint = MaterialTheme.colorScheme.onSurface)
             Text(
                 title,
                 modifier = Modifier.weight(1f),
-                color = VitalTraceNavy,
+                color = MaterialTheme.colorScheme.onSurface,
                 fontSize = 17.sp,
                 fontWeight = FontWeight.Bold
             )
             Icon(
                 Icons.AutoMirrored.Rounded.KeyboardArrowRight,
                 null,
-                tint = Color(0xFF53636D)
+                tint = MaterialTheme.colorScheme.onSurfaceVariant
             )
         }
     }

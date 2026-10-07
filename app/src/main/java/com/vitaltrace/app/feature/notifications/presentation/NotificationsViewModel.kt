@@ -60,7 +60,7 @@ class NotificationsViewModel @Inject constructor(
                 _uiState.update {
                     it.copy(
                         unreadCount = it.unreadCount + 1,
-                        feedbackMessage = "No pudimos marcar la notificaciÃ³n como leÃ­da."
+                        feedbackMessage = "No pudimos marcar la notificación como leída."
                     )
                 }
             }
@@ -82,7 +82,7 @@ class NotificationsViewModel @Inject constructor(
                             contentState = updatedContent,
                             unreadCount = result.unreadCount,
                             isMarkingAllAsRead = false,
-                            feedbackMessage = "Notificaciones marcadas como leÃ­das."
+                            feedbackMessage = "Notificaciones marcadas como leídas."
                         )
                     }
                 }
@@ -140,7 +140,7 @@ class NotificationsViewModel @Inject constructor(
                             } else it.contentState,
                             isLoadingMore = false,
                             feedbackMessage = if (page > 1) {
-                                "No pudimos cargar mÃ¡s notificaciones."
+                                "No pudimos cargar más notificaciones."
                             } else null
                         )
                     }

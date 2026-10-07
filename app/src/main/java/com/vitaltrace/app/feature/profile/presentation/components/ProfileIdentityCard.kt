@@ -1,5 +1,9 @@
 package com.vitaltrace.app.feature.profile.presentation.components
 
+import android.graphics.BitmapFactory
+import android.net.Uri
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -13,12 +17,21 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.PhotoCamera
+import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.produceState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.asImageBitmap
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
@@ -31,11 +44,15 @@ import com.vitaltrace.app.R
 import com.vitaltrace.app.feature.profile.presentation.ProfileUserUiModel
 import com.vitaltrace.app.ui.theme.VitalTraceNavy
 import com.vitaltrace.app.ui.theme.VitalTraceTeal
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 
 @Composable
 fun ProfileIdentityCard(
     user: ProfileUserUiModel,
     roleLabel: String? = null,
+    avatarUri: String? = null,
+    onAvatarClick: (() -> Unit)? = null,
     modifier: Modifier = Modifier
 ) {
     val role = roleLabel ?: stringResource(R.string.profile_role_patient)
@@ -44,12 +61,24 @@ fun ProfileIdentityCard(
         user.fullName,
         role
     )
+    val context = LocalContext.current
+    val avatar by produceState<androidx.compose.ui.graphics.ImageBitmap?>(null, avatarUri) {
+        value = avatarUri?.let { value ->
+            withContext(Dispatchers.IO) {
+                runCatching {
+                    context.contentResolver.openInputStream(Uri.parse(value))?.use {
+                        BitmapFactory.decodeStream(it)?.asImageBitmap()
+                    }
+                }.getOrNull()
+            }
+        }
+    }
     Card(
         modifier = modifier
             .fillMaxWidth()
             .semantics { contentDescription = description },
         shape = RoundedCornerShape(28.dp),
-        colors = CardDefaults.cardColors(containerColor = Color.White),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
         elevation = CardDefaults.cardElevation(defaultElevation = 5.dp)
     ) {
         Row(
@@ -60,6 +89,7 @@ fun ProfileIdentityCard(
             Box(
                 modifier = Modifier
                     .size(96.dp)
+                    .then(if (onAvatarClick != null) Modifier.clickable(onClick = onAvatarClick) else Modifier)
                     .clip(RoundedCornerShape(28.dp))
                     .background(
                         Brush.linearGradient(
@@ -68,14 +98,37 @@ fun ProfileIdentityCard(
                     ),
                 contentAlignment = Alignment.Center
             ) {
-                Text(
-                    text = user.initials,
-                    color = Color.White,
-                    fontFamily = FontFamily.Serif,
-                    fontSize = 35.sp,
-                    fontWeight = FontWeight.Bold,
-                    textAlign = TextAlign.Center
-                )
+                if (avatar != null) {
+                    Image(
+                        bitmap = requireNotNull(avatar),
+                        contentDescription = "Foto de perfil",
+                        modifier = Modifier.matchParentSize(),
+                        contentScale = ContentScale.Crop
+                    )
+                } else {
+                    Text(
+                        text = user.initials,
+                        color = Color.White,
+                        fontFamily = FontFamily.Serif,
+                        fontSize = 35.sp,
+                        fontWeight = FontWeight.Bold,
+                        textAlign = TextAlign.Center
+                    )
+                }
+                if (onAvatarClick != null) {
+                    Surface(
+                        modifier = Modifier.align(Alignment.BottomEnd).size(30.dp),
+                        shape = RoundedCornerShape(10.dp),
+                        color = MaterialTheme.colorScheme.surface
+                    ) {
+                        Icon(
+                            Icons.Rounded.PhotoCamera,
+                            contentDescription = "Cambiar foto",
+                            modifier = Modifier.padding(6.dp),
+                            tint = MaterialTheme.colorScheme.secondary
+                        )
+                    }
+                }
             }
             Column(
                 modifier = Modifier.weight(1f),
@@ -83,15 +136,15 @@ fun ProfileIdentityCard(
             ) {
                 Text(
                     text = user.fullName,
-                    color = VitalTraceNavy,
+                    color = MaterialTheme.colorScheme.onSurface,
                     fontFamily = FontFamily.Serif,
                     fontSize = 27.sp,
                     fontWeight = FontWeight.Bold,
                     lineHeight = 30.sp
                 )
                 Surface(
-                    color = VitalTraceTeal.copy(alpha = 0.16f),
-                    contentColor = VitalTraceTeal,
+                    color = MaterialTheme.colorScheme.secondaryContainer,
+                    contentColor = MaterialTheme.colorScheme.onSecondaryContainer,
                     shape = RoundedCornerShape(50)
                 ) {
                     Text(

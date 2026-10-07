@@ -92,7 +92,7 @@ fun NotificationsScreen(
     }
 
     Scaffold(
-        containerColor = VitalTraceWarmBackground,
+        containerColor = MaterialTheme.colorScheme.background,
         snackbarHost = { SnackbarHost(snackbarHostState) }
     ) { padding ->
         Column(
@@ -154,20 +154,20 @@ private fun NotificationsHeader(
             Icon(
                 imageVector = Icons.AutoMirrored.Rounded.ArrowBack,
                 contentDescription = stringResource(R.string.notifications_back),
-                tint = VitalTraceNavy
+                tint = MaterialTheme.colorScheme.onBackground
             )
         }
         Column(modifier = Modifier.weight(1f)) {
             Text(
                 text = stringResource(R.string.notifications_screen_title),
-                color = VitalTraceNavy,
+                color = MaterialTheme.colorScheme.onBackground,
                 fontFamily = FontFamily.Serif,
                 style = MaterialTheme.typography.headlineSmall,
                 fontWeight = FontWeight.Bold
             )
             Text(
                 text = if (unreadCount == 1) stringResource(R.string.notifications_unread_one) else stringResource(R.string.notifications_unread_count, unreadCount),
-                color = VitalTraceTeal,
+                color = MaterialTheme.colorScheme.secondary,
                 style = MaterialTheme.typography.labelLarge,
                 fontWeight = FontWeight.Medium
             )
@@ -187,13 +187,13 @@ private fun NotificationsHeader(
                 CircularProgressIndicator(
                     modifier = Modifier.size(16.dp),
                     strokeWidth = 2.dp,
-                    color = VitalTraceTeal
+                    color = MaterialTheme.colorScheme.secondary
                 )
             }
             if (isMarkingAllAsRead) Spacer(Modifier.size(7.dp))
             Text(
                 text = stringResource(R.string.notifications_mark_all),
-                color = if (unreadCount > 0) VitalTraceTeal else VitalTraceNavy.copy(alpha = 0.62f),
+                color = if (unreadCount > 0) MaterialTheme.colorScheme.secondary else MaterialTheme.colorScheme.onSurfaceVariant,
                 fontWeight = FontWeight.SemiBold
             )
         }
@@ -229,15 +229,15 @@ private fun NotificationFilters(
                 shape = CircleShape,
                 colors = FilterChipDefaults.filterChipColors(
                     containerColor = Color.Transparent,
-                    labelColor = VitalTraceNavy.copy(alpha = 0.82f),
-                    selectedContainerColor = VitalTraceTeal,
-                    selectedLabelColor = Color.White
+                    labelColor = MaterialTheme.colorScheme.onSurfaceVariant,
+                    selectedContainerColor = MaterialTheme.colorScheme.primary,
+                    selectedLabelColor = MaterialTheme.colorScheme.onPrimary
                 ),
                 border = FilterChipDefaults.filterChipBorder(
                     enabled = true,
                     selected = selected == filter,
-                    borderColor = VitalTraceTeal.copy(alpha = 0.65f),
-                    selectedBorderColor = VitalTraceTeal
+                    borderColor = MaterialTheme.colorScheme.outline,
+                    selectedBorderColor = MaterialTheme.colorScheme.primary
                 )
             )
         }
@@ -276,7 +276,7 @@ private fun NotificationsList(
                         CircularProgressIndicator(
                             modifier = Modifier.size(22.dp),
                             strokeWidth = 2.dp,
-                            color = VitalTraceTeal
+                            color = MaterialTheme.colorScheme.secondary
                         )
                     }
                 }
@@ -293,7 +293,11 @@ private fun NotificationCard(
 ) {
     val category = notificationCategory(notification)
     val accent = categoryColor(category)
-    val background = if (notification.isRead) Color.White else accent.copy(alpha = 0.055f)
+    val background = if (notification.isRead) {
+        MaterialTheme.colorScheme.surface
+    } else {
+        MaterialTheme.colorScheme.surfaceVariant
+    }
     val presentation = NotificationPresentationMapper.map(notification)
     val visibleTitle = presentation.titleResource?.let { stringResource(it) }
         ?: notification.title.orEmpty()
@@ -333,7 +337,7 @@ private fun NotificationCard(
                         modifier = Modifier
                             .weight(1f)
                             .padding(horizontal = 10.dp),
-                        color = VitalTraceNavy,
+                        color = MaterialTheme.colorScheme.onSurface,
                         style = MaterialTheme.typography.titleMedium,
                         fontWeight = FontWeight.SemiBold,
                         maxLines = 2,
@@ -341,7 +345,7 @@ private fun NotificationCard(
                     )
                     Text(
                         text = NotificationDateFormatter.format(notification.createdAt),
-                        color = VitalTraceNavy.copy(alpha = 0.64f),
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
                         style = MaterialTheme.typography.labelMedium,
                         textAlign = TextAlign.End
                     )
@@ -350,7 +354,7 @@ private fun NotificationCard(
                     Text(
                         text = visibleMessage,
                         modifier = Modifier.padding(top = 8.dp),
-                        color = VitalTraceNavy.copy(alpha = 0.78f),
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
                         style = MaterialTheme.typography.bodyMedium,
                         maxLines = 2,
                         overflow = TextOverflow.Ellipsis
@@ -365,7 +369,7 @@ private fun NotificationCard(
                     if (isRead) {
                         Text(
                             text = stringResource(R.string.notifications_status_read),
-                            color = VitalTraceNavy.copy(alpha = 0.66f),
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
                             style = MaterialTheme.typography.labelMedium,
                             fontWeight = FontWeight.Medium
                         )
@@ -422,7 +426,7 @@ private enum class NotificationCategory(
 @Composable
 private fun categoryColor(category: NotificationCategory): Color = when (category) {
     NotificationCategory.APPOINTMENT -> MaterialTheme.colorScheme.primary
-    NotificationCategory.MEASUREMENT -> VitalTraceTeal
+    NotificationCategory.MEASUREMENT -> MaterialTheme.colorScheme.secondary
     NotificationCategory.TREATMENT -> MaterialTheme.colorScheme.tertiary
     NotificationCategory.GENERAL -> MaterialTheme.colorScheme.secondary
     NotificationCategory.ALERT -> MaterialTheme.colorScheme.error
@@ -458,7 +462,7 @@ private fun NotificationSkeletonCard(accentWidth: Float) {
     Card(
         modifier = Modifier.fillMaxWidth(),
         shape = RoundedCornerShape(20.dp),
-        colors = CardDefaults.cardColors(containerColor = Color.White),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
         elevation = CardDefaults.cardElevation(defaultElevation = 1.dp)
     ) {
         Column(modifier = Modifier.padding(18.dp)) {
@@ -466,21 +470,21 @@ private fun NotificationSkeletonCard(accentWidth: Float) {
                 Box(
                     modifier = Modifier
                         .size(42.dp)
-                        .background(VitalTraceTeal.copy(alpha = 0.10f), CircleShape)
+                        .background(MaterialTheme.colorScheme.secondaryContainer, CircleShape)
                 )
                 Column(modifier = Modifier.weight(1f).padding(start = 12.dp)) {
                     Box(
                         Modifier
                             .fillMaxWidth(accentWidth)
                             .height(15.dp)
-                            .background(VitalTraceNavy.copy(alpha = 0.09f), CircleShape)
+                            .background(MaterialTheme.colorScheme.onSurface.copy(alpha = 0.12f), CircleShape)
                     )
                     Box(
                         Modifier
                             .padding(top = 9.dp)
                             .fillMaxWidth(0.32f)
                             .height(10.dp)
-                            .background(VitalTraceNavy.copy(alpha = 0.06f), CircleShape)
+                            .background(MaterialTheme.colorScheme.onSurface.copy(alpha = 0.08f), CircleShape)
                     )
                 }
             }
@@ -489,14 +493,14 @@ private fun NotificationSkeletonCard(accentWidth: Float) {
                     .padding(top = 18.dp)
                     .fillMaxWidth()
                     .height(11.dp)
-                    .background(VitalTraceNavy.copy(alpha = 0.06f), CircleShape)
+                    .background(MaterialTheme.colorScheme.onSurface.copy(alpha = 0.08f), CircleShape)
             )
             Box(
                 Modifier
                     .padding(top = 8.dp)
                     .fillMaxWidth(0.68f)
                     .height(11.dp)
-                    .background(VitalTraceNavy.copy(alpha = 0.06f), CircleShape)
+                    .background(MaterialTheme.colorScheme.onSurface.copy(alpha = 0.08f), CircleShape)
             )
         }
     }
@@ -513,7 +517,7 @@ private fun NotificationsEmptyState(onRefresh: () -> Unit) {
         Text(
             text = stringResource(R.string.notifications_empty_title),
             modifier = Modifier.padding(top = 20.dp),
-            color = VitalTraceNavy,
+            color = MaterialTheme.colorScheme.onBackground,
             fontFamily = FontFamily.Serif,
             style = MaterialTheme.typography.headlineSmall,
             fontWeight = FontWeight.Bold,
@@ -547,7 +551,7 @@ private fun NotificationsErrorState(onRetry: () -> Unit) {
         Text(
             text = stringResource(R.string.notifications_error_title),
             modifier = Modifier.padding(top = 20.dp),
-            color = VitalTraceNavy,
+            color = MaterialTheme.colorScheme.onBackground,
             fontFamily = FontFamily.Serif,
             style = MaterialTheme.typography.headlineSmall,
             fontWeight = FontWeight.Bold,
@@ -568,14 +572,14 @@ private fun StateIcon(icon: ImageVector, description: String) {
     Surface(
         modifier = Modifier.size(84.dp),
         shape = CircleShape,
-        color = VitalTraceTeal.copy(alpha = 0.10f)
+        color = MaterialTheme.colorScheme.secondaryContainer
     ) {
         Box(contentAlignment = Alignment.Center) {
             Icon(
                 imageVector = icon,
                 contentDescription = description,
                 modifier = Modifier.size(40.dp),
-                tint = VitalTraceTeal
+                tint = MaterialTheme.colorScheme.onSecondaryContainer
             )
         }
     }

@@ -35,10 +35,10 @@ fun RelativesLoadingState(modifier: Modifier = Modifier) {
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(18.dp)
         ) {
-            CircularProgressIndicator(color = VitalTraceNavy, strokeWidth = 3.dp)
+            CircularProgressIndicator(color = MaterialTheme.colorScheme.primary, strokeWidth = 3.dp)
             Text(
                 stringResource(R.string.relatives_loading),
-                color = Color(0xFF5C6870)
+                color = MaterialTheme.colorScheme.onSurfaceVariant
             )
         }
     }
@@ -53,8 +53,8 @@ fun RelativesEmptyState(modifier: Modifier = Modifier) {
             verticalArrangement = Arrangement.spacedBy(14.dp)
         ) {
             StateIcon(
-                background = Color(0xFFD9F2F0),
-                content = VitalTraceTeal
+                background = MaterialTheme.colorScheme.secondaryContainer,
+                content = MaterialTheme.colorScheme.onSecondaryContainer
             ) {
                 Icon(
                     Icons.Rounded.Group,
@@ -64,13 +64,13 @@ fun RelativesEmptyState(modifier: Modifier = Modifier) {
             }
             Text(
                 stringResource(R.string.relatives_empty_title),
-                color = VitalTraceNavy,
+                color = MaterialTheme.colorScheme.onBackground,
                 textAlign = TextAlign.Center,
                 style = MaterialTheme.typography.titleLarge
             )
             Text(
                 stringResource(R.string.relatives_empty),
-                color = Color(0xFF5C6870),
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
                 textAlign = TextAlign.Center
             )
         }
@@ -86,8 +86,8 @@ fun RelativesErrorState(message: String, onRetry: () -> Unit, modifier: Modifier
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
             StateIcon(
-                background = Color(0xFFF5DDDF),
-                content = Color(0xFF8E3E45)
+                background = MaterialTheme.colorScheme.errorContainer,
+                content = MaterialTheme.colorScheme.onErrorContainer
             ) {
                 Icon(
                     Icons.Rounded.WifiOff,
@@ -97,11 +97,11 @@ fun RelativesErrorState(message: String, onRetry: () -> Unit, modifier: Modifier
             }
             Text(
                 stringResource(R.string.relatives_error_title),
-                color = VitalTraceNavy,
+                color = MaterialTheme.colorScheme.onBackground,
                 textAlign = TextAlign.Center,
                 style = MaterialTheme.typography.titleLarge
             )
-            Text(message, color = Color(0xFF5C6870), textAlign = TextAlign.Center)
+            Text(message, color = MaterialTheme.colorScheme.onSurfaceVariant, textAlign = TextAlign.Center)
             Button(onClick = onRetry) {
                 Icon(Icons.Rounded.Refresh, contentDescription = null)
                 Text(

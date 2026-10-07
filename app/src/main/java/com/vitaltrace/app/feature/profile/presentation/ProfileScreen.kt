@@ -1,18 +1,26 @@
 package com.vitaltrace.app.feature.profile.presentation
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.MedicalInformation
 import androidx.compose.material.icons.rounded.Medication
+import androidx.compose.material.icons.rounded.Timeline
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.PickVisualMediaRequest
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
@@ -23,12 +31,16 @@ import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import com.vitaltrace.app.R
 import com.vitaltrace.app.feature.home.presentation.HomeBottomDestination
 import com.vitaltrace.app.feature.home.presentation.components.HomeBottomBar
+import com.vitaltrace.app.feature.home.presentation.components.AdaptivePortalScaffold
 import com.vitaltrace.app.feature.profile.presentation.components.NotificationSettingsCard
+import com.vitaltrace.app.feature.profile.presentation.components.AppearanceSettingsCard
+import com.vitaltrace.app.core.settings.ThemePreference
 import com.vitaltrace.app.feature.profile.presentation.components.ProfileErrorState
 import com.vitaltrace.app.feature.profile.presentation.components.ProfileIdentityCard
 import com.vitaltrace.app.feature.profile.presentation.components.ProfileInformationCard
 import com.vitaltrace.app.feature.profile.presentation.components.RelativesAccessCard
 import com.vitaltrace.app.feature.profile.presentation.components.ProfileLoadingState
+import com.vitaltrace.app.feature.profile.presentation.components.SupportAndAboutCard
 import com.vitaltrace.app.ui.theme.VitalTraceNavy
 import com.vitaltrace.app.ui.theme.VitalTraceWarmBackground
 
@@ -40,9 +52,13 @@ fun ProfileScreen(
     onRelativesClick: () -> Unit,
     onClinicalHistoryClick: () -> Unit,
     onTreatmentsClick: () -> Unit,
+    onHealthTimelineClick: () -> Unit,
     viewModel: ProfileViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val avatarPicker = rememberLauncherForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
+        viewModel.setAvatarUri(uri?.toString())
+    }
 
     ProfileContent(
         uiState = uiState,
@@ -52,10 +68,19 @@ fun ProfileScreen(
         onRelativesClick = onRelativesClick,
         onClinicalHistoryClick = onClinicalHistoryClick,
         onTreatmentsClick = onTreatmentsClick,
+        onHealthTimelineClick = onHealthTimelineClick,
         onRetryClick = viewModel::retry,
         onMeasurementRemindersChange = viewModel::setMeasurementReminders,
         onAppointmentNotificationsChange = viewModel::setAppointmentNotifications,
-        onEmailUpdatesChange = viewModel::setEmailUpdates
+        onReminderTimeChange = viewModel::setReminderTime,
+        onReminderDayToggle = viewModel::toggleReminderDay,
+        onSnoozeMinutesChange = viewModel::setSnoozeMinutes,
+        onThemeChange = viewModel::setTheme,
+        onSecureScreenChange = viewModel::setSecureScreen,
+        onLargeTextChange = viewModel::setLargeText,
+        onAvatarClick = {
+            avatarPicker.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
+        }
     )
 }
 
@@ -68,22 +93,25 @@ private fun ProfileContent(
     onRelativesClick: () -> Unit,
     onClinicalHistoryClick: () -> Unit,
     onTreatmentsClick: () -> Unit,
+    onHealthTimelineClick: () -> Unit,
     onRetryClick: () -> Unit,
     onMeasurementRemindersChange: (Boolean) -> Unit,
     onAppointmentNotificationsChange: (Boolean) -> Unit,
-    onEmailUpdatesChange: (Boolean) -> Unit
+    onReminderTimeChange: (Int, Int) -> Unit,
+    onReminderDayToggle: (Int) -> Unit,
+    onSnoozeMinutesChange: (Int) -> Unit,
+    onThemeChange: (ThemePreference) -> Unit,
+    onSecureScreenChange: (Boolean) -> Unit,
+    onLargeTextChange: (Boolean) -> Unit,
+    onAvatarClick: () -> Unit
 ) {
-    Scaffold(
-        containerColor = VitalTraceWarmBackground,
-        bottomBar = {
-            HomeBottomBar(
-                selectedDestination = HomeBottomDestination.PROFILE,
-                onHomeClick = onHomeClick,
-                onMeasurementsClick = onMeasurementsClick,
-                onAppointmentsClick = onAppointmentsClick,
-                onProfileClick = {}
-            )
-        }
+    AdaptivePortalScaffold(
+        selectedDestination = HomeBottomDestination.PROFILE,
+        onHomeClick = onHomeClick,
+        onMeasurementsClick = onMeasurementsClick,
+        onAppointmentsClick = onAppointmentsClick,
+        onProfileClick = {},
+        containerColor = MaterialTheme.colorScheme.background,
     ) { innerPadding ->
         when {
             uiState.isLoading -> ProfileLoadingState(
@@ -94,17 +122,27 @@ private fun ProfileContent(
                 onRetryClick = onRetryClick,
                 modifier = Modifier.padding(innerPadding)
             )
-            else -> ProfileBody(
-                user = uiState.user,
-                settings = uiState.notificationSettings,
-                onMeasurementRemindersChange = onMeasurementRemindersChange,
-                onAppointmentNotificationsChange = onAppointmentNotificationsChange,
-                onEmailUpdatesChange = onEmailUpdatesChange,
-                onRelativesClick = onRelativesClick,
-                onClinicalHistoryClick = onClinicalHistoryClick,
-                onTreatmentsClick = onTreatmentsClick,
-                modifier = Modifier.padding(innerPadding)
-            )
+            else -> Box(Modifier.fillMaxSize().padding(innerPadding)) {
+                ProfileBody(
+                    user = uiState.user,
+                    settings = uiState.notificationSettings,
+                    appSettings = uiState.appSettings,
+                    onMeasurementRemindersChange = onMeasurementRemindersChange,
+                    onAppointmentNotificationsChange = onAppointmentNotificationsChange,
+                    onReminderTimeChange = onReminderTimeChange,
+                    onReminderDayToggle = onReminderDayToggle,
+                    onSnoozeMinutesChange = onSnoozeMinutesChange,
+                    onThemeChange = onThemeChange,
+                    onSecureScreenChange = onSecureScreenChange,
+                    onLargeTextChange = onLargeTextChange,
+                    onAvatarClick = onAvatarClick,
+                    onRelativesClick = onRelativesClick,
+                    onClinicalHistoryClick = onClinicalHistoryClick,
+                    onTreatmentsClick = onTreatmentsClick,
+                    onHealthTimelineClick = onHealthTimelineClick,
+                    modifier = Modifier.widthIn(max = 720.dp).align(Alignment.TopCenter)
+                )
+            }
         }
     }
 }
@@ -113,12 +151,20 @@ private fun ProfileContent(
 private fun ProfileBody(
     user: ProfileUserUiModel,
     settings: NotificationSettingsUiModel,
+    appSettings: AppSettingsUiModel,
     onMeasurementRemindersChange: (Boolean) -> Unit,
     onAppointmentNotificationsChange: (Boolean) -> Unit,
-    onEmailUpdatesChange: (Boolean) -> Unit,
+    onReminderTimeChange: (Int, Int) -> Unit,
+    onReminderDayToggle: (Int) -> Unit,
+    onSnoozeMinutesChange: (Int) -> Unit,
+    onThemeChange: (ThemePreference) -> Unit,
+    onSecureScreenChange: (Boolean) -> Unit,
+    onLargeTextChange: (Boolean) -> Unit,
+    onAvatarClick: () -> Unit,
     onRelativesClick: () -> Unit,
     onClinicalHistoryClick: () -> Unit,
     onTreatmentsClick: () -> Unit,
+    onHealthTimelineClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     LazyColumn(
@@ -134,13 +180,19 @@ private fun ProfileBody(
         item {
             Text(
                 text = stringResource(R.string.profile_title),
-                color = VitalTraceNavy,
+                color = MaterialTheme.colorScheme.onBackground,
                 fontFamily = FontFamily.Serif,
                 fontSize = 34.sp,
                 fontWeight = FontWeight.Bold
             )
         }
-        item { ProfileIdentityCard(user = user) }
+        item {
+            ProfileIdentityCard(
+                user = user,
+                avatarUri = appSettings.avatarUri,
+                onAvatarClick = onAvatarClick
+            )
+        }
         item { ProfileInformationCard(user = user) }
         item { RelativesAccessCard(onClick = onRelativesClick) }
         item {
@@ -162,8 +214,26 @@ private fun ProfileBody(
                 settings = settings,
                 onMeasurementRemindersChange = onMeasurementRemindersChange,
                 onAppointmentNotificationsChange = onAppointmentNotificationsChange,
-                onEmailUpdatesChange = onEmailUpdatesChange
+                onReminderTimeChange = onReminderTimeChange,
+                onReminderDayToggle = onReminderDayToggle,
+                onSnoozeMinutesChange = onSnoozeMinutesChange
             )
         }
+        item {
+            RelativesAccessCard(
+                onClick = onHealthTimelineClick,
+                title = "Línea de tiempo de salud",
+                icon = Icons.Rounded.Timeline
+            )
+        }
+        item {
+            AppearanceSettingsCard(
+                settings = appSettings,
+                onThemeChange = onThemeChange,
+                onSecureScreenChange = onSecureScreenChange,
+                onLargeTextChange = onLargeTextChange
+            )
+        }
+        item { SupportAndAboutCard() }
     }
 }

@@ -15,6 +15,7 @@ import androidx.compose.material.icons.automirrored.rounded.ArrowBack
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
@@ -73,7 +74,7 @@ fun RelativesScreen(
     }
 
     Scaffold(
-        containerColor = VitalTraceWarmBackground,
+        containerColor = MaterialTheme.colorScheme.background,
         snackbarHost = { SnackbarHost(snackbarHostState) },
         topBar = {
             TopAppBar(
@@ -87,7 +88,7 @@ fun RelativesScreen(
                         )
                         Text(
                             stringResource(R.string.relatives_description),
-                            color = androidx.compose.ui.graphics.Color(0xFF5C6870),
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
                             fontSize = 12.sp,
                             lineHeight = 15.sp
                         )
@@ -102,9 +103,9 @@ fun RelativesScreen(
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = VitalTraceWarmBackground,
-                    titleContentColor = VitalTraceNavy,
-                    navigationIconContentColor = VitalTraceNavy
+                    containerColor = MaterialTheme.colorScheme.background,
+                    titleContentColor = MaterialTheme.colorScheme.onBackground,
+                    navigationIconContentColor = MaterialTheme.colorScheme.onBackground
                 )
             )
         },
