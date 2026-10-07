@@ -58,6 +58,23 @@ class SessionManagerTest {
     }
 
     @Test
+    fun `login without remember me keeps runtime session but clears stored token`() = runBlocking {
+        val fixture = fixture(token = null)
+        fixture.repository.loginResult = Result.success(user())
+        fixture.repository.tokenSavedByLogin = "temporary-token"
+
+        val result = fixture.manager.login(
+            "ana@example.com",
+            "secret",
+            rememberSession = false
+        )
+
+        assertTrue(result.isSuccess)
+        assertNull(fixture.tokenStore.token)
+        assertEquals(SessionState.Authenticated(user()), fixture.manager.state.value)
+    }
+
+    @Test
     fun `successful logout clears token and authenticated user`() = runBlocking {
         val fixture = authenticatedFixture()
 

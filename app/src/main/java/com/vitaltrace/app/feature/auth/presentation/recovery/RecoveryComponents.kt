@@ -1,11 +1,17 @@
 package com.vitaltrace.app.feature.auth.presentation.recovery
 
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
@@ -21,6 +27,7 @@ import androidx.compose.material.icons.automirrored.rounded.ArrowBack
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
@@ -30,6 +37,7 @@ import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -43,29 +51,26 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import com.vitaltrace.app.R
 import com.vitaltrace.app.ui.theme.VitalTraceNavy
-import com.vitaltrace.app.ui.theme.VitalTraceTeal
-import com.vitaltrace.app.ui.theme.VitalTraceWarmBackground
 
 val RecoveryFieldShape = RoundedCornerShape(18.dp)
-private val RecoveryTextColor = Color(0xFF172C3A)
-private val RecoveryFieldBorder = Color(0xFFE1DDD3)
-private val RecoveryIconColor = Color(0xFF657078)
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun RecoveryScreenLayout(
     title: String,
     onBack: () -> Unit,
+    currentStep: Int? = null,
+    totalSteps: Int? = null,
     content: @Composable () -> Unit
 ) {
     Scaffold(
-        containerColor = VitalTraceWarmBackground,
+        containerColor = MaterialTheme.colorScheme.background,
         topBar = {
             TopAppBar(
                 title = {
                     Text(
                         title,
-                        color = VitalTraceNavy,
+                        color = MaterialTheme.colorScheme.onBackground,
                         fontFamily = FontFamily.Serif,
                         fontWeight = FontWeight.Bold
                     )
@@ -75,43 +80,85 @@ fun RecoveryScreenLayout(
                         Icon(
                             Icons.AutoMirrored.Rounded.ArrowBack,
                             stringResource(R.string.password_recovery_back),
-                            tint = VitalTraceNavy
+                            tint = MaterialTheme.colorScheme.onBackground
                         )
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = VitalTraceWarmBackground
+                    containerColor = MaterialTheme.colorScheme.background,
+                    titleContentColor = MaterialTheme.colorScheme.onBackground,
+                    navigationIconContentColor = MaterialTheme.colorScheme.onBackground
                 )
             )
         }
     ) { padding ->
-        Column(
+        Box(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(padding)
-                .verticalScroll(rememberScrollState())
-                .imePadding()
-                .padding(horizontal = 24.dp, vertical = 28.dp)
+                .padding(padding),
+            contentAlignment = Alignment.TopCenter
         ) {
-            content()
+            Column(
+                modifier = Modifier
+                    .widthIn(max = 560.dp)
+                    .fillMaxWidth()
+                    .fillMaxHeight()
+                    .verticalScroll(rememberScrollState())
+                    .imePadding()
+                    .padding(horizontal = 24.dp, vertical = 28.dp)
+            ) {
+                if (currentStep != null && totalSteps != null && totalSteps > 1) {
+                    FlowProgress(currentStep = currentStep, totalSteps = totalSteps)
+                    Spacer(Modifier.height(28.dp))
+                }
+                content()
+            }
         }
     }
 }
 
 @Composable
+private fun FlowProgress(currentStep: Int, totalSteps: Int) {
+    val safeStep = currentStep.coerceIn(1, totalSteps)
+    Column(verticalArrangement = Arrangement.spacedBy(9.dp)) {
+        Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
+            Text(
+                text = "Paso $safeStep de $totalSteps",
+                color = MaterialTheme.colorScheme.secondary,
+                fontWeight = FontWeight.Bold,
+                style = MaterialTheme.typography.labelLarge
+            )
+            Text(
+                text = "${safeStep * 100 / totalSteps}%",
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                style = MaterialTheme.typography.labelLarge
+            )
+        }
+        LinearProgressIndicator(
+            progress = { safeStep.toFloat() / totalSteps },
+            modifier = Modifier.fillMaxWidth().height(7.dp),
+            color = MaterialTheme.colorScheme.secondary,
+            trackColor = MaterialTheme.colorScheme.surfaceVariant
+        )
+    }
+}
+
+@Composable
 fun recoveryFieldColors() = OutlinedTextFieldDefaults.colors(
-    focusedContainerColor = Color.White,
-    unfocusedContainerColor = Color.White,
-    disabledContainerColor = Color.White,
-    focusedBorderColor = VitalTraceTeal,
-    unfocusedBorderColor = RecoveryFieldBorder,
-    focusedLeadingIconColor = RecoveryIconColor,
-    unfocusedLeadingIconColor = RecoveryIconColor,
-    focusedTrailingIconColor = RecoveryIconColor,
-    unfocusedTrailingIconColor = RecoveryIconColor,
-    focusedTextColor = RecoveryTextColor,
-    unfocusedTextColor = RecoveryTextColor,
-    cursorColor = VitalTraceTeal
+    focusedContainerColor = MaterialTheme.colorScheme.surface,
+    unfocusedContainerColor = MaterialTheme.colorScheme.surface,
+    disabledContainerColor = MaterialTheme.colorScheme.surfaceVariant,
+    focusedBorderColor = MaterialTheme.colorScheme.secondary,
+    unfocusedBorderColor = MaterialTheme.colorScheme.outline,
+    focusedLeadingIconColor = MaterialTheme.colorScheme.onSurfaceVariant,
+    unfocusedLeadingIconColor = MaterialTheme.colorScheme.onSurfaceVariant,
+    focusedTrailingIconColor = MaterialTheme.colorScheme.onSurfaceVariant,
+    unfocusedTrailingIconColor = MaterialTheme.colorScheme.onSurfaceVariant,
+    focusedTextColor = MaterialTheme.colorScheme.onSurface,
+    unfocusedTextColor = MaterialTheme.colorScheme.onSurface,
+    focusedPlaceholderColor = MaterialTheme.colorScheme.onSurfaceVariant,
+    unfocusedPlaceholderColor = MaterialTheme.colorScheme.onSurfaceVariant,
+    cursorColor = MaterialTheme.colorScheme.secondary
 )
 
 @Composable
@@ -216,7 +263,7 @@ fun RecoverySecondaryButton(text: String, onClick: () -> Unit) {
     TextButton(onClick = onClick, modifier = Modifier.fillMaxWidth()) {
         Text(
             text = text,
-            color = VitalTraceTeal,
+            color = MaterialTheme.colorScheme.secondary,
             fontWeight = FontWeight.Bold,
             style = MaterialTheme.typography.bodyLarge
         )
@@ -227,7 +274,7 @@ fun RecoverySecondaryButton(text: String, onClick: () -> Unit) {
 private fun RecoveryFieldLabel(text: String, modifier: Modifier = Modifier) {
     Text(
         text = text,
-        color = RecoveryTextColor,
+        color = MaterialTheme.colorScheme.onBackground,
         fontWeight = FontWeight.Bold,
         style = MaterialTheme.typography.titleMedium,
         modifier = modifier

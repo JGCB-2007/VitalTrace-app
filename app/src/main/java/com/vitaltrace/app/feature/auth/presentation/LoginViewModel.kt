@@ -58,6 +58,10 @@ class LoginViewModel @Inject constructor(
         }
     }
 
+    fun onRememberMeChange(rememberMe: Boolean) {
+        _uiState.update { it.copy(rememberMe = rememberMe) }
+    }
+
     fun login() {
         val currentState = _uiState.value
 
@@ -75,7 +79,8 @@ class LoginViewModel @Inject constructor(
 
             loginUseCase(
                 email = currentState.email,
-                password = currentState.password
+                password = currentState.password,
+                rememberSession = currentState.rememberMe
             ).onSuccess {
                 _uiState.update {
                     it.copy(isLoading = false)

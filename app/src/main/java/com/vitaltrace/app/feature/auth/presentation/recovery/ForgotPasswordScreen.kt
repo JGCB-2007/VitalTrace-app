@@ -29,11 +29,13 @@ fun ForgotPasswordScreen(
     val state by viewModel.uiState.collectAsStateWithLifecycle()
     RecoveryScreenLayout(
         title = stringResource(R.string.forgot_password_title),
-        onBack = onBack
+        onBack = onBack,
+        currentStep = 1,
+        totalSteps = 2
     ) {
         Text(
             stringResource(R.string.forgot_password_description),
-            color = Color(0xFF5C6870),
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
             style = MaterialTheme.typography.bodyLarge
         )
         Spacer(Modifier.height(28.dp))

@@ -43,10 +43,17 @@ class SessionManager @Inject constructor(
             }
     }
 
-    suspend fun login(email: String, password: String): Result<Unit> = operationMutex.withLock {
+    suspend fun login(
+        email: String,
+        password: String,
+        rememberSession: Boolean = true
+    ): Result<Unit> = operationMutex.withLock {
         _state.value = SessionState.Loading
         authRepository.login(email, password)
-            .onSuccess { user -> _state.value = SessionState.Authenticated(user) }
+            .onSuccess { user ->
+                if (!rememberSession) tokenStore.clearToken()
+                _state.value = SessionState.Authenticated(user)
+            }
             .onFailure { _state.value = SessionState.Unauthenticated }
             .map { Unit }
     }

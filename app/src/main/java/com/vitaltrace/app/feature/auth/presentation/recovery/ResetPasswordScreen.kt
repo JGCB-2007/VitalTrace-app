@@ -35,11 +35,13 @@ fun ResetPasswordScreen(
     }
     RecoveryScreenLayout(
         title = stringResource(R.string.reset_password_title),
-        onBack = onBack
+        onBack = onBack,
+        currentStep = 2,
+        totalSteps = 2
     ) {
         Text(
             stringResource(R.string.reset_password_description),
-            color = Color(0xFF5C6870),
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
             style = MaterialTheme.typography.bodyLarge
         )
         Spacer(Modifier.height(28.dp))

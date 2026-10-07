@@ -44,9 +44,6 @@ import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.vitaltrace.app.core.session.PortalTarget
 import com.vitaltrace.app.feature.home.presentation.components.LogoutConfirmationDialog
-import com.vitaltrace.app.ui.theme.VitalTraceNavy
-import com.vitaltrace.app.ui.theme.VitalTraceTeal
-import com.vitaltrace.app.ui.theme.VitalTraceWarmBackground
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -74,7 +71,7 @@ fun PortalSelectorScreen(
     }
 
     Scaffold(
-        containerColor = VitalTraceWarmBackground,
+        containerColor = androidx.compose.material3.MaterialTheme.colorScheme.background,
         topBar = {
             TopAppBar(
                 title = {
@@ -91,9 +88,9 @@ fun PortalSelectorScreen(
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = VitalTraceWarmBackground,
-                    titleContentColor = VitalTraceNavy,
-                    actionIconContentColor = VitalTraceNavy
+                    containerColor = androidx.compose.material3.MaterialTheme.colorScheme.background,
+                    titleContentColor = androidx.compose.material3.MaterialTheme.colorScheme.onBackground,
+                    actionIconContentColor = androidx.compose.material3.MaterialTheme.colorScheme.onBackground
                 )
             )
         }
@@ -107,14 +104,14 @@ fun PortalSelectorScreen(
         ) {
             Text(
                 "¿Cómo deseas continuar?",
-                color = VitalTraceNavy,
+                color = androidx.compose.material3.MaterialTheme.colorScheme.onBackground,
                 fontFamily = FontFamily.Serif,
                 fontSize = 26.sp,
                 fontWeight = FontWeight.Bold
             )
             Text(
                 "Tu cuenta tiene acceso a más de un módulo. Elige con cuál quieres trabajar ahora.",
-                color = Color(0xFF53636D),
+                color = androidx.compose.material3.MaterialTheme.colorScheme.onSurfaceVariant,
                 modifier = Modifier.padding(top = 8.dp, bottom = 20.dp)
             )
             state.portals.forEach { portal ->
@@ -139,23 +136,23 @@ private fun PortalCard(
         onClick = onClick,
         modifier = modifier.fillMaxWidth(),
         shape = RoundedCornerShape(22.dp),
-        colors = CardDefaults.cardColors(containerColor = Color.White),
+        colors = CardDefaults.cardColors(containerColor = androidx.compose.material3.MaterialTheme.colorScheme.surface),
         elevation = CardDefaults.cardElevation(3.dp)
     ) {
         Row(Modifier.padding(18.dp), verticalAlignment = Alignment.CenterVertically) {
-            Surface(Modifier.size(48.dp), shape = CircleShape, color = Color(0xFFD9F2F0)) {
-                Icon(presentation.icon, null, Modifier.padding(12.dp), tint = VitalTraceTeal)
+            Surface(Modifier.size(48.dp), shape = CircleShape, color = androidx.compose.material3.MaterialTheme.colorScheme.secondaryContainer) {
+                Icon(presentation.icon, null, Modifier.padding(12.dp), tint = androidx.compose.material3.MaterialTheme.colorScheme.onSecondaryContainer)
             }
             Column(Modifier.padding(start = 16.dp)) {
                 Text(
                     presentation.title,
-                    color = VitalTraceNavy,
+                    color = androidx.compose.material3.MaterialTheme.colorScheme.onSurface,
                     fontWeight = FontWeight.Bold,
                     fontSize = 17.sp
                 )
                 Text(
                     presentation.description,
-                    color = Color(0xFF53636D),
+                    color = androidx.compose.material3.MaterialTheme.colorScheme.onSurfaceVariant,
                     fontSize = 13.sp,
                     modifier = Modifier.padding(top = 2.dp)
                 )
