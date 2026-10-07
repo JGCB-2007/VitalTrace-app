@@ -39,7 +39,7 @@ fun ClinicalHistoryScreen(
 @Composable
 private fun LegacyClinicalHistoryScreen(onNavigateBack: () -> Unit, viewModel: ClinicalHistoryViewModel = hiltViewModel()) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
-    Scaffold(containerColor = VitalTraceWarmBackground, topBar = {
+    Scaffold(containerColor = androidx.compose.material3.MaterialTheme.colorScheme.background, topBar = {
         TopAppBar(title = { Text("Historial clínico") }, navigationIcon = {
             IconButton(onClick = onNavigateBack) { Icon(Icons.AutoMirrored.Filled.ArrowBack, "Volver") }
         })

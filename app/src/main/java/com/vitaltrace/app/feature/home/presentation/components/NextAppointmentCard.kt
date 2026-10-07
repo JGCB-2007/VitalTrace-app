@@ -33,7 +33,7 @@ fun NextAppointmentCard(
     Card(
         modifier = modifier.fillMaxWidth().clickable(enabled = appointment != null, onClick = onDetailClick),
         shape = RoundedCornerShape(26.dp),
-        colors = CardDefaults.cardColors(containerColor = Color.White),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
         elevation = CardDefaults.cardElevation(defaultElevation = 5.dp)
     ) {
         Column(modifier = Modifier.padding(22.dp)) {

@@ -138,14 +138,14 @@ fun HomeHeader(
                 expanded = isMenuExpanded,
                 onDismissRequest = { isMenuExpanded = false },
                 shape = RoundedCornerShape(18.dp),
-                containerColor = Color.White,
+                containerColor = MaterialTheme.colorScheme.surface,
                 shadowElevation = 8.dp
             ) {
                 DropdownMenuItem(
                     text = {
                         Text(
                             text = stringResource(R.string.home_logout),
-                            color = HomeNavy,
+                            color = MaterialTheme.colorScheme.onSurface,
                             fontSize = 15.sp,
                             fontWeight = FontWeight.SemiBold
                         )
@@ -154,7 +154,7 @@ fun HomeHeader(
                         Icon(
                             Icons.AutoMirrored.Rounded.ExitToApp,
                             contentDescription = null,
-                            tint = HomeTeal
+                            tint = MaterialTheme.colorScheme.secondary
                         )
                     },
                     onClick = {

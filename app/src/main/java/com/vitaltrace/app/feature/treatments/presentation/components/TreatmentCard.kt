@@ -13,6 +13,7 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -35,7 +36,7 @@ fun TreatmentCard(
         onClick = onClick,
         modifier = modifier.fillMaxWidth(),
         shape = RoundedCornerShape(26.dp),
-        colors = CardDefaults.cardColors(containerColor = Color.White),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
         elevation = CardDefaults.cardElevation(defaultElevation = 5.dp)
     ) {
         Column(
@@ -43,31 +44,31 @@ fun TreatmentCard(
             verticalArrangement = Arrangement.spacedBy(14.dp)
         ) {
             Row(verticalAlignment = Alignment.CenterVertically) {
-                Surface(color = Color(0xFFDDF4F2), shape = RoundedCornerShape(18.dp)) {
+                Surface(color = MaterialTheme.colorScheme.secondaryContainer, shape = RoundedCornerShape(18.dp)) {
                     Icon(
                         imageVector = Icons.Rounded.Medication,
                         contentDescription = null,
                         modifier = Modifier.padding(14.dp),
-                        tint = VitalTraceTeal
+                        tint = MaterialTheme.colorScheme.onSecondaryContainer
                     )
                 }
                 Column(modifier = Modifier.weight(1f).padding(start = 16.dp)) {
                     treatment.diagnosisDescription?.takeIf(String::isNotBlank)?.let {
                         Text(
                             text = it,
-                            color = VitalTraceNavy,
+                            color = MaterialTheme.colorScheme.onSurface,
                             fontFamily = FontFamily.Serif,
                             fontSize = 22.sp,
                             fontWeight = FontWeight.Bold
                         )
                     }
-                    Text(text = treatment.indications, color = Color(0xFF53636D), fontSize = 16.sp)
+                    Text(text = treatment.indications, color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 16.sp)
                 }
                 TreatmentStatusChip(status = treatment.status)
             }
             Text(
                 text = listOfNotNull(treatment.startDate, treatment.endDate).joinToString("  ·  "),
-                color = Color(0xFF53636D),
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
                 fontSize = 15.sp
             )
         }

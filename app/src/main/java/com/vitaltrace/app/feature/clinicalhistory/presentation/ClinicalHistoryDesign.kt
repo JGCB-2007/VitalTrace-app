@@ -46,7 +46,7 @@ internal fun ClinicalHistoryDesign(
     onRetry: () -> Unit
 ) {
     Scaffold(
-        containerColor = VitalTraceWarmBackground,
+        containerColor = MaterialTheme.colorScheme.background,
         topBar = {
             TopAppBar(
                 title = {
@@ -63,9 +63,9 @@ internal fun ClinicalHistoryDesign(
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = VitalTraceWarmBackground,
-                    titleContentColor = VitalTraceNavy,
-                    navigationIconContentColor = VitalTraceNavy
+                    containerColor = MaterialTheme.colorScheme.background,
+                    titleContentColor = MaterialTheme.colorScheme.onBackground,
+                    navigationIconContentColor = MaterialTheme.colorScheme.onBackground
                 )
             )
         }
@@ -120,10 +120,21 @@ internal fun ClinicalHistoryContent(
         verticalArrangement = Arrangement.spacedBy(14.dp)
     ) {
         item {
-            RecordBadge(
+            HistoryOverviewCard(
+                patientName = patientName,
                 recordNumber = history.recordNumber,
+                diagnoses = history.diagnoses.size,
+                evolutions = history.clinicalEvolutions.size,
+                treatments = history.currentTreatments.size,
+                measurements = history.recentMeasurements.size,
+                latestRecord = listOfNotNull(
+                    history.clinicalEvolutions.maxOfOrNull(ClinicalEvolution::recordedAt),
+                    history.diagnoses.maxOfOrNull(ClinicalDiagnosis::diagnosisDate),
+                    history.currentTreatments.maxOfOrNull(ClinicalTreatment::startDate),
+                    history.recentMeasurements.maxOfOrNull(ClinicalMeasurement::measuredAt)
+                ).filter(String::isNotBlank).maxOrNull(),
                 isExporting = isExporting,
-                onClick = {
+                onExport = {
                     launcher.launch("VitalTrace-$safeRecordNumber.pdf")
                 }
             )
@@ -149,32 +160,150 @@ internal fun ClinicalHistoryContent(
     }
 }
 
+private data class HistoryMetric(val label: String, val value: Int, val icon: ImageVector)
+
 @Composable
-private fun RecordBadge(recordNumber: String, isExporting: Boolean, onClick: () -> Unit) {
-    Surface(
-        onClick = onClick,
-        enabled = !isExporting,
-        color = Color.White,
-        shape = RoundedCornerShape(20.dp),
-        shadowElevation = 3.dp
+private fun HistoryOverviewCard(
+    patientName: String,
+    recordNumber: String,
+    diagnoses: Int,
+    evolutions: Int,
+    treatments: Int,
+    measurements: Int,
+    latestRecord: String?,
+    isExporting: Boolean,
+    onExport: () -> Unit
+) {
+    val metrics = listOf(
+        HistoryMetric("Diagnósticos", diagnoses, Icons.Rounded.HealthAndSafety),
+        HistoryMetric("Tratamientos", treatments, Icons.Rounded.Medication),
+        HistoryMetric("Mediciones", measurements, Icons.Rounded.MonitorHeart),
+        HistoryMetric("Evoluciones", evolutions, Icons.Rounded.HistoryEdu)
+    )
+    Card(
+        modifier = Modifier.fillMaxWidth(),
+        shape = RoundedCornerShape(28.dp),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
+        elevation = CardDefaults.cardElevation(3.dp)
     ) {
-        Row(
-            Modifier.fillMaxWidth().padding(horizontal = 18.dp, vertical = 14.dp),
-            horizontalArrangement = Arrangement.spacedBy(14.dp),
-            verticalAlignment = Alignment.CenterVertically
+        Column(
+            Modifier.fillMaxWidth().padding(20.dp),
+            verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-            Surface(color = Color(0xFFDDF4F2), shape = RoundedCornerShape(14.dp)) {
-                Icon(Icons.Rounded.FolderShared, null, Modifier.padding(11.dp), tint = VitalTraceTeal)
+            Row(
+                Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(14.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Surface(
+                    modifier = Modifier.size(54.dp),
+                    color = MaterialTheme.colorScheme.primaryContainer,
+                    contentColor = MaterialTheme.colorScheme.onPrimaryContainer,
+                    shape = RoundedCornerShape(17.dp)
+                ) {
+                    Icon(Icons.Rounded.FolderShared, null, Modifier.padding(14.dp))
+                }
+                Column(Modifier.weight(1f)) {
+                    Text(
+                        "Resumen del historial",
+                        style = MaterialTheme.typography.titleLarge,
+                        fontFamily = FontFamily.Serif,
+                        fontWeight = FontWeight.Bold
+                    )
+                    Text(
+                        patientName.ifBlank { "Paciente" },
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                }
             }
-            Column(Modifier.weight(1f)) {
-                Text("Expediente", color = Color(0xFF53636D), fontSize = 13.sp)
-                Text(recordNumber, color = VitalTraceNavy, fontSize = 18.sp, fontWeight = FontWeight.Bold)
+
+            Surface(
+                color = MaterialTheme.colorScheme.secondaryContainer,
+                contentColor = MaterialTheme.colorScheme.onSecondaryContainer,
+                shape = RoundedCornerShape(14.dp)
+            ) {
+                Row(
+                    Modifier.fillMaxWidth().padding(horizontal = 14.dp, vertical = 11.dp),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text("N.º de expediente", style = MaterialTheme.typography.labelLarge)
+                    Text(recordNumber.ifBlank { "Sin asignar" }, fontWeight = FontWeight.Bold)
+                }
             }
-            if (isExporting) {
-                CircularProgressIndicator(Modifier.size(22.dp), color = VitalTraceTeal, strokeWidth = 2.dp)
-            } else {
-                Icon(Icons.Rounded.Download, "Descargar expediente PDF", tint = VitalTraceTeal)
+
+            metrics.chunked(2).forEach { rowMetrics ->
+                Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(10.dp)) {
+                    rowMetrics.forEach { metric ->
+                        HistoryMetricTile(metric, Modifier.weight(1f))
+                    }
+                }
             }
+
+            latestRecord?.let {
+                Row(
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Icon(
+                        Icons.Rounded.Update,
+                        null,
+                        modifier = Modifier.size(18.dp),
+                        tint = MaterialTheme.colorScheme.primary
+                    )
+                    Text(
+                        "Último registro: $it",
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                }
+            }
+
+            OutlinedButton(
+                onClick = onExport,
+                enabled = !isExporting,
+                modifier = Modifier.fillMaxWidth().height(50.dp),
+                shape = RoundedCornerShape(16.dp)
+            ) {
+                if (isExporting) {
+                    CircularProgressIndicator(Modifier.size(20.dp), strokeWidth = 2.dp)
+                } else {
+                    Icon(Icons.Rounded.Download, null)
+                }
+                Text(
+                    if (isExporting) "Generando PDF…" else "Descargar historial en PDF",
+                    modifier = Modifier.padding(start = 9.dp),
+                    fontWeight = FontWeight.Bold
+                )
+            }
+        }
+    }
+}
+
+@Composable
+private fun HistoryMetricTile(metric: HistoryMetric, modifier: Modifier = Modifier) {
+    Surface(
+        modifier = modifier,
+        color = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.7f),
+        contentColor = MaterialTheme.colorScheme.onSurfaceVariant,
+        shape = RoundedCornerShape(18.dp)
+    ) {
+        Column(Modifier.padding(14.dp), verticalArrangement = Arrangement.spacedBy(7.dp)) {
+            Row(
+                Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Icon(metric.icon, null, modifier = Modifier.size(20.dp), tint = MaterialTheme.colorScheme.primary)
+                Text(
+                    metric.value.toString(),
+                    style = MaterialTheme.typography.titleLarge,
+                    fontWeight = FontWeight.ExtraBold,
+                    color = MaterialTheme.colorScheme.onSurface
+                )
+            }
+            Text(metric.label, style = MaterialTheme.typography.labelMedium, maxLines = 1)
         }
     }
 }
@@ -186,8 +315,14 @@ private fun ClinicalSectionHeader(icon: ImageVector, title: String) {
         horizontalArrangement = Arrangement.spacedBy(10.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Icon(icon, null, tint = VitalTraceTeal)
-        Text(title, color = VitalTraceNavy, fontFamily = FontFamily.Serif, fontSize = 23.sp, fontWeight = FontWeight.Bold)
+        Icon(icon, null, tint = MaterialTheme.colorScheme.primary)
+        Text(
+            title,
+            color = MaterialTheme.colorScheme.onBackground,
+            fontFamily = FontFamily.Serif,
+            fontSize = 23.sp,
+            fontWeight = FontWeight.Bold
+        )
     }
 }
 
@@ -197,7 +332,7 @@ private fun DiagnosisCard(
     onEducationClick: (String, String) -> Unit,
     showEducationAction: Boolean
 ) = VitalTraceClinicalCard {
-    Text(item.description, color = VitalTraceNavy, fontFamily = FontFamily.Serif, fontSize = 21.sp, fontWeight = FontWeight.Bold)
+    Text(item.description, color = MaterialTheme.colorScheme.onSurface, fontFamily = FontFamily.Serif, fontSize = 21.sp, fontWeight = FontWeight.Bold)
     Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween, verticalAlignment = Alignment.CenterVertically) {
         item.cieCode?.takeIf(String::isNotBlank)?.let { DetailLabel("Código CIE", it) }
         ClinicalStatusChip(item.status)
@@ -207,8 +342,8 @@ private fun DiagnosisCard(
     item.cieCode?.takeIf(String::isNotBlank)?.takeIf { showEducationAction }?.let { code ->
         Surface(
             modifier = Modifier.fillMaxWidth().clickable { onEducationClick(code, item.description) },
-            color = Color(0xFFF3FAF9),
-            contentColor = VitalTraceTeal,
+            color = MaterialTheme.colorScheme.secondaryContainer,
+            contentColor = MaterialTheme.colorScheme.onSecondaryContainer,
             shape = RoundedCornerShape(16.dp),
             border = BorderStroke(1.dp, VitalTraceMint.copy(alpha = 0.55f))
         ) {
@@ -227,7 +362,7 @@ private fun EvolutionCard(item: ClinicalEvolution) {
     VitalTraceClinicalCard(Modifier.animateContentSize()) {
         Text(
             item.clinicalSummary,
-            color = VitalTraceNavy,
+            color = MaterialTheme.colorScheme.onSurface,
             fontFamily = FontFamily.Serif,
             fontSize = 19.sp,
             fontWeight = FontWeight.Bold,
@@ -238,7 +373,7 @@ private fun EvolutionCard(item: ClinicalEvolution) {
             Text(
                 if (expanded) "Ver menos" else "Ver más",
                 modifier = Modifier.clickable { expanded = !expanded },
-                color = VitalTraceTeal,
+                color = MaterialTheme.colorScheme.secondary,
                 fontWeight = FontWeight.Bold
             )
         }
@@ -251,12 +386,12 @@ private fun EvolutionCard(item: ClinicalEvolution) {
 @Composable
 private fun ClinicalTreatmentCard(item: ClinicalTreatment) = VitalTraceClinicalCard {
     Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(14.dp)) {
-        Surface(color = Color(0xFFDDF4F2), shape = RoundedCornerShape(18.dp)) {
-            Icon(Icons.Rounded.Medication, null, Modifier.padding(14.dp), tint = VitalTraceTeal)
+        Surface(color = MaterialTheme.colorScheme.secondaryContainer, shape = RoundedCornerShape(18.dp)) {
+            Icon(Icons.Rounded.Medication, null, Modifier.padding(14.dp), tint = MaterialTheme.colorScheme.onSecondaryContainer)
         }
         Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(6.dp)) {
-            Text(item.indications, color = VitalTraceNavy, fontFamily = FontFamily.Serif, fontSize = 19.sp, fontWeight = FontWeight.Bold)
-            Text(listOfNotNull(item.startDate, item.endDate).joinToString("  ·  "), color = Color(0xFF53636D), fontSize = 15.sp)
+            Text(item.indications, color = MaterialTheme.colorScheme.onSurface, fontFamily = FontFamily.Serif, fontSize = 19.sp, fontWeight = FontWeight.Bold)
+            Text(listOfNotNull(item.startDate, item.endDate).joinToString("  ·  "), color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 15.sp)
         }
         ClinicalStatusChip(item.status)
     }
@@ -268,7 +403,7 @@ private fun ClinicalMeasurementsCard(items: List<ClinicalMeasurement>) {
     Card(
         Modifier.fillMaxWidth(),
         shape = RoundedCornerShape(26.dp),
-        colors = CardDefaults.cardColors(containerColor = Color.White),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
         elevation = CardDefaults.cardElevation(5.dp)
     ) {
         Column(Modifier.padding(horizontal = 24.dp, vertical = 10.dp)) {
@@ -278,16 +413,16 @@ private fun ClinicalMeasurementsCard(items: List<ClinicalMeasurement>) {
                     horizontalArrangement = Arrangement.spacedBy(16.dp),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Surface(Modifier.size(54.dp), color = Color(0xFFDDF4F2), shape = RoundedCornerShape(17.dp)) {
-                        Icon(Icons.Rounded.MonitorHeart, null, Modifier.padding(14.dp), tint = VitalTraceTeal)
+                    Surface(Modifier.size(54.dp), color = MaterialTheme.colorScheme.secondaryContainer, shape = RoundedCornerShape(17.dp)) {
+                        Icon(Icons.Rounded.MonitorHeart, null, Modifier.padding(14.dp), tint = MaterialTheme.colorScheme.onSecondaryContainer)
                     }
                     Column(Modifier.weight(1f)) {
-                        Text(item.measurementType?.name ?: "Medición", color = VitalTraceNavy, fontWeight = FontWeight.Bold)
-                        Text("${item.value} ${item.unit}", color = VitalTraceNavy, fontFamily = FontFamily.Serif, fontSize = 21.sp, fontWeight = FontWeight.Bold)
-                        Text(item.measuredAt, color = Color(0xFF53636D), fontSize = 14.sp)
+                        Text(item.measurementType?.name ?: "Medición", color = MaterialTheme.colorScheme.onSurface, fontWeight = FontWeight.Bold)
+                        Text("${item.value} ${item.unit}", color = MaterialTheme.colorScheme.onSurface, fontFamily = FontFamily.Serif, fontSize = 21.sp, fontWeight = FontWeight.Bold)
+                        Text(item.measuredAt, color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 14.sp)
                     }
                 }
-                if (index < items.lastIndex) HorizontalDivider(color = Color(0xFFE5E0D7))
+                if (index < items.lastIndex) HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
             }
         }
     }
@@ -298,7 +433,7 @@ private fun VitalTraceClinicalCard(modifier: Modifier = Modifier, content: @Comp
     Card(
         modifier.fillMaxWidth(),
         shape = RoundedCornerShape(26.dp),
-        colors = CardDefaults.cardColors(containerColor = Color.White),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
         elevation = CardDefaults.cardElevation(5.dp)
     ) {
         Column(Modifier.fillMaxWidth().padding(22.dp), verticalArrangement = Arrangement.spacedBy(12.dp), content = content)
@@ -319,39 +454,39 @@ private fun ClinicalStatusChip(status: String) {
 }
 
 @Composable private fun DetailLine(icon: ImageVector, value: String) = Row(horizontalArrangement = Arrangement.spacedBy(9.dp), verticalAlignment = Alignment.CenterVertically) {
-    Icon(icon, null, Modifier.size(18.dp), tint = VitalTraceTeal)
-    Text(value, color = Color(0xFF53636D), fontSize = 15.sp)
+    Icon(icon, null, Modifier.size(18.dp), tint = MaterialTheme.colorScheme.secondary)
+    Text(value, color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 15.sp)
 }
 
 @Composable private fun DetailLabel(label: String, value: String) = Column {
-    Text(label, color = Color(0xFF53636D), fontSize = 12.sp)
-    Text(value, color = VitalTraceNavy, fontWeight = FontWeight.Bold)
+    Text(label, color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 12.sp)
+    Text(value, color = MaterialTheme.colorScheme.onSurface, fontWeight = FontWeight.Bold)
 }
 
 @Composable private fun ClinicalLoading(modifier: Modifier) = Column(
     modifier.fillMaxSize(), horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.Center
 ) {
-    CircularProgressIndicator(color = VitalTraceTeal)
-    Text("Cargando historial clínico", Modifier.padding(top = 16.dp), color = VitalTraceNavy)
+    CircularProgressIndicator(color = MaterialTheme.colorScheme.secondary)
+    Text("Cargando historial clínico", Modifier.padding(top = 16.dp), color = MaterialTheme.colorScheme.onBackground)
 }
 
 @Composable private fun ClinicalEmpty(modifier: Modifier) = Column(
     modifier.fillMaxSize().padding(32.dp), horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.Center
 ) {
     Icon(Icons.Rounded.FolderShared, null, Modifier.size(72.dp), tint = VitalTraceMint)
-    Text("Aún no existe información clínica registrada.", Modifier.padding(top = 22.dp), color = VitalTraceNavy, fontFamily = FontFamily.Serif, fontSize = 25.sp, fontWeight = FontWeight.Bold, textAlign = TextAlign.Center)
+    Text("Aún no existe información clínica registrada.", Modifier.padding(top = 22.dp), color = MaterialTheme.colorScheme.onBackground, fontFamily = FontFamily.Serif, fontSize = 25.sp, fontWeight = FontWeight.Bold, textAlign = TextAlign.Center)
 }
 
 @Composable private fun ClinicalError(message: String, onRetry: () -> Unit, modifier: Modifier) = Column(
     modifier.fillMaxSize().padding(24.dp), horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.Center
 ) {
-    Icon(Icons.Rounded.MedicalInformation, null, tint = VitalTraceTeal)
-    Text(message, Modifier.padding(top = 14.dp), color = VitalTraceNavy, fontWeight = FontWeight.Bold, textAlign = TextAlign.Center)
+    Icon(Icons.Rounded.MedicalInformation, null, tint = MaterialTheme.colorScheme.secondary)
+    Text(message, Modifier.padding(top = 14.dp), color = MaterialTheme.colorScheme.onBackground, fontWeight = FontWeight.Bold, textAlign = TextAlign.Center)
     Button(
         onClick = onRetry,
         modifier = Modifier.fillMaxWidth().padding(top = 22.dp).height(56.dp),
         shape = RoundedCornerShape(18.dp),
-        colors = ButtonDefaults.buttonColors(containerColor = VitalTraceNavy)
+        colors = ButtonDefaults.buttonColors()
     ) { Text("Reintentar", fontFamily = FontFamily.Serif, fontSize = 19.sp, fontWeight = FontWeight.Bold) }
 }
 

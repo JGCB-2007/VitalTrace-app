@@ -1,6 +1,7 @@
 package com.vitaltrace.app.feature.home.presentation.components
 
 import androidx.compose.foundation.background
+import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -21,11 +22,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.vitaltrace.app.R
 import com.vitaltrace.app.feature.home.presentation.RecentMeasurementUiModel
+import com.vitaltrace.app.feature.home.presentation.MeasurementTrendPoint
 
 @Composable
 fun RecentPressureCard(
@@ -34,9 +38,9 @@ fun RecentPressureCard(
     modifier: Modifier = Modifier
 ) {
     Card(
-        modifier = modifier.fillMaxWidth(),
+        modifier = modifier.fillMaxWidth().animateContentSize(),
         shape = RoundedCornerShape(26.dp),
-        colors = CardDefaults.cardColors(containerColor = Color.White),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
         elevation = CardDefaults.cardElevation(defaultElevation = 5.dp)
     ) {
         Column(modifier = Modifier.padding(22.dp)) {
@@ -68,53 +72,89 @@ fun RecentPressureCard(
                 modifier = Modifier.padding(top = 8.dp),
                 verticalAlignment = Alignment.Bottom
             ) {
+                Column(modifier = Modifier.weight(1f)) {
+                    Text(
+                        text = measurement.typeName,
+                        color = HomeSupportingText,
+                        style = MaterialTheme.typography.titleMedium
+                    )
+                    Row(verticalAlignment = Alignment.Bottom) {
+                        Text(
+                            text = measurement.value,
+                            color = HomeNavy,
+                            fontFamily = FontFamily.Serif,
+                            fontWeight = FontWeight.Bold,
+                            style = MaterialTheme.typography.displayMedium
+                        )
+                        Text(
+                            text = measurement.unit,
+                            color = HomeSupportingText,
+                            style = MaterialTheme.typography.titleMedium,
+                            modifier = Modifier.padding(start = 8.dp, bottom = 8.dp)
+                        )
+                    }
+                }
                 Text(
-                    text = measurement.value,
-                    color = HomeNavy,
-                    fontFamily = FontFamily.Serif,
-                    fontWeight = FontWeight.Bold,
-                    style = MaterialTheme.typography.displayMedium
-                )
-                Text(
-                    text = stringResource(
-                        R.string.home_measurement_summary,
-                        measurement.unit,
-                        measurement.date
-                    ),
+                    text = measurement.date,
                     color = HomeSupportingText,
-                    style = MaterialTheme.typography.titleMedium,
-                    modifier = Modifier.padding(start = 10.dp, bottom = 8.dp)
+                    style = MaterialTheme.typography.bodyMedium,
+                    modifier = Modifier.padding(bottom = 9.dp)
                 )
             }
-            PressureBarChart(
-                values = measurement.chartValues,
-                modifier = Modifier.padding(top = 22.dp)
-            )
+            if (measurement.trendPoints.isNotEmpty()) {
+                Text(
+                    text = stringResource(R.string.home_measurement_trend, measurement.typeName),
+                    color = HomeSupportingText,
+                    style = MaterialTheme.typography.labelLarge,
+                    modifier = Modifier.padding(top = 18.dp)
+                )
+                MeasurementBarChart(
+                    points = measurement.trendPoints,
+                    unit = measurement.unit,
+                    modifier = Modifier.padding(top = 10.dp)
+                )
+            }
         }
     }
 }
 
 @Composable
-private fun PressureBarChart(
-    values: List<Float>,
+private fun MeasurementBarChart(
+    points: List<MeasurementTrendPoint>,
+    unit: String,
     modifier: Modifier = Modifier
 ) {
     Row(
         modifier = modifier
             .fillMaxWidth()
-            .height(82.dp),
-        horizontalArrangement = Arrangement.spacedBy(18.dp, Alignment.CenterHorizontally),
+            .height(124.dp),
+        horizontalArrangement = Arrangement.spacedBy(8.dp, Alignment.CenterHorizontally),
         verticalAlignment = Alignment.Bottom
     ) {
-        values.takeLast(7).forEachIndexed { index, value ->
-            Box(
+        points.takeLast(7).forEachIndexed { index, point ->
+            Column(
                 modifier = Modifier
-                    .width(22.dp)
-                    .height(82.dp * value.coerceIn(0.1f, 1f))
-                    .background(
-                        brush = if (index == values.takeLast(7).lastIndex) {
+                    .weight(1f)
+                    .semantics {
+                        contentDescription = "${point.dateLabel}: ${point.displayValue} $unit"
+                    },
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Bottom
+            ) {
+                Text(
+                    text = point.displayValue,
+                    color = HomeSupportingText,
+                    style = MaterialTheme.typography.labelSmall
+                )
+                Box(
+                    modifier = Modifier
+                        .padding(top = 4.dp)
+                        .width(20.dp)
+                        .height(68.dp * point.normalizedValue.coerceIn(0.1f, 1f))
+                        .background(
+                        brush = if (index == points.takeLast(7).lastIndex) {
                             Brush.verticalGradient(
-                                listOf(Color(0xFFF2BD62), HomeAlertBar)
+                                listOf(HomeMint, HomeTeal)
                             )
                         } else {
                             Brush.verticalGradient(
@@ -129,7 +169,14 @@ private fun PressureBarChart(
                             topEnd = 7.dp
                         )
                     )
-            )
+                )
+                Text(
+                    text = point.dateLabel,
+                    color = HomeSupportingText,
+                    style = MaterialTheme.typography.labelSmall,
+                    modifier = Modifier.padding(top = 4.dp)
+                )
+            }
         }
     }
 }

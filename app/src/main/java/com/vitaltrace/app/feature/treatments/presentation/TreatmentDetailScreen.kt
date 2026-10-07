@@ -19,6 +19,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -45,7 +46,7 @@ fun TreatmentDetailScreen(
     val state by viewModel.uiState.collectAsStateWithLifecycle()
     val treatment = state.selectedTreatment
     Scaffold(
-        containerColor = VitalTraceWarmBackground,
+        containerColor = MaterialTheme.colorScheme.background,
         topBar = {
             CenterAlignedTopAppBar(
                 title = { Text(stringResource(R.string.treatment_detail_title)) },
@@ -75,7 +76,7 @@ fun TreatmentDetailScreen(
                         Text(
                             text = description,
                             modifier = Modifier.weight(1f),
-                            color = VitalTraceNavy,
+                            color = MaterialTheme.colorScheme.onBackground,
                             fontFamily = FontFamily.Serif,
                             fontSize = 28.sp,
                             fontWeight = FontWeight.Bold
@@ -93,31 +94,31 @@ fun TreatmentDetailScreen(
 private fun TreatmentDetailsCard(treatment: TreatmentUiModel) {
     Card(
         modifier = Modifier.fillMaxWidth(),
-        colors = CardDefaults.cardColors(containerColor = Color.White),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
         elevation = CardDefaults.cardElevation(defaultElevation = 5.dp)
     ) {
         Column(modifier = Modifier.padding(horizontal = 22.dp, vertical = 8.dp)) {
             DetailRow(stringResource(R.string.treatment_detail_indications), treatment.indications)
             treatment.diagnosisCode?.takeIf(String::isNotBlank)?.let {
-                HorizontalDivider(color = Color(0xFFE5E0D7))
+                HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
                 DetailRow(stringResource(R.string.treatment_detail_diagnosis_code), it)
             }
-            HorizontalDivider(color = Color(0xFFE5E0D7))
+            HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
             DetailRow(stringResource(R.string.treatment_detail_start_date), treatment.startDate)
             treatment.endDate?.takeIf(String::isNotBlank)?.let {
-                HorizontalDivider(color = Color(0xFFE5E0D7))
+                HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
                 DetailRow(stringResource(R.string.treatment_detail_end_date), it)
             }
             treatment.prescriberName?.takeIf(String::isNotBlank)?.let {
-                HorizontalDivider(color = Color(0xFFE5E0D7))
+                HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
                 DetailRow(stringResource(R.string.treatment_detail_prescriber), it)
             }
             treatment.professionalType?.takeIf(String::isNotBlank)?.let {
-                HorizontalDivider(color = Color(0xFFE5E0D7))
+                HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
                 DetailRow(stringResource(R.string.treatment_detail_professional_type), it)
             }
             treatment.specialtyName?.takeIf(String::isNotBlank)?.let {
-                HorizontalDivider(color = Color(0xFFE5E0D7))
+                HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
                 DetailRow(stringResource(R.string.treatment_detail_specialty), it)
             }
         }
@@ -131,11 +132,11 @@ private fun DetailRow(label: String, value: String) {
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Text(label, color = Color(0xFF53636D), fontSize = 17.sp)
+        Text(label, color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 17.sp)
         Text(
             value,
             modifier = Modifier.weight(1f).padding(start = 20.dp),
-            color = VitalTraceNavy,
+            color = MaterialTheme.colorScheme.onSurface,
             fontWeight = FontWeight.Bold,
             textAlign = TextAlign.End
         )

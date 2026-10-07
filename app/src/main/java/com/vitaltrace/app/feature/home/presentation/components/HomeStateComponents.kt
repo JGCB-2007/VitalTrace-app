@@ -16,19 +16,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.vitaltrace.app.R
+import com.vitaltrace.app.core.presentation.components.LoadingSkeleton
 
 @Composable
 fun LoadingState(modifier: Modifier = Modifier) {
-    Box(modifier = modifier, contentAlignment = Alignment.Center) {
-        Column(horizontalAlignment = Alignment.CenterHorizontally) {
-            CircularProgressIndicator(color = HomeNavy)
-            Text(
-                text = stringResource(R.string.home_loading),
-                style = MaterialTheme.typography.bodyLarge,
-                modifier = Modifier.padding(top = 16.dp)
-            )
-        }
-    }
+    LoadingSkeleton(stringResource(R.string.home_loading), modifier)
 }
 
 @Composable

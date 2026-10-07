@@ -28,6 +28,7 @@ sealed class AppRoute(val route: String) {
         fun create(id: Long) = "treatments/$id"
     }
     data object ClinicalHistory : AppRoute("clinical_history")
+    data object HealthTimeline : AppRoute("health_timeline")
     data object DiagnosisEducation : AppRoute("diagnosis_education/{cieCode}/{diagnosisName}") {
         fun create(cieCode: String, diagnosisName: String) =
             "diagnosis_education/${Uri.encode(cieCode)}/${Uri.encode(diagnosisName)}"

@@ -3,12 +3,16 @@ package com.vitaltrace.app.feature.home.presentation
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
@@ -22,7 +26,10 @@ import com.vitaltrace.app.feature.home.presentation.components.HomeHeader
 import com.vitaltrace.app.feature.home.presentation.components.LoadingState
 import com.vitaltrace.app.feature.home.presentation.components.NextAppointmentCard
 import com.vitaltrace.app.feature.home.presentation.components.RecentPressureCard
-import com.vitaltrace.app.feature.home.presentation.components.RegisterMeasurementButton
+import com.vitaltrace.app.feature.home.presentation.components.HealthOverviewCard
+import com.vitaltrace.app.feature.home.presentation.components.AdaptivePortalScaffold
+import com.vitaltrace.app.feature.home.presentation.components.TodayOverviewCard
+import com.vitaltrace.app.core.presentation.components.OfflineStatusBanner
 import com.vitaltrace.app.ui.theme.VitalTraceTheme
 import kotlinx.coroutines.flow.collectLatest
 
@@ -36,6 +43,7 @@ fun HomeScreen(
     onAppointmentsClick: () -> Unit = {},
     onProfileClick: () -> Unit = {},
     onNotificationsClick: () -> Unit = {},
+    onTimelineClick: () -> Unit = {},
     viewModel: HomeViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
@@ -54,40 +62,41 @@ fun HomeScreen(
         uiState = uiState,
         onLogoutClick = viewModel::logout,
         onRetryClick = viewModel::retry,
+        onRefresh = viewModel::refresh,
         onRegisterMeasurementClick = onRegisterMeasurementClick,
         onAppointmentDetailClick = onAppointmentDetailClick,
         onPressureHistoryClick = onPressureHistoryClick,
         onMeasurementsClick = onMeasurementsClick,
         onAppointmentsClick = onAppointmentsClick,
         onProfileClick = onProfileClick,
-        onNotificationsClick = onNotificationsClick
+        onNotificationsClick = onNotificationsClick,
+        onTimelineClick = onTimelineClick
     )
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun HomeContent(
     uiState: HomeUiState,
     onLogoutClick: () -> Unit,
     onRetryClick: () -> Unit,
+    onRefresh: () -> Unit,
     onRegisterMeasurementClick: () -> Unit,
     onAppointmentDetailClick: (Long) -> Unit,
     onPressureHistoryClick: () -> Unit,
     onMeasurementsClick: () -> Unit,
     onAppointmentsClick: () -> Unit,
     onProfileClick: () -> Unit,
-    onNotificationsClick: () -> Unit
+    onNotificationsClick: () -> Unit,
+    onTimelineClick: () -> Unit
 ) {
-    Scaffold(
+    AdaptivePortalScaffold(
+        selectedDestination = uiState.selectedBottomDestination,
+        onHomeClick = {},
+        onMeasurementsClick = onMeasurementsClick,
+        onAppointmentsClick = onAppointmentsClick,
+        onProfileClick = onProfileClick,
         containerColor = HomeBackground,
-        bottomBar = {
-            HomeBottomBar(
-                selectedDestination = uiState.selectedBottomDestination,
-                onHomeClick = {},
-                onMeasurementsClick = onMeasurementsClick,
-                onAppointmentsClick = onAppointmentsClick,
-                onProfileClick = onProfileClick
-            )
-        }
     ) { innerPadding ->
         when (val contentState = uiState.contentState) {
             HomeContentState.Loading -> LoadingState(
@@ -102,17 +111,24 @@ private fun HomeContent(
                     .fillMaxSize()
                     .padding(innerPadding)
             )
-            is HomeContentState.Success -> HomeBody(
-                content = contentState.content,
-                isLoggingOut = uiState.isLoggingOut,
-                onLogoutClick = onLogoutClick,
-                onRegisterMeasurementClick = onRegisterMeasurementClick,
-                onAppointmentDetailClick = onAppointmentDetailClick,
-                onPressureHistoryClick = onPressureHistoryClick,
-                unreadNotificationsCount = uiState.unreadNotificationsCount,
-                onNotificationsClick = onNotificationsClick,
-                modifier = Modifier.padding(innerPadding)
-            )
+            is HomeContentState.Success -> PullToRefreshBox(
+                isRefreshing = uiState.isRefreshing,
+                onRefresh = onRefresh,
+                modifier = Modifier.fillMaxSize().padding(innerPadding)
+            ) {
+                HomeBody(
+                    content = contentState.content,
+                    isLoggingOut = uiState.isLoggingOut,
+                    onLogoutClick = onLogoutClick,
+                    onRegisterMeasurementClick = onRegisterMeasurementClick,
+                    onAppointmentDetailClick = onAppointmentDetailClick,
+                    onPressureHistoryClick = onPressureHistoryClick,
+                    unreadNotificationsCount = uiState.unreadNotificationsCount,
+                    onNotificationsClick = onNotificationsClick,
+                    onTimelineClick = onTimelineClick,
+                    modifier = Modifier.widthIn(max = 720.dp).align(Alignment.TopCenter)
+                )
+            }
         }
     }
 }
@@ -127,6 +143,7 @@ private fun HomeBody(
     onPressureHistoryClick: () -> Unit,
     unreadNotificationsCount: Int,
     onNotificationsClick: () -> Unit,
+    onTimelineClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     LazyColumn(
@@ -138,6 +155,7 @@ private fun HomeBody(
             bottom = 28.dp
         )
     ) {
+        item { OfflineStatusBanner() }
         item {
             HomeHeader(
                 greeting = content.greeting,
@@ -150,15 +168,29 @@ private fun HomeBody(
             )
         }
         item {
-            FollowUpStatusCard(
-                status = content.followUpStatus,
-                modifier = Modifier.padding(top = 28.dp)
+            TodayOverviewCard(
+                appointment = content.nextAppointment,
+                measurement = content.recentMeasurement,
+                activeTreatmentsCount = content.activeTreatmentsCount,
+                onRegisterMeasurement = onRegisterMeasurementClick,
+                onAppointmentClick = {
+                    content.nextAppointment?.let { onAppointmentDetailClick(it.id) }
+                },
+                modifier = Modifier.padding(top = 18.dp)
             )
         }
         item {
-            RegisterMeasurementButton(
-                onClick = onRegisterMeasurementClick,
-                modifier = Modifier.padding(top = 16.dp)
+            HealthOverviewCard(
+                status = content.healthStatus,
+                activeTreatmentsCount = content.activeTreatmentsCount,
+                onTimelineClick = onTimelineClick,
+                modifier = Modifier.padding(top = 18.dp)
+            )
+        }
+        item {
+            FollowUpStatusCard(
+                status = content.followUpStatus,
+                modifier = Modifier.padding(top = 28.dp)
             )
         }
         item {
@@ -186,13 +218,15 @@ private fun HomeScreenPreview() {
             uiState = previewHomeState(),
             onLogoutClick = {},
             onRetryClick = {},
+            onRefresh = {},
             onRegisterMeasurementClick = {},
             onAppointmentDetailClick = {},
             onPressureHistoryClick = {},
             onMeasurementsClick = {},
             onAppointmentsClick = {},
             onProfileClick = {},
-            onNotificationsClick = {}
+            onNotificationsClick = {},
+            onTimelineClick = {}
         )
     }
 }
@@ -218,16 +252,17 @@ private fun previewHomeState(): HomeUiState {
             status = "Programada"
         ),
         recentMeasurement = RecentMeasurementUiModel(
+            typeName = "Presión arterial sistólica",
             value = "145/92",
             unit = "mmHg",
             date = "14 jul",
-            chartValues = listOf(
-                0.46f,
-                0.58f,
-                0.52f,
-                0.68f,
-                0.61f,
-                0.93f
+            trendPoints = listOf(
+                MeasurementTrendPoint(0.46f, "128", "08/07"),
+                MeasurementTrendPoint(0.58f, "132", "09/07"),
+                MeasurementTrendPoint(0.52f, "130", "10/07"),
+                MeasurementTrendPoint(0.68f, "136", "11/07"),
+                MeasurementTrendPoint(0.61f, "133", "12/07"),
+                MeasurementTrendPoint(0.93f, "145", "14/07")
             )
         )
             )
