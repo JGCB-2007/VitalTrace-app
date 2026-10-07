@@ -24,10 +24,13 @@ data class MeasurementTypeOption(
     val id: Long,
     val name: String,
     val unit: String,
-    val decimals: Int
+    val decimals: Int,
+    val minimumValue: Double,
+    val maximumValue: Double
 )
 
 enum class MeasurementFieldError {
     REQUIRED,
-    INVALID
+    INVALID,
+    OUT_OF_RANGE
 }

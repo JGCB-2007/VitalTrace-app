@@ -13,6 +13,7 @@ import androidx.compose.material.icons.rounded.MonitorHeart
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -41,7 +42,7 @@ fun MeasurementHistoryCard(
     Card(
         modifier = modifier.fillMaxWidth(),
         shape = RoundedCornerShape(26.dp),
-        colors = CardDefaults.cardColors(containerColor = Color.White),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
         elevation = CardDefaults.cardElevation(defaultElevation = 5.dp)
     ) {
         Column(modifier = Modifier.padding(horizontal = 24.dp, vertical = 12.dp)) {
@@ -52,7 +53,7 @@ fun MeasurementHistoryCard(
                     modifier = Modifier.padding(vertical = 18.dp)
                 )
                 if (index < measurements.lastIndex) {
-                    HorizontalDivider(color = Color(0xFFE5E0D7))
+                    HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
                 }
             }
         }
@@ -76,20 +77,20 @@ private fun MeasurementHistoryItem(
     ) {
         Surface(
             modifier = Modifier.size(52.dp),
-            color = Color(0xFFDDF4F2),
+            color = MaterialTheme.colorScheme.secondaryContainer,
             shape = RoundedCornerShape(18.dp)
         ) {
             Icon(
                 imageVector = Icons.Rounded.MonitorHeart,
                 contentDescription = null,
-                tint = VitalTraceTeal,
+                tint = MaterialTheme.colorScheme.onSecondaryContainer,
                 modifier = Modifier.padding(13.dp)
             )
         }
         Column(modifier = Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(2.dp)) {
             Text(
                 text = "${measurement.value} ${measurement.unit}",
-                color = VitalTraceNavy,
+                color = MaterialTheme.colorScheme.onSurface,
                 fontFamily = FontFamily.Serif,
                 fontSize = 22.sp,
                 fontWeight = FontWeight.Bold,
@@ -99,7 +100,7 @@ private fun MeasurementHistoryItem(
             )
             Text(
                 text = localizedMeasurementTypeLabel(measurement.typeName),
-                color = Color(0xFF53636D),
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
                 fontSize = 14.sp,
                 fontWeight = FontWeight.Bold,
                 maxLines = 1,
@@ -107,7 +108,7 @@ private fun MeasurementHistoryItem(
             )
             Text(
                 text = "${measurement.date} · ${measurement.time}",
-                color = Color(0xFF53636D),
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
                 fontSize = 14.sp,
                 maxLines = 2,
                 overflow = TextOverflow.Ellipsis

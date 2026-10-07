@@ -13,6 +13,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -32,21 +33,11 @@ import com.vitaltrace.app.R
 import com.vitaltrace.app.ui.theme.VitalTraceMint
 import com.vitaltrace.app.ui.theme.VitalTraceNavy
 import com.vitaltrace.app.ui.theme.VitalTraceTeal
+import com.vitaltrace.app.core.presentation.components.LoadingSkeleton
 
 @Composable
 fun MeasurementsLoadingState(modifier: Modifier = Modifier) {
-    Column(
-        modifier = modifier,
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
-    ) {
-        CircularProgressIndicator(color = VitalTraceTeal)
-        Text(
-            text = stringResource(R.string.measurements_loading),
-            modifier = Modifier.padding(top = 16.dp),
-            color = VitalTraceNavy
-        )
-    }
+    LoadingSkeleton(stringResource(R.string.measurements_loading), modifier)
 }
 
 @Composable
@@ -80,7 +71,7 @@ fun MeasurementsEmptyState(
         Text(
             text = stringResource(R.string.measurements_empty_title),
             modifier = Modifier.padding(top = 24.dp),
-            color = VitalTraceNavy,
+            color = MaterialTheme.colorScheme.onBackground,
             fontFamily = FontFamily.Serif,
             fontSize = 27.sp,
             fontWeight = FontWeight.Bold,
@@ -89,7 +80,7 @@ fun MeasurementsEmptyState(
         Text(
             text = stringResource(R.string.measurements_empty_description),
             modifier = Modifier.padding(top = 14.dp),
-            color = Color(0xFF53636D),
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
             fontSize = 19.sp,
             lineHeight = 28.sp,
             textAlign = TextAlign.Center
@@ -100,7 +91,7 @@ fun MeasurementsEmptyState(
                 .fillMaxWidth()
                 .padding(top = 28.dp),
             shape = RoundedCornerShape(18.dp),
-            colors = ButtonDefaults.buttonColors(containerColor = VitalTraceTeal),
+            colors = ButtonDefaults.buttonColors(),
             contentPadding = androidx.compose.foundation.layout.PaddingValues(vertical = 17.dp)
         ) {
             Text(
@@ -160,24 +151,24 @@ private fun MeasurementsMessageState(
         Icon(
             imageVector = Icons.Rounded.MonitorHeart,
             contentDescription = null,
-            tint = VitalTraceTeal
+            tint = MaterialTheme.colorScheme.secondary
         )
         Text(
             text = title,
-            color = VitalTraceNavy,
+            color = MaterialTheme.colorScheme.onBackground,
             fontWeight = FontWeight.Bold,
             textAlign = TextAlign.Center
         )
         description?.let {
             Text(
                 text = it,
-                color = Color(0xFF53636D),
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
                 textAlign = TextAlign.Center
             )
         }
         Button(
             onClick = onActionClick,
-            colors = ButtonDefaults.buttonColors(containerColor = VitalTraceNavy)
+            colors = ButtonDefaults.buttonColors()
         ) {
             Text(text = actionLabel)
         }

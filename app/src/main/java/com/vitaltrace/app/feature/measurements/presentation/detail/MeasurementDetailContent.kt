@@ -13,6 +13,7 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -46,18 +47,18 @@ fun MeasurementDetailContent(
         ) {
             Text(
                 text = stringResource(R.string.measurement_detail_title),
-                color = VitalTraceTeal,
+                color = MaterialTheme.colorScheme.secondary,
                 fontSize = 16.sp,
                 fontWeight = FontWeight.ExtraBold,
                 letterSpacing = 0.7.sp
             )
             MeasurementStatusChip(status = detail.status)
         }
-        Text(text = detail.typeName, color = Color(0xFF53636D), fontSize = 18.sp)
+        Text(text = detail.typeName, color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 18.sp)
         Row(verticalAlignment = Alignment.Bottom) {
             Text(
                 text = detail.value,
-                color = VitalTraceNavy,
+                color = MaterialTheme.colorScheme.onSurface,
                 fontFamily = FontFamily.Serif,
                 fontSize = 49.sp,
                 fontWeight = FontWeight.Bold
@@ -65,7 +66,7 @@ fun MeasurementDetailContent(
             Text(
                 text = detail.unit,
                 modifier = Modifier.padding(start = 12.dp, bottom = 7.dp),
-                color = Color(0xFF53636D),
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
                 fontSize = 24.sp,
                 fontWeight = FontWeight.Bold
             )
@@ -75,7 +76,7 @@ fun MeasurementDetailContent(
             onClick = onCloseClick,
             modifier = Modifier.fillMaxWidth().height(64.dp),
             shape = RoundedCornerShape(18.dp),
-            colors = ButtonDefaults.outlinedButtonColors(contentColor = VitalTraceNavy)
+            colors = ButtonDefaults.outlinedButtonColors(contentColor = MaterialTheme.colorScheme.primary)
         ) {
             Text(
                 text = stringResource(R.string.measurement_detail_close),
@@ -93,7 +94,7 @@ fun MeasurementDetailDragHandle() {
         Surface(
             modifier = Modifier.matchParentSize(),
             shape = RoundedCornerShape(50),
-            color = Color(0xFFC9C2B5)
+            color = MaterialTheme.colorScheme.outlineVariant
         ) {}
     }
 }
@@ -102,22 +103,22 @@ fun MeasurementDetailDragHandle() {
 private fun MeasurementInformationCard(detail: MeasurementDetailUiModel) {
     Card(
         modifier = Modifier.fillMaxWidth(),
-        colors = CardDefaults.cardColors(containerColor = Color.White),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
         shape = RoundedCornerShape(24.dp),
         elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
     ) {
         Column(modifier = Modifier.padding(horizontal = 22.dp, vertical = 8.dp)) {
             DetailRow(stringResource(R.string.measurement_detail_date), detail.date)
-            HorizontalDivider(color = Color(0xFFE5E0D7))
+            HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
             DetailRow(stringResource(R.string.measurement_detail_time), detail.time)
-            HorizontalDivider(color = Color(0xFFE5E0D7))
+            HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
             DetailRow(stringResource(R.string.measurement_detail_observation), detail.observation)
             detail.reviewerName?.takeIf(String::isNotBlank)?.let { reviewer ->
-                HorizontalDivider(color = Color(0xFFE5E0D7))
+                HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
                 DetailRow(stringResource(R.string.measurement_detail_reviewer), reviewer)
             }
             detail.reviewedDate?.takeIf(String::isNotBlank)?.let { reviewedDate ->
-                HorizontalDivider(color = Color(0xFFE5E0D7))
+                HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
                 DetailRow(
                     stringResource(R.string.measurement_detail_reviewed_at),
                     listOfNotNull(reviewedDate, detail.reviewedTime?.takeIf(String::isNotBlank))
@@ -125,7 +126,7 @@ private fun MeasurementInformationCard(detail: MeasurementDetailUiModel) {
                 )
             }
             detail.reviewObservation?.takeIf(String::isNotBlank)?.let { observation ->
-                HorizontalDivider(color = Color(0xFFE5E0D7))
+                HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
                 DetailRow(stringResource(R.string.measurement_detail_review_observation), observation)
             }
         }
@@ -139,11 +140,11 @@ private fun DetailRow(label: String, value: String) {
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Text(text = label, color = Color(0xFF53636D), fontSize = 18.sp)
+        Text(text = label, color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 18.sp)
         Text(
             text = value,
             modifier = Modifier.weight(1f).padding(start = 20.dp),
-            color = Color(0xFF172C3A),
+            color = MaterialTheme.colorScheme.onSurface,
             fontSize = 17.sp,
             fontWeight = FontWeight.Bold,
             textAlign = TextAlign.End

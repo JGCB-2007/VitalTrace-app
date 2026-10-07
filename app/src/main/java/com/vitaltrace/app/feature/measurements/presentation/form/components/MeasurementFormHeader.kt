@@ -9,6 +9,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.ArrowBackIosNew
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -32,28 +33,28 @@ fun MeasurementFormHeader(
         Surface(
             modifier = Modifier.size(50.dp),
             shape = CircleShape,
-            color = Color.White,
+            color = MaterialTheme.colorScheme.surface,
             shadowElevation = 1.dp
         ) {
             IconButton(onClick = onBackClick) {
                 Icon(
                     imageVector = Icons.Rounded.ArrowBackIosNew,
                     contentDescription = stringResource(R.string.measurement_form_back),
-                    tint = VitalTraceNavy
+                    tint = MaterialTheme.colorScheme.onSurface
                 )
             }
         }
         Column(modifier = Modifier.padding(start = 18.dp)) {
             Text(
                 text = stringResource(R.string.measurement_form_title),
-                color = VitalTraceNavy,
+                color = MaterialTheme.colorScheme.onBackground,
                 fontFamily = FontFamily.Serif,
                 fontSize = 31.sp,
                 fontWeight = FontWeight.Bold
             )
             Text(
                 text = stringResource(R.string.measurement_form_subtitle),
-                color = Color(0xFF53636D),
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
                 fontSize = 18.sp
             )
         }

@@ -10,6 +10,7 @@ import androidx.compose.material.icons.rounded.Check
 import androidx.compose.material.icons.rounded.Schedule
 import androidx.compose.material.icons.rounded.Upload
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -64,25 +65,26 @@ private data class MeasurementStatusPresentation(
     val content: Color
 )
 
+@Composable
 private fun statusPresentation(status: MeasurementStatus): MeasurementStatusPresentation {
     return when (status) {
         MeasurementStatus.PENDING -> MeasurementStatusPresentation(
             label = R.string.measurements_status_pending,
             icon = Icons.Rounded.Schedule,
-            background = Color(0xFFFFEBC7),
-            content = Color(0xFF765315)
+            background = MaterialTheme.colorScheme.secondaryContainer,
+            content = MaterialTheme.colorScheme.onSecondaryContainer
         )
         MeasurementStatus.REVIEWED -> MeasurementStatusPresentation(
             label = R.string.measurements_status_reviewed,
             icon = Icons.Rounded.Check,
-            background = Color(0xFFDDF1E7),
-            content = Color(0xFF23805F)
+            background = MaterialTheme.colorScheme.tertiaryContainer,
+            content = MaterialTheme.colorScheme.onTertiaryContainer
         )
         MeasurementStatus.UNKNOWN -> MeasurementStatusPresentation(
             label = R.string.measurements_status_unknown,
             icon = Icons.Rounded.Upload,
-            background = Color(0xFFE5EDF4),
-            content = Color(0xFF315A76)
+            background = MaterialTheme.colorScheme.surfaceVariant,
+            content = MaterialTheme.colorScheme.onSurfaceVariant
         )
     }
 }

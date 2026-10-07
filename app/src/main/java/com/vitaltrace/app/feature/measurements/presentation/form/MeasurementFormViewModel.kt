@@ -3,6 +3,8 @@ package com.vitaltrace.app.feature.measurements.presentation.form
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.vitaltrace.app.feature.patient.domain.usecase.CreatePatientMeasurementUseCase
+import com.vitaltrace.app.feature.profile.data.NotificationPreferencesStore
+import com.vitaltrace.app.feature.measurements.data.MeasurementPreferencesStore
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.channels.Channel
@@ -19,7 +21,9 @@ import javax.inject.Inject
 
 @HiltViewModel
 class MeasurementFormViewModel @Inject constructor(
-    private val createPatientMeasurement: CreatePatientMeasurementUseCase
+    private val createPatientMeasurement: CreatePatientMeasurementUseCase,
+    private val notificationPreferencesStore: NotificationPreferencesStore,
+    private val measurementPreferencesStore: MeasurementPreferencesStore
 ) : ViewModel() {
     private val localMeasurementTypes = LocalMeasurementTypeCatalog.types
     private val _uiState = MutableStateFlow(initialState())
@@ -28,14 +32,36 @@ class MeasurementFormViewModel @Inject constructor(
     val effects = effectChannel.receiveAsFlow()
     private var saveRequest: Job? = null
 
+    init {
+        viewModelScope.launch {
+            measurementPreferencesStore.lastTypeId()?.let { storedId ->
+                if (localMeasurementTypes.any { it.id == storedId }) selectType(storedId)
+            }
+        }
+    }
+
     fun selectType(id: Long) {
         _uiState.update { it.copy(selectedTypeId = id, typeError = null, errorMessage = null) }
+        viewModelScope.launch { measurementPreferencesStore.setLastTypeId(id) }
     }
 
     fun updateValue(value: String) {
+        val normalized = value.replace(',', '.')
+        val sanitized = buildString {
+            var decimalSeparatorAdded = false
+            normalized.forEach { character ->
+                when {
+                    character.isDigit() -> append(character)
+                    character == '.' && !decimalSeparatorAdded -> {
+                        append(character)
+                        decimalSeparatorAdded = true
+                    }
+                }
+            }
+        }
         _uiState.update {
             it.copy(
-                value = value.filter { character -> character.isDigit() || character == '.' },
+                value = sanitized,
                 valueError = null,
                 errorMessage = null
             )
@@ -55,6 +81,8 @@ class MeasurementFormViewModel @Inject constructor(
         val valueError = when {
             state.value.isBlank() -> MeasurementFieldError.REQUIRED
             numericValue == null -> MeasurementFieldError.INVALID
+            selectedType != null && numericValue !in selectedType.minimumValue..selectedType.maximumValue ->
+                MeasurementFieldError.OUT_OF_RANGE
             else -> null
         }
         if (typeError != null || valueError != null) {
@@ -72,6 +100,7 @@ class MeasurementFormViewModel @Inject constructor(
                     .format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")),
                 observation = state.note.trim().ifBlank { null }
             ).onSuccess {
+                notificationPreferencesStore.recordReminderEvent("COMPLETED")
                 _uiState.value = initialState()
                 effectChannel.send(MeasurementFormUiEffect.MeasurementSaved)
             }.onFailure {

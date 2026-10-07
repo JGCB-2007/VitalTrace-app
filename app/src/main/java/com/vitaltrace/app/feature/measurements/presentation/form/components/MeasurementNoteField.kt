@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -32,17 +33,19 @@ fun MeasurementNoteField(
             placeholder = {
                 Text(
                     text = stringResource(R.string.measurement_form_note_placeholder),
-                    color = Color(0xFFA5AFB5)
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
             },
             minLines = 3,
             maxLines = 5,
             shape = RoundedCornerShape(18.dp),
             colors = OutlinedTextFieldDefaults.colors(
-                focusedContainerColor = Color.White,
-                unfocusedContainerColor = Color.White,
-                focusedBorderColor = VitalTraceTeal,
-                unfocusedBorderColor = Color(0xFFE1DDD3)
+                focusedContainerColor = MaterialTheme.colorScheme.surface,
+                unfocusedContainerColor = MaterialTheme.colorScheme.surface,
+                focusedBorderColor = MaterialTheme.colorScheme.secondary,
+                unfocusedBorderColor = MaterialTheme.colorScheme.outline,
+                focusedTextColor = MaterialTheme.colorScheme.onSurface,
+                unfocusedTextColor = MaterialTheme.colorScheme.onSurface
             )
         )
     }
