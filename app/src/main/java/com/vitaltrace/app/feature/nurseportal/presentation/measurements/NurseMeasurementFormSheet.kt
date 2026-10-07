@@ -13,7 +13,6 @@ import androidx.compose.ui.unit.sp
 import com.vitaltrace.app.feature.measurements.presentation.form.components.MeasurementFormActions
 import com.vitaltrace.app.feature.measurements.presentation.form.components.MeasurementInformationCard
 import com.vitaltrace.app.feature.measurements.presentation.form.components.MeasurementNoteField
-import com.vitaltrace.app.ui.theme.*
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -34,7 +33,7 @@ internal fun NurseMeasurementFormSheet(
 
     ModalBottomSheet(
         onDismissRequest = onDismiss,
-        containerColor = VitalTraceWarmBackground,
+        containerColor = MaterialTheme.colorScheme.background,
         scrimColor = Color(0x990C1C29),
         shape = RoundedCornerShape(topStart = 36.dp, topEnd = 36.dp)
     ) {
@@ -42,8 +41,8 @@ internal fun NurseMeasurementFormSheet(
             Modifier.fillMaxWidth().navigationBarsPadding().padding(start = 24.dp, end = 24.dp, bottom = 28.dp),
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-            Text("Registrar medición", color = VitalTraceNavy, fontFamily = FontFamily.Serif, fontSize = 27.sp, fontWeight = FontWeight.Bold)
-            Text(state.selectedPatient?.fullName.orEmpty(), color = VitalTraceTeal, fontWeight = FontWeight.Bold)
+            Text("Registrar medición", color = MaterialTheme.colorScheme.onBackground, fontFamily = FontFamily.Serif, fontSize = 27.sp, fontWeight = FontWeight.Bold)
+            Text(state.selectedPatient?.fullName.orEmpty(), color = MaterialTheme.colorScheme.secondary, fontWeight = FontWeight.Bold)
             MeasurementInformationCard()
             ExposedDropdownMenuBox(expanded = expanded, onExpandedChange = { expanded = !expanded }) {
                 OutlinedTextField(
@@ -100,8 +99,8 @@ internal fun NurseMeasurementFormSheet(
 
 @Composable
 private fun nurseFieldColors() = OutlinedTextFieldDefaults.colors(
-    focusedContainerColor = Color.White,
-    unfocusedContainerColor = Color.White,
-    focusedBorderColor = VitalTraceTeal,
-    unfocusedBorderColor = Color(0xFFE1DDD3)
+    focusedContainerColor = MaterialTheme.colorScheme.surface,
+    unfocusedContainerColor = MaterialTheme.colorScheme.surface,
+    focusedBorderColor = MaterialTheme.colorScheme.secondary,
+    unfocusedBorderColor = MaterialTheme.colorScheme.outline
 )

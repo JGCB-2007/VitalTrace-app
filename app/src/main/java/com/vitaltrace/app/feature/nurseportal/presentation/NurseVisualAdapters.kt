@@ -96,6 +96,7 @@ internal fun NurseAppointment.toAppointmentDetailUiModel(patientName: String? = 
         reason = reason,
         date = parts.firstOrNull().orEmpty(),
         time = parts.getOrNull(1).orEmpty(),
+        scheduledAt = scheduledAt,
         durationMinutes = durationMinutes,
         status = AppointmentStatus.fromApiValue(status),
         contextName = patientName

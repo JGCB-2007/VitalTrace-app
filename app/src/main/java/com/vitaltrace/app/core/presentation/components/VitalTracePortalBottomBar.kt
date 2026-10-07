@@ -1,18 +1,17 @@
 package com.vitaltrace.app.core.presentation.components
 
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.NavigationBarItemDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.sp
-import com.vitaltrace.app.ui.theme.VitalTraceNavy
 
 data class PortalBottomDestination<T>(val destination: T, val label: String, val icon: ImageVector)
 
@@ -22,7 +21,7 @@ fun <T> VitalTracePortalBottomBar(
     destinations: List<PortalBottomDestination<T>>,
     onSelect: (T) -> Unit
 ) {
-    NavigationBar(containerColor = Color.White) {
+    NavigationBar(containerColor = MaterialTheme.colorScheme.surface) {
         destinations.forEach { item ->
             NavigationBarItem(
                 selected = selected == item.destination,
@@ -40,11 +39,11 @@ fun <T> VitalTracePortalBottomBar(
                     )
                 },
                 colors = NavigationBarItemDefaults.colors(
-                    selectedIconColor = VitalTraceNavy,
-                    selectedTextColor = VitalTraceNavy,
-                    indicatorColor = Color(0xFFD9F2F0),
-                    unselectedIconColor = Color(0xFF9AA5AC),
-                    unselectedTextColor = Color(0xFF9AA5AC)
+                    selectedIconColor = MaterialTheme.colorScheme.primary,
+                    selectedTextColor = MaterialTheme.colorScheme.primary,
+                    indicatorColor = MaterialTheme.colorScheme.tertiaryContainer,
+                    unselectedIconColor = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.68f),
+                    unselectedTextColor = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.68f)
                 )
             )
         }
