@@ -9,6 +9,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Check
 import androidx.compose.material.icons.rounded.Schedule
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -70,43 +71,44 @@ private data class AppointmentStatusPresentation(
     val content: Color
 )
 
+@Composable
 private fun AppointmentStatus.presentation(prominent: Boolean): AppointmentStatusPresentation {
     return when (this) {
         AppointmentStatus.SCHEDULED -> AppointmentStatusPresentation(
             label = R.string.appointments_status_scheduled,
             icon = Icons.Rounded.Schedule,
-            background = if (prominent) Color.White.copy(alpha = 0.20f) else Color(0xFFDDF4F2),
-            content = if (prominent) Color.White else VitalTraceTeal
+            background = if (prominent) Color.White.copy(alpha = 0.20f) else MaterialTheme.colorScheme.secondaryContainer,
+            content = if (prominent) Color.White else MaterialTheme.colorScheme.onSecondaryContainer
         )
         AppointmentStatus.CONFIRMED -> AppointmentStatusPresentation(
             label = R.string.appointments_status_confirmed,
             icon = Icons.Rounded.Schedule,
-            background = if (prominent) Color.White.copy(alpha = 0.20f) else Color(0xFFDDF4F2),
-            content = if (prominent) Color.White else VitalTraceTeal
+            background = if (prominent) Color.White.copy(alpha = 0.20f) else MaterialTheme.colorScheme.secondaryContainer,
+            content = if (prominent) Color.White else MaterialTheme.colorScheme.onSecondaryContainer
         )
         AppointmentStatus.ATTENDED -> AppointmentStatusPresentation(
             label = R.string.appointments_status_attended,
             icon = Icons.Rounded.Check,
-            background = Color(0xFFDDF1E7),
-            content = Color(0xFF23805F)
+            background = MaterialTheme.colorScheme.tertiaryContainer,
+            content = MaterialTheme.colorScheme.onTertiaryContainer
         )
         AppointmentStatus.CANCELLED -> AppointmentStatusPresentation(
             label = R.string.appointments_status_cancelled,
             icon = Icons.Rounded.Check,
-            background = Color(0xFFF3E4E1),
-            content = Color(0xFF8C3D32)
+            background = MaterialTheme.colorScheme.errorContainer,
+            content = MaterialTheme.colorScheme.onErrorContainer
         )
         AppointmentStatus.NO_SHOW -> AppointmentStatusPresentation(
             label = R.string.appointments_status_no_show,
             icon = Icons.Rounded.Check,
-            background = Color(0xFFF3E4E1),
-            content = Color(0xFF8C3D32)
+            background = MaterialTheme.colorScheme.errorContainer,
+            content = MaterialTheme.colorScheme.onErrorContainer
         )
         AppointmentStatus.UNKNOWN -> AppointmentStatusPresentation(
             label = R.string.appointments_status_unknown,
             icon = Icons.Rounded.Schedule,
-            background = Color(0xFFE8E8E8),
-            content = Color(0xFF53636D)
+            background = MaterialTheme.colorScheme.surfaceVariant,
+            content = MaterialTheme.colorScheme.onSurfaceVariant
         )
     }
 }

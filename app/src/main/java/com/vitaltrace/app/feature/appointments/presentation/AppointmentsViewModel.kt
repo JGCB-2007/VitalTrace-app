@@ -30,6 +30,18 @@ class AppointmentsViewModel @Inject constructor(
         loadAppointments()
     }
 
+    fun refresh() {
+        appointmentsRequest?.cancel()
+        appointmentsRequest = null
+        loadAppointments(refresh = true)
+    }
+
+    fun loadMore() {
+        val content = (_uiState.value.contentState as? AppointmentsContentState.Success)?.content ?: return
+        if (_uiState.value.isLoadingMore || content.currentPage >= content.lastPage) return
+        loadAppointments(page = content.currentPage + 1)
+    }
+
     fun showAppointmentDetail(appointmentId: Long) {
         val content = (_uiState.value.contentState as? AppointmentsContentState.Success)?.content
             ?: return
@@ -47,35 +59,58 @@ class AppointmentsViewModel @Inject constructor(
         _uiState.update { it.copy(selectedAppointmentDetail = null) }
     }
 
-    private fun loadAppointments() {
+    private fun loadAppointments(page: Int = 1, refresh: Boolean = false) {
         if (appointmentsRequest?.isActive == true) return
 
-        _uiState.update {
-            it.copy(
-                contentState = AppointmentsContentState.Loading,
-                selectedAppointmentDetail = null
-            )
+        _uiState.update { state ->
+            when {
+                refresh -> state.copy(isRefreshing = true, selectedAppointmentDetail = null)
+                page > 1 -> state.copy(isLoadingMore = true)
+                else -> state.copy(contentState = AppointmentsContentState.Loading, selectedAppointmentDetail = null)
+            }
         }
         appointmentsRequest = viewModelScope.launch {
-            getPatientAppointments()
+            getPatientAppointments(page, forceRefresh = refresh)
                 .onSuccess { page ->
                     _uiState.update {
-                        it.copy(
-                            contentState = AppointmentsContentState.Success(
-                                appointmentsMapper.map(page)
+                        val mapped = appointmentsMapper.map(page)
+                        val previous = (it.contentState as? AppointmentsContentState.Success)?.content
+                        val content = if (page.meta.currentPage > 1 && previous != null) {
+                            previous.mergeWith(mapped).copy(
+                                currentPage = page.meta.currentPage,
+                                lastPage = page.meta.lastPage
                             )
+                        } else mapped
+                        it.copy(
+                            contentState = AppointmentsContentState.Success(content),
+                            isRefreshing = false,
+                            isLoadingMore = false
                         )
                     }
                 }
                 .onFailure {
                     _uiState.update {
-                        it.copy(
-                            contentState = AppointmentsContentState.Error(
-                                "No pudimos cargar tus citas. Intenta de nuevo."
-                            )
+                        if (page > 1 || refresh) it.copy(isRefreshing = false, isLoadingMore = false)
+                        else it.copy(
+                            contentState = AppointmentsContentState.Error("No pudimos cargar tus citas. Intenta de nuevo."),
+                            isRefreshing = false,
+                            isLoadingMore = false
                         )
                     }
                 }
         }
     }
+
+    fun updateQuery(value: String) = _uiState.update { it.copy(query = value.take(80)) }
+
+    private fun AppointmentsContentUiModel.mergeWith(other: AppointmentsContentUiModel): AppointmentsContentUiModel =
+        copy(
+            nextAppointment = nextAppointment ?: other.nextAppointment,
+            upcomingAppointments = (upcomingAppointments + listOfNotNull(other.nextAppointment) + other.upcomingAppointments)
+                .filterNot { it.id == nextAppointment?.id }
+                .distinctBy(AppointmentUiModel::id)
+                .sortedBy(AppointmentUiModel::scheduledAt),
+            previousAppointments = (previousAppointments + other.previousAppointments)
+                .distinctBy(AppointmentUiModel::id)
+        )
 }
