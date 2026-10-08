@@ -15,6 +15,7 @@ import androidx.compose.material.icons.rounded.Schedule
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -46,7 +47,7 @@ fun AppointmentSection(
     Column(modifier = modifier, verticalArrangement = Arrangement.spacedBy(8.dp)) {
         Text(
             text = title,
-            color = VitalTraceTeal,
+            color = MaterialTheme.colorScheme.secondary,
             fontSize = 17.sp,
             fontWeight = FontWeight.ExtraBold,
             letterSpacing = 0.6.sp
@@ -54,14 +55,14 @@ fun AppointmentSection(
         Card(
             modifier = Modifier.fillMaxWidth(),
             shape = RoundedCornerShape(26.dp),
-            colors = CardDefaults.cardColors(containerColor = Color.White),
+            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
             elevation = CardDefaults.cardElevation(defaultElevation = 5.dp)
         ) {
             if (appointments.isEmpty()) {
                 Text(
                     text = emptyMessage,
                     modifier = Modifier.padding(24.dp),
-                    color = Color(0xFF53636D)
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
             } else {
                 Column(modifier = Modifier.padding(horizontal = 24.dp, vertical = 10.dp)) {
@@ -72,7 +73,7 @@ fun AppointmentSection(
                             modifier = Modifier.padding(vertical = 18.dp)
                         )
                         if (index < appointments.lastIndex) {
-                            HorizontalDivider(color = Color(0xFFE5E0D7))
+                            HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
                         }
                     }
                 }
@@ -115,7 +116,7 @@ private fun AppointmentListItem(
             ) {
                 Text(
                     text = appointment.professionalName,
-                    color = VitalTraceNavy,
+                    color = MaterialTheme.colorScheme.onSurface,
                     fontSize = 21.sp,
                     fontWeight = FontWeight.Bold,
                     lineHeight = 24.sp,
@@ -123,7 +124,7 @@ private fun AppointmentListItem(
                 )
                 Text(
                     text = appointment.reason,
-                    color = Color(0xFF53636D),
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
                     fontSize = 16.sp,
                     lineHeight = 20.sp
                 )
@@ -168,7 +169,7 @@ private fun AppointmentLeadingIcon(status: AppointmentStatus) {
             },
             contentDescription = null,
             tint = if (status.isUpcoming) {
-                VitalTraceTeal
+                MaterialTheme.colorScheme.secondary
             } else {
                 Color(0xFF23805F)
             },
@@ -189,12 +190,12 @@ private fun AppointmentDateTime(
         Icon(
             imageVector = icon,
             contentDescription = null,
-            tint = Color(0xFF657078),
+            tint = MaterialTheme.colorScheme.onSurfaceVariant,
             modifier = Modifier.size(19.dp)
         )
         Text(
             text = text,
-            color = Color(0xFF53636D),
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
             fontSize = 16.sp
         )
     }

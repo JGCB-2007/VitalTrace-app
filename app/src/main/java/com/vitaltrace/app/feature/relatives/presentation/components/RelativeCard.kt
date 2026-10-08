@@ -17,6 +17,7 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -40,7 +41,7 @@ fun RelativeCard(
     Card(
         modifier = modifier.fillMaxWidth(),
         shape = RoundedCornerShape(20.dp),
-        colors = CardDefaults.cardColors(containerColor = Color.White),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
         elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
     ) {
         Column(
@@ -62,11 +63,11 @@ fun RelativeCard(
                     Text(
                         text = relative.fullName?.takeIf(String::isNotBlank)
                             ?: stringResource(R.string.relatives_linked_relative),
-                        color = VitalTraceNavy,
+                        color = MaterialTheme.colorScheme.onSurface,
                         fontSize = 18.sp,
                         fontWeight = FontWeight.Bold
                     )
-                    Text(relative.relationship, color = Color(0xFF53636D), fontSize = 14.sp)
+                    Text(relative.relationship, color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 14.sp)
                 }
                 RelativeStatusChip(relative.status)
             }
@@ -79,10 +80,10 @@ fun RelativeCard(
                     Icon(
                         Icons.Rounded.Phone,
                         contentDescription = null,
-                        tint = Color(0xFF6C7A82),
+                        tint = MaterialTheme.colorScheme.onSurfaceVariant,
                         modifier = Modifier.size(17.dp)
                     )
-                    Text(phone, color = Color(0xFF53636D), fontSize = 14.sp)
+                    Text(phone, color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 14.sp)
                 }
             }
 

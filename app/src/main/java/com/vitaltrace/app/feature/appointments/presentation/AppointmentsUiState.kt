@@ -2,8 +2,24 @@ package com.vitaltrace.app.feature.appointments.presentation
 
 data class AppointmentsUiState(
     val contentState: AppointmentsContentState = AppointmentsContentState.Loading,
-    val selectedAppointmentDetail: AppointmentDetailUiModel? = null
-)
+    val selectedAppointmentDetail: AppointmentDetailUiModel? = null,
+    val query: String = "",
+    val isRefreshing: Boolean = false,
+    val isLoadingMore: Boolean = false
+) {
+    val filteredContent: AppointmentsContentUiModel?
+        get() = (contentState as? AppointmentsContentState.Success)?.content?.let { content ->
+            if (query.isBlank()) content else content.copy(
+                nextAppointment = content.nextAppointment?.takeIf(::matchesQuery),
+                upcomingAppointments = content.upcomingAppointments.filter(::matchesQuery),
+                previousAppointments = content.previousAppointments.filter(::matchesQuery)
+            )
+        }
+
+    private fun matchesQuery(item: AppointmentUiModel): Boolean =
+        listOf(item.professionalName, item.specialty, item.reason, item.date, item.status.name)
+            .any { it.contains(query.trim(), ignoreCase = true) }
+}
 
 sealed interface AppointmentsContentState {
     data object Loading : AppointmentsContentState
@@ -33,6 +49,7 @@ data class AppointmentDetailUiModel(
     val reason: String,
     val date: String,
     val time: String,
+    val scheduledAt: String = "",
     val durationMinutes: Int = 0,
     val status: AppointmentStatus,
     val contextName: String? = null
@@ -58,6 +75,7 @@ data class AppointmentUiModel(
         reason = reason,
         date = date,
         time = time,
+        scheduledAt = scheduledAt,
         durationMinutes = durationMinutes,
         status = status
     )

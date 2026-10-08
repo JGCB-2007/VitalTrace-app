@@ -4,12 +4,14 @@ import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Check
 import androidx.compose.material.icons.rounded.Schedule
 import androidx.compose.material.icons.rounded.Upload
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -28,6 +30,7 @@ import com.vitaltrace.app.ui.theme.VitalTraceTeal
 @Composable
 fun MeasurementStatusChip(
     status: MeasurementStatus,
+    compact: Boolean = false,
     modifier: Modifier = Modifier
 ) {
     val presentation = statusPresentation(status)
@@ -38,18 +41,21 @@ fun MeasurementStatusChip(
         shape = RoundedCornerShape(50)
     ) {
         Row(
-            modifier = Modifier.padding(horizontal = 14.dp, vertical = 8.dp),
-            horizontalArrangement = Arrangement.spacedBy(7.dp),
+            modifier = Modifier.padding(
+                horizontal = if (compact) 10.dp else 14.dp,
+                vertical = if (compact) 6.dp else 8.dp
+            ),
+            horizontalArrangement = Arrangement.spacedBy(if (compact) 5.dp else 7.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
             Icon(
                 imageVector = presentation.icon,
                 contentDescription = null,
-                modifier = Modifier.padding(1.dp)
+                modifier = Modifier.size(if (compact) 18.dp else 24.dp)
             )
             Text(
                 text = stringResource(presentation.label),
-                fontSize = 15.sp,
+                fontSize = if (compact) 13.sp else 15.sp,
                 fontWeight = FontWeight.Bold,
                 maxLines = 1
             )
@@ -64,25 +70,26 @@ private data class MeasurementStatusPresentation(
     val content: Color
 )
 
+@Composable
 private fun statusPresentation(status: MeasurementStatus): MeasurementStatusPresentation {
     return when (status) {
         MeasurementStatus.PENDING -> MeasurementStatusPresentation(
             label = R.string.measurements_status_pending,
             icon = Icons.Rounded.Schedule,
-            background = Color(0xFFFFEBC7),
-            content = Color(0xFF765315)
+            background = MaterialTheme.colorScheme.secondaryContainer,
+            content = MaterialTheme.colorScheme.onSecondaryContainer
         )
         MeasurementStatus.REVIEWED -> MeasurementStatusPresentation(
             label = R.string.measurements_status_reviewed,
             icon = Icons.Rounded.Check,
-            background = Color(0xFFDDF1E7),
-            content = Color(0xFF23805F)
+            background = MaterialTheme.colorScheme.tertiaryContainer,
+            content = MaterialTheme.colorScheme.onTertiaryContainer
         )
         MeasurementStatus.UNKNOWN -> MeasurementStatusPresentation(
             label = R.string.measurements_status_unknown,
             icon = Icons.Rounded.Upload,
-            background = Color(0xFFE5EDF4),
-            content = Color(0xFF315A76)
+            background = MaterialTheme.colorScheme.surfaceVariant,
+            content = MaterialTheme.colorScheme.onSurfaceVariant
         )
     }
 }

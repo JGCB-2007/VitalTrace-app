@@ -5,7 +5,13 @@ import com.vitaltrace.app.core.presentation.localization.SpanishDateTime
 import com.vitaltrace.app.feature.patient.domain.model.Appointment
 import com.vitaltrace.app.feature.patient.domain.model.Measurement
 import com.vitaltrace.app.feature.patient.domain.model.PatientSummary
+import com.vitaltrace.app.core.presentation.formatClinicalDateTime
 import java.math.RoundingMode
+<<<<<<< HEAD
+=======
+import java.time.LocalDate
+import java.time.LocalDateTime
+>>>>>>> develop
 import java.time.LocalTime
 import javax.inject.Inject
 
@@ -29,8 +35,24 @@ class HomeSummaryMapper @Inject constructor() {
                             it.measurementTypeId == latest.measurementTypeId
                         }
                     }
-                latest.toUiModel(chartValuesFor(sameTypeHistory, latest.measurementTypeId))
-            }
+                latest.toUiModel(trendPointsFor(sameTypeHistory, latest.measurementTypeId))
+            },
+            healthStatus = when {
+                summary.alerts.critical > 0 -> HealthStatusUiModel(
+                    HealthStatusLevel.CRITICAL,
+                    "Requiere atención",
+                    "Hay ${summary.alerts.critical} alerta(s) crítica(s) pendiente(s) de revisión.",
+                    summary.alerts.open
+                )
+                summary.alerts.open > 0 -> HealthStatusUiModel(
+                    HealthStatusLevel.ATTENTION,
+                    "Seguimiento pendiente",
+                    "Tienes ${summary.alerts.open} alerta(s) abierta(s) en seguimiento.",
+                    summary.alerts.open
+                )
+                else -> HealthStatusUiModel()
+            },
+            activeTreatmentsCount = summary.activeTreatments.size
         )
     }
 
@@ -46,12 +68,14 @@ class HomeSummaryMapper @Inject constructor() {
         )
     }
 
-    private fun Measurement.toUiModel(chartValues: List<Float>): RecentMeasurementUiModel {
+    private fun Measurement.toUiModel(trendPoints: List<MeasurementTrendPoint>): RecentMeasurementUiModel {
         return RecentMeasurementUiModel(
+            typeName = measurementType?.name?.localizedMeasurementTypeName().orEmpty()
+                .ifBlank { "Medición" },
             value = formattedValue(),
             unit = unit,
-            date = measuredAt.substringBefore(" "),
-            chartValues = chartValues
+            date = formatClinicalDateTime(measuredAt),
+            trendPoints = trendPoints
         )
     }
 
@@ -72,27 +96,66 @@ class HomeSummaryMapper @Inject constructor() {
         )
     }
 
-    private fun chartValuesFor(measurements: List<Measurement>, typeId: Long): List<Float> {
+    private fun trendPointsFor(measurements: List<Measurement>, typeId: Long): List<MeasurementTrendPoint> {
         val values = measurements
             .filter { it.measurementTypeId == typeId }
             .mapNotNull { measurement ->
-                measurement.value.toFloatOrNull()?.let { measurement.measuredAt to it }
+                measurement.value.toFloatOrNull()?.let { value -> Triple(measurement, measurement.measuredAt, value) }
             }
-            .sortedBy { it.first }
+            .sortedBy { it.second }
             .takeLast(7)
-            .map { it.second }
         if (values.isEmpty()) return emptyList()
-        val minimum = values.min()
-        val range = values.max() - minimum
-        return if (range == 0f) {
-            List(values.size) { 0.65f }
-        } else {
-            values.map { value -> 0.25f + ((value - minimum) / range) * 0.75f }
+        val minimum = values.minOf { it.third }
+        val range = values.maxOf { it.third } - minimum
+        return values.map { (measurement, measuredAt, value) ->
+            MeasurementTrendPoint(
+                normalizedValue = if (range == 0f) 0.65f else 0.25f + ((value - minimum) / range) * 0.75f,
+                displayValue = measurement.formattedValue(),
+                dateLabel = compactTrendDateLabel(measuredAt)
+            )
         }
     }
 
+<<<<<<< HEAD
     private fun formatAppointmentDateTime(value: String): Pair<String, String> =
         SpanishDateTime.formatApiDateTime(value)
+=======
+    private fun compactTrendDateLabel(value: String): String {
+        val rawDate = value.trim().substringBefore(" ")
+        return runCatching {
+            LocalDate.parse(rawDate, DateTimeFormatter.ISO_LOCAL_DATE)
+                .format(DateTimeFormatter.ofPattern("d/M", Locale.getDefault()))
+        }.getOrElse {
+            rawDate.takeLast(5).replace('-', '/').trimStart('0')
+        }
+    }
+
+    private fun String.localizedMeasurementTypeName(): String = when (trim().lowercase()) {
+        "systolic blood pressure" -> "Presión arterial sistólica"
+        "blood glucose" -> "Glucosa en sangre"
+        "oxygen saturation" -> "Saturación de oxígeno"
+        else -> this
+    }
+
+    private fun formatAppointmentDateTime(value: String): Pair<String, String> {
+        val parsed = runCatching {
+            LocalDateTime.parse(value.trim(), API_DATE_TIME_FORMAT)
+        }.getOrNull() ?: return value.substringBefore(" ") to value.substringAfter(" ", "")
+        val locale = Locale.getDefault()
+        val date = parsed.format(DateTimeFormatter.ofPattern("d MMM uuuu", locale)).lowercase(locale)
+        val time = parsed.format(DateTimeFormatter.ofPattern("h:mm a", locale)).lowercase(locale)
+        return date to time
+    }
+
+    private fun appointmentStatusLabel(value: String): String = when (value.trim().uppercase()) {
+        "SCHEDULED" -> "Programada"
+        "CONFIRMED" -> "Confirmada"
+        "ATTENDED" -> "Atendida"
+        "NO_SHOW" -> "No asisti\u00f3"
+        "CANCELLED" -> "Cancelada"
+        else -> value
+    }
+>>>>>>> develop
 
     private fun initialsFor(fullName: String?): String {
         return fullName

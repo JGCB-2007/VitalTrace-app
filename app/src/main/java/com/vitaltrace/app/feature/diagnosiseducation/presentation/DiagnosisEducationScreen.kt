@@ -38,15 +38,15 @@ fun DiagnosisEducationScreen(
 ) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
     Scaffold(
-        containerColor = VitalTraceWarmBackground,
+        containerColor = MaterialTheme.colorScheme.background,
         topBar = {
             TopAppBar(
                 title = { Text("Información educativa", fontFamily = FontFamily.Serif, fontWeight = FontWeight.Bold) },
                 navigationIcon = { IconButton(onClick = onNavigateBack) { Icon(Icons.AutoMirrored.Rounded.ArrowBack, "Volver") } },
                 colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = VitalTraceWarmBackground,
-                    titleContentColor = VitalTraceNavy,
-                    navigationIconContentColor = VitalTraceNavy
+                    containerColor = MaterialTheme.colorScheme.background,
+                    titleContentColor = MaterialTheme.colorScheme.onBackground,
+                    navigationIconContentColor = MaterialTheme.colorScheme.onBackground
                 )
             )
         }
@@ -86,9 +86,9 @@ private fun EducationContent(education: DiagnosisEducation, modifier: Modifier) 
 
 @Composable
 private fun EducationHeader(education: DiagnosisEducation) = Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
-    Text(education.diagnosisName, color = VitalTraceNavy, fontFamily = FontFamily.Serif, fontSize = 28.sp, fontWeight = FontWeight.Bold)
-    education.cieCode?.takeIf(String::isNotBlank)?.let { Text("Código CIE: $it", color = Color(0xFF53636D)) }
-    Surface(color = Color(0xFFDDF4F2), contentColor = VitalTraceTeal, shape = RoundedCornerShape(50)) {
+    Text(education.diagnosisName, color = MaterialTheme.colorScheme.onBackground, fontFamily = FontFamily.Serif, fontSize = 28.sp, fontWeight = FontWeight.Bold)
+    education.cieCode?.takeIf(String::isNotBlank)?.let { Text("Código CIE: $it", color = MaterialTheme.colorScheme.onSurfaceVariant) }
+    Surface(color = MaterialTheme.colorScheme.secondaryContainer, contentColor = MaterialTheme.colorScheme.onSecondaryContainer, shape = RoundedCornerShape(50)) {
         Row(Modifier.padding(horizontal = 10.dp, vertical = 5.dp), horizontalArrangement = Arrangement.spacedBy(6.dp), verticalAlignment = Alignment.CenterVertically) {
             Icon(Icons.AutoMirrored.Rounded.MenuBook, null, Modifier.size(14.dp))
             Text("Información de ${education.source}", fontSize = 12.sp, fontWeight = FontWeight.Bold)
@@ -97,12 +97,12 @@ private fun EducationHeader(education: DiagnosisEducation) = Column(verticalArra
 }
 
 @Composable
-private fun EducationalNotice() = Surface(color = Color(0xFFDDF4F2), shape = RoundedCornerShape(14.dp)) {
+private fun EducationalNotice() = Surface(color = MaterialTheme.colorScheme.secondaryContainer, shape = RoundedCornerShape(14.dp)) {
     Row(Modifier.fillMaxWidth().padding(horizontal = 13.dp, vertical = 10.dp), horizontalArrangement = Arrangement.spacedBy(9.dp), verticalAlignment = Alignment.Top) {
-        Icon(Icons.Rounded.Info, null, Modifier.size(18.dp), tint = VitalTraceTeal)
+        Icon(Icons.Rounded.Info, null, Modifier.size(18.dp), tint = MaterialTheme.colorScheme.onSecondaryContainer)
         Text(
             "Esta información es educativa y no sustituye la valoración de un profesional de la salud.",
-            Modifier.weight(1f), color = VitalTraceNavy, fontSize = 13.sp, lineHeight = 18.sp
+            Modifier.weight(1f), color = MaterialTheme.colorScheme.onSecondaryContainer, fontSize = 13.sp, lineHeight = 18.sp
         )
     }
 }
@@ -113,20 +113,20 @@ private fun EducationArticleCard(title: String, summary: String, onOpen: () -> U
     Card(
         Modifier.fillMaxWidth().animateContentSize(),
         shape = RoundedCornerShape(24.dp),
-        colors = CardDefaults.cardColors(containerColor = Color.White),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
         elevation = CardDefaults.cardElevation(4.dp)
     ) {
         Column(Modifier.padding(20.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
             Row(horizontalArrangement = Arrangement.spacedBy(12.dp), verticalAlignment = Alignment.CenterVertically) {
-                Surface(color = Color(0xFFDDF4F2), shape = RoundedCornerShape(14.dp)) {
-                    Icon(Icons.AutoMirrored.Rounded.MenuBook, null, Modifier.padding(10.dp).size(20.dp), tint = VitalTraceTeal)
+                Surface(color = MaterialTheme.colorScheme.secondaryContainer, shape = RoundedCornerShape(14.dp)) {
+                    Icon(Icons.AutoMirrored.Rounded.MenuBook, null, Modifier.padding(10.dp).size(20.dp), tint = MaterialTheme.colorScheme.onSecondaryContainer)
                 }
-                Text(title, Modifier.weight(1f), color = VitalTraceNavy, fontFamily = FontFamily.Serif, fontSize = 21.sp, fontWeight = FontWeight.Bold)
+                Text(title, Modifier.weight(1f), color = MaterialTheme.colorScheme.onSurface, fontFamily = FontFamily.Serif, fontSize = 21.sp, fontWeight = FontWeight.Bold)
             }
-            HorizontalDivider(color = Color(0xFFE5E0D7))
+            HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
             Text(
                 summary,
-                color = Color(0xFF53636D),
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
                 fontSize = 15.sp,
                 lineHeight = 22.sp,
                 maxLines = if (expanded) Int.MAX_VALUE else 4,
@@ -140,7 +140,10 @@ private fun EducationArticleCard(title: String, summary: String, onOpen: () -> U
             Button(
                 onClick = onOpen,
                 modifier = Modifier.fillMaxWidth(),
-                colors = ButtonDefaults.buttonColors(containerColor = VitalTraceTeal),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = MaterialTheme.colorScheme.primary,
+                    contentColor = MaterialTheme.colorScheme.onPrimary
+                ),
                 shape = RoundedCornerShape(16.dp),
                 contentPadding = PaddingValues(vertical = 13.dp)
             ) {
@@ -158,8 +161,8 @@ private fun EducationEmpty(education: DiagnosisEducation, modifier: Modifier) = 
     verticalArrangement = Arrangement.Center
 ) {
     Icon(Icons.AutoMirrored.Rounded.MenuBook, null, Modifier.size(72.dp), tint = VitalTraceMint)
-    Text(education.diagnosisName, Modifier.padding(top = 18.dp), color = VitalTraceNavy, fontFamily = FontFamily.Serif, fontSize = 23.sp, fontWeight = FontWeight.Bold, textAlign = TextAlign.Center)
-    Text("No se encontró información educativa para este diagnóstico.", Modifier.padding(top = 12.dp), color = Color(0xFF53636D), textAlign = TextAlign.Center)
+    Text(education.diagnosisName, Modifier.padding(top = 18.dp), color = MaterialTheme.colorScheme.onBackground, fontFamily = FontFamily.Serif, fontSize = 23.sp, fontWeight = FontWeight.Bold, textAlign = TextAlign.Center)
+    Text("No se encontró información educativa para este diagnóstico.", Modifier.padding(top = 12.dp), color = MaterialTheme.colorScheme.onSurfaceVariant, textAlign = TextAlign.Center)
 }
 
 @Composable
@@ -168,9 +171,9 @@ private fun EducationMessage(message: String, retry: (() -> Unit)?, modifier: Mo
     horizontalAlignment = Alignment.CenterHorizontally,
     verticalArrangement = Arrangement.Center
 ) {
-    if (retry == null) CircularProgressIndicator(color = VitalTraceTeal) else Icon(Icons.AutoMirrored.Rounded.MenuBook, null, tint = VitalTraceTeal)
-    Text(message, Modifier.padding(top = 16.dp), color = VitalTraceNavy, fontWeight = FontWeight.Bold, textAlign = TextAlign.Center)
+    if (retry == null) CircularProgressIndicator(color = MaterialTheme.colorScheme.secondary) else Icon(Icons.AutoMirrored.Rounded.MenuBook, null, tint = MaterialTheme.colorScheme.secondary)
+    Text(message, Modifier.padding(top = 16.dp), color = MaterialTheme.colorScheme.onBackground, fontWeight = FontWeight.Bold, textAlign = TextAlign.Center)
     retry?.let {
-        Button(onClick = it, Modifier.padding(top = 20.dp), colors = ButtonDefaults.buttonColors(containerColor = VitalTraceNavy)) { Text("Reintentar") }
+        Button(onClick = it, Modifier.padding(top = 20.dp)) { Text("Reintentar") }
     }
 }

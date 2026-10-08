@@ -145,7 +145,7 @@ class AppointmentsViewModelTest {
         var appointmentCalls = 0
 
         override suspend fun getAppointments(
-            status: String?, dateFrom: String?, dateTo: String?, upcoming: Boolean?, page: Int?
+            status: String?, dateFrom: String?, dateTo: String?, upcoming: Boolean?, page: Int?, forceRefresh: Boolean
         ): Result<Page<Appointment>> {
             appointmentCalls += 1
             return appointmentResults.removeFirst()
@@ -154,7 +154,7 @@ class AppointmentsViewModelTest {
         override suspend fun getSummary(): Result<PatientSummary> = unsupported()
 
         override suspend fun getMeasurements(
-            measurementTypeId: Long?, dateFrom: String?, dateTo: String?, page: Int?
+            measurementTypeId: Long?, dateFrom: String?, dateTo: String?, page: Int?, forceRefresh: Boolean
         ): Result<Page<Measurement>> = unsupported()
 
         override suspend fun createMeasurement(
@@ -166,7 +166,7 @@ class AppointmentsViewModelTest {
         ): Result<Measurement> = unsupported()
 
         override suspend fun getTreatments(
-            status: String?, dateFrom: String?, dateTo: String?, active: Boolean?, page: Int?
+            status: String?, dateFrom: String?, dateTo: String?, active: Boolean?, page: Int?, forceRefresh: Boolean
         ): Result<Page<Treatment>> = unsupported()
 
         override suspend fun getProfile(): Result<PatientProfile> = unsupported()

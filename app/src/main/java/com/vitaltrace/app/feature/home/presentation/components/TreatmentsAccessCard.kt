@@ -9,6 +9,7 @@ import androidx.compose.material.icons.rounded.Medication
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -27,15 +28,15 @@ fun TreatmentsAccessCard(onClick: () -> Unit, modifier: Modifier = Modifier) {
         onClick = onClick,
         modifier = modifier.fillMaxWidth(),
         shape = RoundedCornerShape(26.dp),
-        colors = CardDefaults.cardColors(containerColor = Color.White),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
         elevation = CardDefaults.cardElevation(defaultElevation = 5.dp)
     ) {
         Row(modifier = Modifier.padding(22.dp), verticalAlignment = Alignment.CenterVertically) {
-            Icon(Icons.Rounded.Medication, null, tint = HomeTeal)
+            Icon(Icons.Rounded.Medication, null, tint = MaterialTheme.colorScheme.secondary)
             Text(
                 text = stringResource(R.string.treatments_home_access),
                 modifier = Modifier.padding(start = 16.dp),
-                color = HomeNavy,
+                color = MaterialTheme.colorScheme.onSurface,
                 fontFamily = FontFamily.Serif,
                 fontSize = 21.sp,
                 fontWeight = FontWeight.Bold

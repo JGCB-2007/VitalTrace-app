@@ -8,8 +8,8 @@ package com.vitaltrace.app.feature.measurements.presentation.form
  */
 internal object LocalMeasurementTypeCatalog {
     val types = listOf(
-        MeasurementTypeOption(id = 1L, name = "Systolic blood pressure", unit = "mmHg", decimals = 0),
-        MeasurementTypeOption(id = 2L, name = "Blood glucose", unit = "mg/dL", decimals = 0),
-        MeasurementTypeOption(id = 3L, name = "Oxygen saturation", unit = "%", decimals = 0)
+        MeasurementTypeOption(1L, "Presión arterial sistólica", "mmHg", 0, 30.0, 300.0),
+        MeasurementTypeOption(2L, "Glucosa en sangre", "mg/dL", 0, 10.0, 1000.0),
+        MeasurementTypeOption(3L, "Saturación de oxígeno", "%", 0, 1.0, 100.0)
     )
 }

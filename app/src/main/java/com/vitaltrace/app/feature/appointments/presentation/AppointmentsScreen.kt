@@ -3,10 +3,22 @@ package com.vitaltrace.app.feature.appointments.presentation
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.pulltorefresh.PullToRefreshBox
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.Search
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.LaunchedEffect
@@ -14,6 +26,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
@@ -30,6 +43,7 @@ import com.vitaltrace.app.feature.appointments.presentation.components.FeaturedA
 import com.vitaltrace.app.feature.appointments.presentation.detail.AppointmentDetailSheet
 import com.vitaltrace.app.feature.home.presentation.HomeBottomDestination
 import com.vitaltrace.app.feature.home.presentation.components.HomeBottomBar
+import com.vitaltrace.app.feature.home.presentation.components.AdaptivePortalScaffold
 import com.vitaltrace.app.ui.theme.VitalTraceNavy
 import com.vitaltrace.app.ui.theme.VitalTraceTheme
 import com.vitaltrace.app.ui.theme.VitalTraceWarmBackground
@@ -56,6 +70,9 @@ fun AppointmentsScreen(
     AppointmentsContent(
         uiState = uiState,
         onRetryClick = viewModel::retry,
+        onRefresh = viewModel::refresh,
+        onLoadMore = viewModel::loadMore,
+        onQueryChange = viewModel::updateQuery,
         onHomeClick = onHomeClick,
         onMeasurementsClick = onMeasurementsClick,
         onAppointmentClick = viewModel::showAppointmentDetail,
@@ -67,10 +84,14 @@ fun AppointmentsScreen(
     )
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun AppointmentsContent(
     uiState: AppointmentsUiState,
     onRetryClick: () -> Unit,
+    onRefresh: () -> Unit,
+    onLoadMore: () -> Unit,
+    onQueryChange: (String) -> Unit,
     onHomeClick: () -> Unit,
     onMeasurementsClick: () -> Unit,
     onAppointmentClick: (Long) -> Unit,
@@ -84,17 +105,13 @@ private fun AppointmentsContent(
         )
     }
 
-    Scaffold(
-        containerColor = VitalTraceWarmBackground,
-        bottomBar = {
-            HomeBottomBar(
-                selectedDestination = HomeBottomDestination.APPOINTMENTS,
-                onHomeClick = onHomeClick,
-                onMeasurementsClick = onMeasurementsClick,
-                onAppointmentsClick = {},
-                onProfileClick = onProfileClick
-            )
-        }
+    AdaptivePortalScaffold(
+        selectedDestination = HomeBottomDestination.APPOINTMENTS,
+        onHomeClick = onHomeClick,
+        onMeasurementsClick = onMeasurementsClick,
+        onAppointmentsClick = {},
+        onProfileClick = onProfileClick,
+        containerColor = MaterialTheme.colorScheme.background,
     ) { innerPadding ->
         when (val contentState = uiState.contentState) {
             AppointmentsContentState.Loading -> AppointmentsLoadingState(
@@ -105,11 +122,21 @@ private fun AppointmentsContent(
                 onRetryClick = onRetryClick,
                 modifier = Modifier.padding(innerPadding)
             )
-            is AppointmentsContentState.Success -> AppointmentsBody(
-                content = contentState.content,
-                onAppointmentClick = onAppointmentClick,
-                modifier = Modifier.padding(innerPadding)
-            )
+            is AppointmentsContentState.Success -> PullToRefreshBox(
+                isRefreshing = uiState.isRefreshing,
+                onRefresh = onRefresh,
+                modifier = Modifier.fillMaxSize().padding(innerPadding)
+            ) {
+                AppointmentsBody(
+                    content = uiState.filteredContent ?: contentState.content,
+                    query = uiState.query,
+                    onQueryChange = onQueryChange,
+                    onAppointmentClick = onAppointmentClick,
+                    onLoadMore = onLoadMore,
+                    isLoadingMore = uiState.isLoadingMore,
+                    modifier = Modifier.widthIn(max = 720.dp).align(Alignment.TopCenter)
+                )
+            }
         }
     }
 }
@@ -117,7 +144,11 @@ private fun AppointmentsContent(
 @Composable
 private fun AppointmentsBody(
     content: AppointmentsContentUiModel,
+    query: String,
+    onQueryChange: (String) -> Unit,
     onAppointmentClick: (Long) -> Unit,
+    onLoadMore: () -> Unit,
+    isLoadingMore: Boolean,
     modifier: Modifier = Modifier
 ) {
     LazyColumn(
@@ -133,7 +164,7 @@ private fun AppointmentsBody(
         item {
             Text(
                 text = stringResource(R.string.appointments_title),
-                color = VitalTraceNavy,
+                color = MaterialTheme.colorScheme.onBackground,
                 fontFamily = FontFamily.Serif,
                 fontSize = 34.sp,
                 fontWeight = FontWeight.Bold
@@ -156,6 +187,25 @@ private fun AppointmentsBody(
             )
         }
         item {
+            OutlinedTextField(
+                value = query,
+                onValueChange = onQueryChange,
+                modifier = Modifier.fillMaxWidth(),
+                leadingIcon = { Icon(Icons.Rounded.Search, contentDescription = null) },
+                placeholder = { Text("Buscar por profesional, especialidad o motivo") },
+                singleLine = true,
+                shape = RoundedCornerShape(18.dp)
+            )
+        }
+        if (content.currentPage < content.lastPage) {
+            item(key = "load-more-${content.currentPage}") {
+                LaunchedEffect(content.currentPage) { onLoadMore() }
+                Box(Modifier.fillMaxWidth().padding(16.dp), contentAlignment = Alignment.Center) {
+                    if (isLoadingMore) CircularProgressIndicator()
+                }
+            }
+        }
+        item {
             AppointmentSection(
                 title = stringResource(R.string.appointments_previous),
                 appointments = content.previousAppointments,
@@ -173,6 +223,9 @@ private fun AppointmentsScreenPreview() {
         AppointmentsContent(
             uiState = previewAppointmentsState(),
             onRetryClick = {},
+            onRefresh = {},
+            onLoadMore = {},
+            onQueryChange = {},
             onHomeClick = {},
             onMeasurementsClick = {},
             onAppointmentClick = {},

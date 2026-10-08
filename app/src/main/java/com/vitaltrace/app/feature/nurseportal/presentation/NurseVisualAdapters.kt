@@ -99,8 +99,14 @@ internal fun NurseAppointment.toAppointmentDetailUiModel(patientName: String? = 
             professional?.specialty
         ).filter(String::isNotBlank).joinToString(" · "),
         reason = reason,
+<<<<<<< HEAD
         date = displayDate,
         time = displayTime,
+=======
+        date = parts.firstOrNull().orEmpty(),
+        time = parts.getOrNull(1).orEmpty(),
+        scheduledAt = scheduledAt,
+>>>>>>> develop
         durationMinutes = durationMinutes,
         status = AppointmentStatus.fromApiValue(status),
         contextName = patientName

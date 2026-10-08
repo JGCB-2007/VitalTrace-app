@@ -8,7 +8,7 @@ import javax.inject.Inject
 class GetPatientTreatmentsUseCase @Inject constructor(
     private val patientRepository: PatientRepository
 ) {
-    suspend operator fun invoke(page: Int? = null): Result<Page<Treatment>> {
-        return patientRepository.getTreatments(page = page)
+    suspend operator fun invoke(page: Int? = null, forceRefresh: Boolean = false): Result<Page<Treatment>> {
+        return patientRepository.getTreatments(page = page, forceRefresh = forceRefresh)
     }
 }

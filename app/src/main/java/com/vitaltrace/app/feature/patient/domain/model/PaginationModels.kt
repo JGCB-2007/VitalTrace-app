@@ -1,19 +1,22 @@
 package com.vitaltrace.app.feature.patient.domain.model
 
+import kotlinx.serialization.Serializable
+
+@Serializable
 data class Page<T>(
     val items: List<T>,
     val links: PaginationLinks,
     val meta: PaginationMeta
 )
 
-data class PaginationLinks(
+@Serializable data class PaginationLinks(
     val first: String,
     val last: String,
     val previous: String?,
     val next: String?
 )
 
-data class PaginationMeta(
+@Serializable data class PaginationMeta(
     val currentPage: Int,
     val from: Int?,
     val lastPage: Int,
@@ -24,7 +27,7 @@ data class PaginationMeta(
     val total: Int
 )
 
-data class PaginationMetaLink(
+@Serializable data class PaginationMetaLink(
     val url: String?,
     val label: String,
     val active: Boolean

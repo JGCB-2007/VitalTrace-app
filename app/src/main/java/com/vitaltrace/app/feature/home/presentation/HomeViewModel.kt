@@ -59,6 +59,13 @@ class HomeViewModel @Inject constructor(
         refreshUnreadNotificationsCount()
     }
 
+    fun refresh() {
+        summaryRequest?.cancel()
+        summaryRequest = null
+        loadSummary(refresh = true)
+        refreshUnreadNotificationsCount()
+    }
+
 
     fun refreshAfterMeasurementCreated() {
         summaryRequest?.cancel()
@@ -75,10 +82,13 @@ class HomeViewModel @Inject constructor(
         }
     }
 
-    private fun loadSummary() {
+    private fun loadSummary(refresh: Boolean = false) {
         if (summaryRequest?.isActive == true) return
 
-        _uiState.update { it.copy(contentState = HomeContentState.Loading) }
+        _uiState.update {
+            if (refresh) it.copy(isRefreshing = true)
+            else it.copy(contentState = HomeContentState.Loading)
+        }
         summaryRequest = viewModelScope.launch {
             getPatientSummary()
                 .onSuccess { summary ->
@@ -86,16 +96,18 @@ class HomeViewModel @Inject constructor(
                         it.copy(
                             contentState = HomeContentState.Success(
                                 summaryMapper.map(summary)
-                            )
+                            ),
+                            isRefreshing = false
                         )
                     }
                     if (summary.latestMeasurements.isNotEmpty()) {
-                        getPatientMeasurements().onSuccess { page ->
+                        getPatientMeasurements(forceRefresh = refresh).onSuccess { page ->
                             _uiState.update {
                                 it.copy(
                                     contentState = HomeContentState.Success(
                                         summaryMapper.map(summary, page.items)
-                                    )
+                                    ),
+                                    isRefreshing = false
                                 )
                             }
                         }
@@ -103,10 +115,12 @@ class HomeViewModel @Inject constructor(
                 }
                 .onFailure {
                     _uiState.update {
-                        it.copy(
+                        if (refresh) it.copy(isRefreshing = false)
+                        else it.copy(
                             contentState = HomeContentState.Error(
                                 "No pudimos cargar tu información. Intenta de nuevo."
-                            )
+                            ),
+                            isRefreshing = false
                         )
                     }
                 }

@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -18,21 +19,11 @@ import androidx.compose.ui.unit.dp
 import com.vitaltrace.app.R
 import com.vitaltrace.app.ui.theme.VitalTraceNavy
 import com.vitaltrace.app.ui.theme.VitalTraceTeal
+import com.vitaltrace.app.core.presentation.components.LoadingSkeleton
 
 @Composable
 fun ProfileLoadingState(modifier: Modifier = Modifier) {
-    Column(
-        modifier = modifier.fillMaxSize(),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
-    ) {
-        CircularProgressIndicator(color = VitalTraceTeal)
-        Text(
-            text = stringResource(R.string.profile_loading),
-            modifier = Modifier.padding(top = 16.dp),
-            color = VitalTraceNavy
-        )
-    }
+    LoadingSkeleton(stringResource(R.string.profile_loading), modifier)
 }
 
 @Composable
@@ -49,14 +40,14 @@ fun ProfileErrorState(
         Text(
             text = message?.takeIf(String::isNotBlank)
                 ?: stringResource(R.string.profile_error),
-            color = VitalTraceNavy,
+            color = MaterialTheme.colorScheme.onBackground,
             fontWeight = FontWeight.Bold,
             textAlign = TextAlign.Center
         )
         Button(
             onClick = onRetryClick,
             modifier = Modifier.padding(top = 16.dp),
-            colors = ButtonDefaults.buttonColors(containerColor = VitalTraceNavy)
+            colors = ButtonDefaults.buttonColors()
         ) {
             Text(text = stringResource(R.string.profile_retry))
         }

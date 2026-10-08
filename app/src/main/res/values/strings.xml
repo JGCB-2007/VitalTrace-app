@@ -35,7 +35,8 @@
     <string name="home_register_measurement">+ Registrar medición</string>
     <string name="home_next_appointment">PRÓXIMA CITA</string>
     <string name="home_view_detail">Ver detalle</string>
-    <string name="home_recent_pressure">PRESIÓN RECIENTE</string>
+    <string name="home_recent_pressure">ÚLTIMA MEDICIÓN</string>
+    <string name="home_measurement_trend">Tendencia reciente de %1$s</string>
     <string name="home_history">Historial</string>
     <string name="home_no_follow_up">No hay información de seguimiento</string>
     <string name="home_no_appointments">No hay citas próximas</string>
@@ -67,6 +68,8 @@
     <string name="measurements_empty_action">Registrar medición</string>
     <string name="measurement_form_title">Registrar medición</string>
     <string name="measurement_form_subtitle">Medición escalar</string>
+    <string name="measurement_form_type">Tipo de medición</string>
+    <string name="measurement_form_value">Valor</string>
     <string name="measurement_form_back">Volver</string>
     <string name="measurement_form_systolic">Sistólica</string>
     <string name="measurement_form_diastolic">Diastólica</string>
@@ -82,6 +85,7 @@
     <string name="measurement_form_cancel">Cancelar</string>
     <string name="measurement_form_required_error">Ingresa un valor</string>
     <string name="measurement_form_invalid_error">Ingresa un valor válido</string>
+    <string name="measurement_form_range_error">Verifica el valor. Debe estar entre %1$d y %2$d.</string>
     <string name="measurement_form_date_description">Seleccionar fecha: %1$s</string>
     <string name="measurement_form_time_description">Seleccionar hora: %1$s</string>
     <string name="nurse_measurement_form_datetime_label">Fecha y hora</string>
@@ -118,6 +122,8 @@
     <string name="appointment_detail_time">Hora</string>
     <string name="appointment_detail_status">Estado</string>
     <string name="appointment_detail_reschedule_notice">Para reprogramar, comunícate con tu centro de atención.</string>
+    <string name="appointment_detail_add_calendar">Agregar al calendario</string>
+    <string name="appointment_calendar_title">Cita médica · VitalTrace</string>
     <string name="appointment_detail_close">Cerrar</string>
     <string name="appointment_detail_professional_description">Profesional: %1$s, %2$s</string>
     <string name="profile_title">Mi perfil</string>
@@ -137,6 +143,17 @@
     <string name="profile_measurement_reminders">Recordatorios de medición</string>
     <string name="profile_appointment_notifications">Avisos de citas</string>
     <string name="profile_email_updates">Actualizaciones por correo</string>
+    <string name="profile_notifications_local_note">Estas preferencias se guardan únicamente en este dispositivo.</string>
+    <string name="measurement_reminder_channel_name">Recordatorios de medición</string>
+    <string name="measurement_reminder_channel_description">Avisos locales para registrar tus mediciones.</string>
+    <string name="measurement_reminder_title">Es momento de registrar tu medición</string>
+    <string name="measurement_reminder_message">Abre VitalTrace para guardar tu medición de hoy.</string>
+    <string name="measurement_reminder_snooze">Recordar después</string>
+    <string name="notification_permission_title">Mantente al día con tu seguimiento</string>
+    <string name="notification_permission_description">VitalTrace puede avisarte sobre próximas citas y recordarte registrar tus mediciones. Puedes cambiarlo después desde tu perfil.</string>
+    <string name="notification_permission_enable">Activar avisos</string>
+    <string name="notification_permission_later">Ahora no</string>
+    <string name="login_first_access">¿Es tu primer acceso?</string>
     <string name="profile_loading">Cargando perfil</string>
     <string name="profile_error">No se pudo cargar el perfil</string>
     <string name="profile_retry">Intentar de nuevo</string>

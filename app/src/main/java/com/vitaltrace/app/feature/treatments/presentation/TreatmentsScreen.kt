@@ -3,21 +3,33 @@ package com.vitaltrace.app.feature.treatments.presentation
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.ArrowBack
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.Text
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.pulltorefresh.PullToRefreshBox
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.FilterChip
+import androidx.compose.material.icons.rounded.Search
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
@@ -48,7 +60,7 @@ fun TreatmentsScreen(
 ) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
     Scaffold(
-        containerColor = VitalTraceWarmBackground,
+        containerColor = MaterialTheme.colorScheme.background,
         topBar = {
             TopAppBar(
                 title = {
@@ -68,9 +80,9 @@ fun TreatmentsScreen(
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = VitalTraceWarmBackground,
-                    titleContentColor = VitalTraceNavy,
-                    navigationIconContentColor = VitalTraceNavy
+                    containerColor = MaterialTheme.colorScheme.background,
+                    titleContentColor = MaterialTheme.colorScheme.onBackground,
+                    navigationIconContentColor = MaterialTheme.colorScheme.onBackground
                 )
             )
         },
@@ -95,19 +107,63 @@ fun TreatmentsScreen(
                 if (contentState.content.treatments.isEmpty()) {
                     TreatmentsEmptyState(Modifier.padding(padding))
                 } else {
-                    LazyColumn(
-                        modifier = Modifier.fillMaxSize().padding(padding),
-                        contentPadding = PaddingValues(24.dp, 30.dp, 24.dp, 30.dp),
-                        verticalArrangement = Arrangement.spacedBy(18.dp)
+                    PullToRefreshBox(
+                        isRefreshing = state.isRefreshing,
+                        onRefresh = viewModel::refresh,
+                        modifier = Modifier.fillMaxSize().padding(padding)
                     ) {
-                        items(contentState.content.treatments, key = TreatmentUiModel::id) { treatment ->
-                            TreatmentCard(
-                                treatment = treatment,
-                                onClick = {
-                                    viewModel.selectTreatment(treatment.id)
-                                    onTreatmentClick(treatment.id)
+                        LazyColumn(
+                            modifier = Modifier.fillMaxSize().widthIn(max = 720.dp).align(Alignment.TopCenter),
+                            contentPadding = PaddingValues(24.dp, 30.dp, 24.dp, 30.dp),
+                            verticalArrangement = Arrangement.spacedBy(18.dp)
+                        ) {
+                            item {
+                                OutlinedTextField(
+                                    value = state.query,
+                                    onValueChange = viewModel::updateQuery,
+                                    modifier = Modifier.fillMaxWidth(),
+                                    leadingIcon = { Icon(Icons.Rounded.Search, null) },
+                                    placeholder = { Text("Buscar medicamento, indicación o profesional") },
+                                    singleLine = true,
+                                    shape = RoundedCornerShape(18.dp)
+                                )
+                            }
+                            item {
+                                FilterChip(
+                                    selected = state.activeOnly,
+                                    onClick = viewModel::toggleActiveOnly,
+                                    label = { Text("Solo tratamientos activos") }
+                                )
+                            }
+                            if (state.visibleTreatments.isEmpty()) {
+                                item {
+                                    Text(
+                                        "No encontramos tratamientos con estos filtros.",
+                                        color = androidx.compose.material3.MaterialTheme.colorScheme.onSurfaceVariant,
+                                        modifier = Modifier.padding(vertical = 28.dp)
+                                    )
                                 }
-                            )
+                            }
+                            items(state.visibleTreatments, key = TreatmentUiModel::id) { treatment ->
+                                TreatmentCard(
+                                    treatment = treatment,
+                                    onClick = {
+                                        viewModel.selectTreatment(treatment.id)
+                                        onTreatmentClick(treatment.id)
+                                    }
+                                )
+                            }
+                            if (contentState.content.currentPage < contentState.content.lastPage) {
+                                item(key = "load-more-${contentState.content.currentPage}") {
+                                    LaunchedEffect(contentState.content.currentPage) { viewModel.loadMore() }
+                                    Box(
+                                        Modifier.fillMaxWidth().padding(16.dp),
+                                        contentAlignment = Alignment.Center
+                                    ) {
+                                        if (state.isLoadingMore) CircularProgressIndicator()
+                                    }
+                                }
+                            }
                         }
                     }
                 }

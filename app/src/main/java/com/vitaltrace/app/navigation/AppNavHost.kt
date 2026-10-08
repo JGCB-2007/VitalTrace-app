@@ -1,5 +1,10 @@
 package com.vitaltrace.app.navigation
 
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.scaleIn
+import androidx.compose.animation.scaleOut
+import androidx.compose.animation.core.tween
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -9,6 +14,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavType
 import androidx.navigation.NavHostController
 import androidx.navigation.navArgument
+import androidx.navigation.navDeepLink
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
@@ -37,6 +43,7 @@ import com.vitaltrace.app.feature.splash.presentation.SplashScreen
 import com.vitaltrace.app.feature.treatments.presentation.TreatmentDetailScreen
 import com.vitaltrace.app.feature.treatments.presentation.TreatmentsScreen
 import com.vitaltrace.app.feature.treatments.presentation.TreatmentsViewModel
+import com.vitaltrace.app.feature.timeline.presentation.HealthTimelineScreen
 
 @Composable
 fun AppNavHost(
@@ -44,7 +51,23 @@ fun AppNavHost(
 ) {
     NavHost(
         navController = navController,
-        startDestination = AppRoute.Splash.route
+        startDestination = AppRoute.Splash.route,
+        enterTransition = {
+            fadeIn(animationSpec = tween(220)) +
+                scaleIn(initialScale = 0.985f, animationSpec = tween(220))
+        },
+        exitTransition = {
+            fadeOut(animationSpec = tween(140)) +
+                scaleOut(targetScale = 1.01f, animationSpec = tween(140))
+        },
+        popEnterTransition = {
+            fadeIn(animationSpec = tween(200)) +
+                scaleIn(initialScale = 1.01f, animationSpec = tween(200))
+        },
+        popExitTransition = {
+            fadeOut(animationSpec = tween(140)) +
+                scaleOut(targetScale = 0.985f, animationSpec = tween(140))
+        }
     ) {
         composable(AppRoute.Notifications.route) {
             NotificationsScreen(
@@ -54,12 +77,14 @@ fun AppNavHost(
                         "appointments" -> {
                             val destination = relatedId?.let(AppRoute.AppointmentDetail::create)
                                 ?: AppRoute.Appointments.route
-                            navController.navigate(destination) { launchSingleTop = true }
+                            if (relatedId == null) {
+                                navController.navigateToPatientTab(destination)
+                            } else {
+                                navController.navigate(destination) { launchSingleTop = true }
+                            }
                         }
                         "measurements" -> {
-                            navController.navigate(AppRoute.Measurements.route) {
-                                launchSingleTop = true
-                            }
+                            navController.navigateToPatientTab(AppRoute.Measurements.route)
                         }
                         "treatments" -> {
                             navController.navigate(AppRoute.Treatments.route) {
@@ -241,9 +266,7 @@ fun AppNavHost(
                     }
                 },
                 onMeasurementsClick = {
-                    navController.navigate(AppRoute.Measurements.route) {
-                        launchSingleTop = true
-                    }
+                    navController.navigateToPatientTab(AppRoute.Measurements.route)
                 },
                 onRegisterMeasurementClick = {
                     navController.navigate(AppRoute.MeasurementForm.route) {
@@ -251,14 +274,10 @@ fun AppNavHost(
                     }
                 },
                 onAppointmentsClick = {
-                    navController.navigate(AppRoute.Appointments.route) {
-                        launchSingleTop = true
-                    }
+                    navController.navigateToPatientTab(AppRoute.Appointments.route)
                 },
                 onProfileClick = {
-                    navController.navigate(AppRoute.Profile.route) {
-                        launchSingleTop = true
-                    }
+                    navController.navigateToPatientTab(AppRoute.Profile.route)
                 },
                 onAppointmentDetailClick = { appointmentId ->
                     navController.navigate(AppRoute.AppointmentDetail.create(appointmentId)) {
@@ -266,7 +285,10 @@ fun AppNavHost(
                     }
                 },
                 onPressureHistoryClick = {
-                    navController.navigate(AppRoute.Measurements.route) { launchSingleTop = true }
+                    navController.navigateToPatientTab(AppRoute.Measurements.route)
+                },
+                onTimelineClick = {
+                    navController.navigate(AppRoute.HealthTimeline.route) { launchSingleTop = true }
                 }
             )
         }
@@ -300,22 +322,13 @@ fun AppNavHost(
             RelativesScreen(
                 onNavigateBack = { navController.popBackStack() },
                 onHomeClick = {
-                    navController.navigate(AppRoute.Home.route) {
-                        popUpTo(AppRoute.Home.route)
-                        launchSingleTop = true
-                    }
+                    navController.navigateToPatientTab(AppRoute.Home.route)
                 },
                 onMeasurementsClick = {
-                    navController.navigate(AppRoute.Measurements.route) {
-                        popUpTo(AppRoute.Home.route)
-                        launchSingleTop = true
-                    }
+                    navController.navigateToPatientTab(AppRoute.Measurements.route)
                 },
                 onAppointmentsClick = {
-                    navController.navigate(AppRoute.Appointments.route) {
-                        popUpTo(AppRoute.Home.route)
-                        launchSingleTop = true
-                    }
+                    navController.navigateToPatientTab(AppRoute.Appointments.route)
                 },
                 onProfileClick = { navController.popBackStack() }
             )
@@ -328,6 +341,10 @@ fun AppNavHost(
                     navController.navigate(AppRoute.DiagnosisEducation.create(cieCode, diagnosisName))
                 }
             )
+        }
+
+        composable(AppRoute.HealthTimeline.route) {
+            HealthTimelineScreen(onNavigateBack = { navController.popBackStack() })
         }
 
         composable(
@@ -346,24 +363,15 @@ fun AppNavHost(
                 onTreatmentClick = { id ->
                     navController.navigate(AppRoute.TreatmentDetail.create(id))
                 },
-                onHomeClick = { navController.popBackStack() },
+                onHomeClick = { navController.navigateToPatientTab(AppRoute.Home.route) },
                 onMeasurementsClick = {
-                    navController.navigate(AppRoute.Measurements.route) {
-                        popUpTo(AppRoute.Home.route)
-                        launchSingleTop = true
-                    }
+                    navController.navigateToPatientTab(AppRoute.Measurements.route)
                 },
                 onAppointmentsClick = {
-                    navController.navigate(AppRoute.Appointments.route) {
-                        popUpTo(AppRoute.Home.route)
-                        launchSingleTop = true
-                    }
+                    navController.navigateToPatientTab(AppRoute.Appointments.route)
                 },
                 onProfileClick = {
-                    navController.navigate(AppRoute.Profile.route) {
-                        popUpTo(AppRoute.Home.route)
-                        launchSingleTop = true
-                    }
+                    navController.navigateToPatientTab(AppRoute.Profile.route)
                 }
             )
         }
@@ -396,7 +404,7 @@ fun AppNavHost(
             MeasurementsScreen(
                 viewModel = viewModel,
                 onHomeClick = {
-                    navController.popBackStack()
+                    navController.navigateToPatientTab(AppRoute.Home.route)
                 },
                 onAddMeasurementClick = {
                     navController.navigate(AppRoute.MeasurementForm.route) {
@@ -404,14 +412,10 @@ fun AppNavHost(
                     }
                 },
                 onAppointmentsClick = {
-                    navController.navigate(AppRoute.Appointments.route) {
-                        launchSingleTop = true
-                    }
+                    navController.navigateToPatientTab(AppRoute.Appointments.route)
                 },
                 onProfileClick = {
-                    navController.navigate(AppRoute.Profile.route) {
-                        launchSingleTop = true
-                    }
+                    navController.navigateToPatientTab(AppRoute.Profile.route)
                 }
             )
         }
@@ -419,33 +423,26 @@ fun AppNavHost(
         composable(AppRoute.Appointments.route) {
             AppointmentsScreen(
                 onHomeClick = {
-                    navController.navigate(AppRoute.Home.route) {
-                        popUpTo(AppRoute.Home.route)
-                        launchSingleTop = true
-                    }
+                    navController.navigateToPatientTab(AppRoute.Home.route)
                 },
                 onMeasurementsClick = {
-                    navController.navigate(AppRoute.Measurements.route) {
-                        popUpTo(AppRoute.Home.route)
-                        launchSingleTop = true
-                    }
+                    navController.navigateToPatientTab(AppRoute.Measurements.route)
                 },
                 onProfileClick = {
-                    navController.navigate(AppRoute.Profile.route) {
-                        launchSingleTop = true
-                    }
+                    navController.navigateToPatientTab(AppRoute.Profile.route)
                 }
             )
         }
 
         composable(
             route = AppRoute.AppointmentDetail.route,
-            arguments = listOf(navArgument("appointmentId") { type = NavType.LongType })
+            arguments = listOf(navArgument("appointmentId") { type = NavType.LongType }),
+            deepLinks = listOf(navDeepLink { uriPattern = "vitaltrace://appointments/{appointmentId}" })
         ) { backStackEntry ->
             AppointmentsScreen(
-                onHomeClick = { navController.navigate(AppRoute.Home.route) { popUpTo(AppRoute.Home.route) } },
-                onMeasurementsClick = { navController.navigate(AppRoute.Measurements.route) },
-                onProfileClick = { navController.navigate(AppRoute.Profile.route) },
+                onHomeClick = { navController.navigateToPatientTab(AppRoute.Home.route) },
+                onMeasurementsClick = { navController.navigateToPatientTab(AppRoute.Measurements.route) },
+                onProfileClick = { navController.navigateToPatientTab(AppRoute.Profile.route) },
                 initialAppointmentId = backStackEntry.arguments?.getLong("appointmentId"),
                 onInitialDetailDismiss = { navController.popBackStack() }
             )
@@ -454,22 +451,13 @@ fun AppNavHost(
         composable(AppRoute.Profile.route) {
             ProfileScreen(
                 onHomeClick = {
-                    navController.navigate(AppRoute.Home.route) {
-                        popUpTo(AppRoute.Home.route)
-                        launchSingleTop = true
-                    }
+                    navController.navigateToPatientTab(AppRoute.Home.route)
                 },
                 onMeasurementsClick = {
-                    navController.navigate(AppRoute.Measurements.route) {
-                        popUpTo(AppRoute.Home.route)
-                        launchSingleTop = true
-                    }
+                    navController.navigateToPatientTab(AppRoute.Measurements.route)
                 },
                 onAppointmentsClick = {
-                    navController.navigate(AppRoute.Appointments.route) {
-                        popUpTo(AppRoute.Home.route)
-                        launchSingleTop = true
-                    }
+                    navController.navigateToPatientTab(AppRoute.Appointments.route)
                 },
                 onRelativesClick = {
                     navController.navigate(AppRoute.Relatives.route) {
@@ -483,11 +471,17 @@ fun AppNavHost(
                 },
                 onTreatmentsClick = {
                     navController.navigate(AppRoute.Treatments.route) { launchSingleTop = true }
+                },
+                onHealthTimelineClick = {
+                    navController.navigate(AppRoute.HealthTimeline.route) { launchSingleTop = true }
                 }
             )
         }
 
-        composable(AppRoute.MeasurementForm.route) {
+        composable(
+            route = AppRoute.MeasurementForm.route,
+            deepLinks = listOf(navDeepLink { uriPattern = "vitaltrace://measurement-form" })
+        ) {
             MeasurementFormScreen(
                 onNavigateBack = {
                     navController.popBackStack()
@@ -507,3 +501,18 @@ fun AppNavHost(
 }
 
 private const val MEASUREMENT_SAVED_KEY = "measurement_saved"
+
+/**
+ * Keeps the four patient destinations behaving as one stable tab group. Switching tabs replaces
+ * the previous tab, preserves its Compose state and prevents duplicate destinations in the stack.
+ */
+private fun NavHostController.navigateToPatientTab(route: String) {
+    if (currentBackStackEntry?.destination?.route == route) return
+    navigate(route) {
+        popUpTo(AppRoute.Home.route) {
+            saveState = true
+        }
+        launchSingleTop = true
+        restoreState = true
+    }
+}

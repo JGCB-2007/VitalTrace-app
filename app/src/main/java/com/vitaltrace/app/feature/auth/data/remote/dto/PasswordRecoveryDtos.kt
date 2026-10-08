@@ -9,6 +9,7 @@ data class ForgotPasswordRequestDto(val email: String)
 @Serializable
 data class ResetPasswordRequestDto(
     val email: String,
+    @SerialName("code")
     val token: String,
     val password: String,
     @SerialName("password_confirmation") val passwordConfirmation: String

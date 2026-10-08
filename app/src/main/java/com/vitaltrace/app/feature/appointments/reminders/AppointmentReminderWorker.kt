@@ -11,6 +11,7 @@ import android.os.Build
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.core.content.ContextCompat
+import androidx.core.net.toUri
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
 import com.vitaltrace.app.MainActivity
@@ -52,6 +53,7 @@ class AppointmentReminderWorker(
 
         createNotificationChannel()
         val openAppIntent = Intent(applicationContext, MainActivity::class.java).apply {
+            data = "vitaltrace://appointments/$appointmentId".toUri()
             flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
         }
         val pendingIntent = PendingIntent.getActivity(
@@ -93,7 +95,6 @@ class AppointmentReminderWorker(
     }
 
     private fun createNotificationChannel() {
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) return
         val channel = NotificationChannel(
             AppointmentReminderContract.CHANNEL_ID,
             applicationContext.getString(R.string.appointment_reminder_channel_name),

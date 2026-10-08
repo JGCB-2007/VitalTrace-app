@@ -11,7 +11,8 @@ class LoginUseCase @Inject constructor(
 
     suspend operator fun invoke(
         email: String,
-        password: String
+        password: String,
+        rememberSession: Boolean = true
     ): Result<Unit> {
         val normalizedEmail = email.trim().lowercase()
 
@@ -35,7 +36,8 @@ class LoginUseCase @Inject constructor(
 
         return sessionManager.login(
             email = normalizedEmail,
-            password = password
+            password = password,
+            rememberSession = rememberSession
         )
     }
 

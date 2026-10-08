@@ -2,8 +2,25 @@ package com.vitaltrace.app.feature.treatments.presentation
 
 data class TreatmentsUiState(
     val contentState: TreatmentsContentState = TreatmentsContentState.Loading,
-    val selectedTreatment: TreatmentUiModel? = null
-)
+    val selectedTreatment: TreatmentUiModel? = null,
+    val query: String = "",
+    val activeOnly: Boolean = false,
+    val isRefreshing: Boolean = false,
+    val isLoadingMore: Boolean = false
+) {
+    val visibleTreatments: List<TreatmentUiModel>
+        get() = (contentState as? TreatmentsContentState.Success)?.content?.treatments.orEmpty()
+            .filter { treatment ->
+                (!activeOnly || treatment.status == TreatmentStatus.ACTIVE) &&
+                    (query.isBlank() || listOfNotNull(
+                        treatment.diagnosisDescription,
+                        treatment.diagnosisCode,
+                        treatment.indications,
+                        treatment.prescriberName,
+                        treatment.specialtyName
+                    ).any { it.contains(query.trim(), ignoreCase = true) })
+            }
+}
 
 sealed interface TreatmentsContentState {
     data object Loading : TreatmentsContentState

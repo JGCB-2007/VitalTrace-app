@@ -1,5 +1,10 @@
 package com.vitaltrace.app.feature.nurseportal.presentation
 
+import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -19,7 +24,11 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.vitaltrace.app.core.presentation.components.ObservedPatientHeader
+<<<<<<< HEAD
 import com.vitaltrace.app.core.presentation.localization.EnumDisplayEs
+=======
+import com.vitaltrace.app.core.presentation.formatClinicalDateTime
+>>>>>>> develop
 import com.vitaltrace.app.feature.appointments.presentation.detail.AppointmentDetailSheet
 import com.vitaltrace.app.feature.home.presentation.FollowUpStatusUiModel
 import com.vitaltrace.app.feature.home.presentation.components.FollowUpStatusCard
@@ -55,10 +64,10 @@ private fun NursePatientSelector(state: NursePortalUiState, viewModel: NursePort
                 singleLine = true,
                 shape = RoundedCornerShape(18.dp),
                 colors = OutlinedTextFieldDefaults.colors(
-                    focusedContainerColor = Color.White,
-                    unfocusedContainerColor = Color.White,
-                    focusedBorderColor = VitalTraceTeal,
-                    unfocusedBorderColor = Color(0xFFE1DDD3)
+                    focusedContainerColor = MaterialTheme.colorScheme.surface,
+                    unfocusedContainerColor = MaterialTheme.colorScheme.surface,
+                    focusedBorderColor = MaterialTheme.colorScheme.secondary,
+                    unfocusedBorderColor = MaterialTheme.colorScheme.outline
                 )
             )
         }
@@ -83,8 +92,8 @@ private fun NursePatientWorkspace(state: NursePortalUiState, viewModel: NursePor
         )
         SecondaryScrollableTabRow(
             selectedTabIndex = sections.indexOf(state.patientSection).coerceAtLeast(0),
-            containerColor = VitalTraceWarmBackground,
-            contentColor = VitalTraceNavy,
+            containerColor = MaterialTheme.colorScheme.background,
+            contentColor = MaterialTheme.colorScheme.primary,
             edgePadding = 20.dp,
             divider = {}
         ) {
@@ -96,12 +105,22 @@ private fun NursePatientWorkspace(state: NursePortalUiState, viewModel: NursePor
                 )
             }
         }
-        when (state.patientSection) {
-            NursePatientSection.SUMMARY, NursePatientSection.DIAGNOSES -> NursePatientSummaryContent(state, viewModel, onEducationClick, Modifier.weight(1f))
-            NursePatientSection.MEASUREMENTS -> NurseMeasurementsContent(state, viewModel, Modifier.weight(1f))
-            NursePatientSection.TREATMENTS -> NurseTreatmentsContent(state.treatments, Modifier.weight(1f))
-            NursePatientSection.HISTORY -> NurseHistoryContent(state, onEducationClick, Modifier.weight(1f))
-            NursePatientSection.ALERTS -> NursePatientAlertsContent(state, viewModel, Modifier.weight(1f))
+        AnimatedContent(
+            targetState = state.patientSection,
+            modifier = Modifier.weight(1f),
+            transitionSpec = {
+                fadeIn(tween(180)) togetherWith fadeOut(tween(110))
+            },
+            label = "nurse-patient-section"
+        ) { section ->
+            val sectionModifier = Modifier.fillMaxSize()
+            when (section) {
+                NursePatientSection.SUMMARY, NursePatientSection.DIAGNOSES -> NursePatientSummaryContent(state, viewModel, onEducationClick, sectionModifier)
+                NursePatientSection.MEASUREMENTS -> NurseMeasurementsContent(state, viewModel, sectionModifier)
+                NursePatientSection.TREATMENTS -> NurseTreatmentsContent(state.treatments, sectionModifier)
+                NursePatientSection.HISTORY -> NurseHistoryContent(state, onEducationClick, sectionModifier)
+                NursePatientSection.ALERTS -> NursePatientAlertsContent(state, viewModel, sectionModifier)
+            }
         }
     }
 }
@@ -140,31 +159,37 @@ private fun NursePatientSummaryContent(state: NursePortalUiState, viewModel: Nur
 
 @Composable
 private fun NursePatientCard(patient: NursePatient, onClick: (NursePatient) -> Unit) {
-    Card(onClick = { onClick(patient) }, modifier = Modifier.fillMaxWidth(), shape = RoundedCornerShape(22.dp), colors = CardDefaults.cardColors(Color.White), elevation = CardDefaults.cardElevation(3.dp)) {
+    Card(onClick = { onClick(patient) }, modifier = Modifier.fillMaxWidth(), shape = RoundedCornerShape(22.dp), colors = CardDefaults.cardColors(MaterialTheme.colorScheme.surface), elevation = CardDefaults.cardElevation(3.dp)) {
         Column(Modifier.padding(18.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
             Row(verticalAlignment = Alignment.CenterVertically) {
-                Surface(Modifier.size(50.dp), shape = CircleShape, color = Color(0xFFD9F2F0)) { Icon(Icons.Rounded.Person, null, Modifier.padding(12.dp), tint = VitalTraceTeal) }
+                Surface(Modifier.size(50.dp), shape = CircleShape, color = MaterialTheme.colorScheme.tertiaryContainer) { Icon(Icons.Rounded.Person, null, Modifier.padding(12.dp), tint = MaterialTheme.colorScheme.secondary) }
                 Column(Modifier.weight(1f).padding(start = 14.dp)) {
-                    Text(patient.fullName, color = VitalTraceNavy, fontFamily = FontFamily.Serif, fontSize = 21.sp, fontWeight = FontWeight.Bold, maxLines = 2, overflow = TextOverflow.Ellipsis)
-                    Text("${patient.recordNumber} · ${patient.age?.let { "$it años" } ?: "Edad no disponible"}", color = Color(0xFF53636D))
+                    Text(patient.fullName, color = MaterialTheme.colorScheme.onSurface, fontFamily = FontFamily.Serif, fontSize = 21.sp, fontWeight = FontWeight.Bold, maxLines = 2, overflow = TextOverflow.Ellipsis)
+                    Text("${patient.recordNumber} · ${patient.age?.let { "$it años" } ?: "Edad no disponible"}", color = MaterialTheme.colorScheme.onSurfaceVariant)
                 }
                 if (patient.criticalAlerts > 0) NurseStatusChip("Crítica", Color(0xFFF3E4E1), Color(0xFF8C3D32))
             }
-            HorizontalDivider(color = Color(0xFFE5E0D7))
+            HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
             NurseDetailRow("Última medición", patient.lastMeasurement?.let { "${it.value} ${it.unit}" } ?: "Sin mediciones")
-            NurseDetailRow("Próxima cita", patient.nextAppointment?.scheduledAt ?: "Sin cita próxima")
-            if (patient.activeAlerts > 0) Text("${patient.activeAlerts} ${if (patient.activeAlerts == 1) "alerta activa" else "alertas activas"}", color = VitalTraceTeal, fontWeight = FontWeight.Bold)
+            NurseDetailRow("Próxima cita", patient.nextAppointment?.scheduledAt?.let(::formatClinicalDateTime) ?: "Sin cita próxima")
+            if (patient.activeAlerts > 0) Text("${patient.activeAlerts} ${if (patient.activeAlerts == 1) "alerta activa" else "alertas activas"}", color = MaterialTheme.colorScheme.secondary, fontWeight = FontWeight.Bold)
         }
     }
 }
 
 @Composable
 private fun NurseDiagnosisCard(item: NurseDiagnosis, onEducationClick: (String, String) -> Unit) {
-    Card(Modifier.fillMaxWidth(), shape = RoundedCornerShape(26.dp), colors = CardDefaults.cardColors(Color.White), elevation = CardDefaults.cardElevation(5.dp)) {
+    Card(Modifier.fillMaxWidth(), shape = RoundedCornerShape(26.dp), colors = CardDefaults.cardColors(MaterialTheme.colorScheme.surface), elevation = CardDefaults.cardElevation(5.dp)) {
         Column(Modifier.padding(22.dp), verticalArrangement = Arrangement.spacedBy(10.dp)) {
+<<<<<<< HEAD
             Text(item.description, color = VitalTraceNavy, fontFamily = FontFamily.Serif, fontSize = 20.sp, fontWeight = FontWeight.Bold)
             Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) { item.cieCode?.let { NurseStatusChip(it, Color(0xFFDDF4F2), VitalTraceTeal) }; NurseStatusChip(EnumDisplayEs.clinicalStatus(item.status), Color(0xFFDDF1E7), Color(0xFF23805F)) }
             item.cieCode?.let { code -> TextButton({ onEducationClick(code, item.description) }) { Text("Ver información educativa", color = VitalTraceTeal, fontWeight = FontWeight.Bold) } }
+=======
+            Text(item.description, color = MaterialTheme.colorScheme.onSurface, fontFamily = FontFamily.Serif, fontSize = 20.sp, fontWeight = FontWeight.Bold)
+            Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) { item.cieCode?.let { NurseStatusChip(it, Color(0xFFDDF4F2), VitalTraceTeal) }; NurseStatusChip(item.status, Color(0xFFDDF1E7), Color(0xFF23805F)) }
+            item.cieCode?.let { code -> TextButton({ onEducationClick(code, item.description) }) { Text("Ver información educativa", color = MaterialTheme.colorScheme.secondary, fontWeight = FontWeight.Bold) } }
+>>>>>>> develop
         }
     }
 }

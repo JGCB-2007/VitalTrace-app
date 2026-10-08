@@ -9,6 +9,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -30,7 +31,7 @@ fun ProfileInformationCard(
     Card(
         modifier = modifier.fillMaxWidth(),
         shape = RoundedCornerShape(26.dp),
-        colors = CardDefaults.cardColors(containerColor = Color.White),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
         elevation = CardDefaults.cardElevation(defaultElevation = 5.dp)
     ) {
         Column(modifier = Modifier.padding(horizontal = 24.dp, vertical = 10.dp)) {
@@ -38,7 +39,7 @@ fun ProfileInformationCard(
                 label = stringResource(R.string.profile_identifier),
                 value = user.identifier
             )
-            HorizontalDivider(color = Color(0xFFE5E0D7))
+            HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
             ProfileInformationRow(
                 label = stringResource(R.string.profile_email),
                 value = user.email
@@ -73,7 +74,7 @@ fun ProfileInformationCard(
 @Composable
 private fun OptionalProfileInformationRow(label: String, value: String?) {
     value?.takeIf(String::isNotBlank)?.let {
-        HorizontalDivider(color = Color(0xFFE5E0D7))
+        HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
         ProfileInformationRow(label, it)
     }
 }
@@ -89,7 +90,7 @@ private fun ProfileInformationRow(label: String, value: String) {
     ) {
         Text(
             text = label,
-            color = Color(0xFF53636D),
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
             fontSize = 17.sp
         )
         Text(
@@ -97,7 +98,7 @@ private fun ProfileInformationRow(label: String, value: String) {
             modifier = Modifier
                 .weight(1f)
                 .padding(start = 18.dp),
-            color = Color(0xFF172C3A),
+            color = MaterialTheme.colorScheme.onSurface,
             fontSize = 16.sp,
             fontWeight = FontWeight.Bold,
             textAlign = TextAlign.End

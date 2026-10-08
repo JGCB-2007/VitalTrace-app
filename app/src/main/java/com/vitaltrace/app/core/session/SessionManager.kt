@@ -58,8 +58,13 @@ class SessionManager @Inject constructor(
             }
     }
 
-    suspend fun login(email: String, password: String): Result<Unit> = operationMutex.withLock {
+    suspend fun login(
+        email: String,
+        password: String,
+        rememberSession: Boolean = true
+    ): Result<Unit> = operationMutex.withLock {
         _state.value = SessionState.Loading
+<<<<<<< HEAD
         val result = authRepository.login(email, password)
         val user = result.getOrElse { error ->
             _state.value = SessionState.Unauthenticated
@@ -96,6 +101,15 @@ class SessionManager @Inject constructor(
 
         _state.value = SessionState.Authenticated(verifiedUser)
         Result.success(Unit)
+=======
+        authRepository.login(email, password)
+            .onSuccess { user ->
+                if (!rememberSession) tokenStore.clearToken()
+                _state.value = SessionState.Authenticated(user)
+            }
+            .onFailure { _state.value = SessionState.Unauthenticated }
+            .map { Unit }
+>>>>>>> develop
     }
 
     suspend fun logout(): Result<Unit> = operationMutex.withLock {

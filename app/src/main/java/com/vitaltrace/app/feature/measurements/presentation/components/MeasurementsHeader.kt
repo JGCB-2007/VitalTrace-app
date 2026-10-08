@@ -8,6 +8,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Add
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -19,7 +20,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.vitaltrace.app.R
-import com.vitaltrace.app.ui.theme.VitalTraceNavy
 
 @Composable
 fun MeasurementsHeader(
@@ -33,7 +33,7 @@ fun MeasurementsHeader(
     ) {
         Text(
             text = stringResource(R.string.measurements_title),
-            color = VitalTraceNavy,
+            color = MaterialTheme.colorScheme.onBackground,
             fontFamily = FontFamily.Serif,
             fontSize = 34.sp,
             fontWeight = FontWeight.Bold
@@ -41,7 +41,7 @@ fun MeasurementsHeader(
         Surface(
             modifier = Modifier.size(54.dp),
             shape = androidx.compose.foundation.shape.RoundedCornerShape(18.dp),
-            color = VitalTraceNavy,
+            color = MaterialTheme.colorScheme.primary,
             shadowElevation = 2.dp
         ) {
             IconButton(onClick = onAddMeasurementClick) {

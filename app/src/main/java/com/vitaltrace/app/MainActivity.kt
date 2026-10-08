@@ -1,21 +1,18 @@
 package com.vitaltrace.app
 
 import android.os.Bundle
-import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import com.vitaltrace.app.ui.theme.VitalTraceTheme
+import androidx.fragment.app.FragmentActivity
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class MainActivity : ComponentActivity() {
+class MainActivity : FragmentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         setContent {
-            VitalTraceTheme {
-                VitalTraceApp()
-            }
+            VitalTraceApp()
         }
     }
 }

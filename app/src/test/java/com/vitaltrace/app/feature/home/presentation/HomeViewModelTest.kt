@@ -61,7 +61,8 @@ class HomeViewModelTest {
             assertEquals("AM", success.content.patientInitials)
             assertEquals("Confirmada", success.content.nextAppointment?.status)
             assertEquals("120", success.content.recentMeasurement?.value)
-            assertEquals(listOf(0.65f), success.content.recentMeasurement?.chartValues)
+            assertEquals(listOf(0.65f), success.content.recentMeasurement?.trendPoints?.map { it.normalizedValue })
+            assertEquals(listOf("29/7"), success.content.recentMeasurement?.trendPoints?.map { it.dateLabel })
             assertEquals(null, success.content.followUpStatus)
         }
     }
@@ -174,11 +175,11 @@ class HomeViewModelTest {
         }
 
         override suspend fun getAppointments(
-            status: String?, dateFrom: String?, dateTo: String?, upcoming: Boolean?, page: Int?
+            status: String?, dateFrom: String?, dateTo: String?, upcoming: Boolean?, page: Int?, forceRefresh: Boolean
         ): Result<Page<Appointment>> = unsupported()
 
         override suspend fun getMeasurements(
-            measurementTypeId: Long?, dateFrom: String?, dateTo: String?, page: Int?
+            measurementTypeId: Long?, dateFrom: String?, dateTo: String?, page: Int?, forceRefresh: Boolean
         ): Result<Page<Measurement>> = unsupported()
 
         override suspend fun createMeasurement(
@@ -190,7 +191,7 @@ class HomeViewModelTest {
         ): Result<Measurement> = unsupported()
 
         override suspend fun getTreatments(
-            status: String?, dateFrom: String?, dateTo: String?, active: Boolean?, page: Int?
+            status: String?, dateFrom: String?, dateTo: String?, active: Boolean?, page: Int?, forceRefresh: Boolean
         ): Result<Page<Treatment>> = unsupported()
 
         override suspend fun getProfile(): Result<PatientProfile> = unsupported()

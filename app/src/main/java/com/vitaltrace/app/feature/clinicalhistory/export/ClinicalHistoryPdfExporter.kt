@@ -189,10 +189,10 @@ private class ClinicalHistoryTemplate(
         canvas!!.drawText("GENERADO", margin + 142f, top + 89f, labelBoldPaint)
         canvas!!.drawText("$generatedDate · $generatedTime", margin + 142f, top + 105f, bodyPaint)
 
-        canvas!!.drawText("Resumen general", rightLeft + 16f, top + 24f, reportPaint)
-        summaryLine("Edad", "No disponible", rightLeft + 16f, top + 48f, rightWidth - 32f)
-        summaryLine("Sexo", "No disponible", rightLeft + 16f, top + 70f, rightWidth - 32f)
-        summaryLine("Expediente", recordNumber.ifBlank { "—" }, rightLeft + 16f, top + 92f, rightWidth - 32f)
+        canvas!!.drawText("Resumen clínico", rightLeft + 16f, top + 24f, reportPaint)
+        summaryLine("Diagnósticos", diagnoses.toString(), rightLeft + 16f, top + 48f, rightWidth - 32f)
+        summaryLine("Tratamientos", treatments.toString(), rightLeft + 16f, top + 70f, rightWidth - 32f)
+        summaryLine("Registros recientes", (measurements + evolutions).toString(), rightLeft + 16f, top + 92f, rightWidth - 32f)
 
         y = top + 146f
         val metrics = listOf("Diagnósticos" to diagnoses, "Tratamientos" to treatments, "Mediciones" to measurements, "Evoluciones" to evolutions)

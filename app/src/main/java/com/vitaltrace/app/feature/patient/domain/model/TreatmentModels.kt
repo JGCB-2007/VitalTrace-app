@@ -1,5 +1,8 @@
 package com.vitaltrace.app.feature.patient.domain.model
 
+import kotlinx.serialization.Serializable
+
+@Serializable
 data class Treatment(
     val id: Long,
     val diagnosisId: Long?,
@@ -12,7 +15,7 @@ data class Treatment(
     val prescriber: Prescriber?
 )
 
-data class Diagnosis(
+@Serializable data class Diagnosis(
     val id: Long,
     val cieCode: String?,
     val description: String,
@@ -20,7 +23,7 @@ data class Diagnosis(
     val status: String
 )
 
-data class Prescriber(
+@Serializable data class Prescriber(
     val id: Long,
     val professionalType: String?,
     val fullName: String?,

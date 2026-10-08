@@ -26,28 +26,61 @@ class TreatmentsViewModel @Inject constructor(
 
     fun retry() = loadTreatments()
 
+    fun refresh() {
+        treatmentsRequest?.cancel()
+        treatmentsRequest = null
+        loadTreatments(refresh = true)
+    }
+
+    fun loadMore() {
+        val content = (_uiState.value.contentState as? TreatmentsContentState.Success)?.content ?: return
+        if (_uiState.value.isLoadingMore || content.currentPage >= content.lastPage) return
+        loadTreatments(page = content.currentPage + 1)
+    }
+
     fun selectTreatment(id: Long) {
         val treatments = (_uiState.value.contentState as? TreatmentsContentState.Success)
             ?.content?.treatments.orEmpty()
         _uiState.update { it.copy(selectedTreatment = treatments.firstOrNull { item -> item.id == id }) }
     }
 
-    private fun loadTreatments() {
+    fun updateQuery(value: String) = _uiState.update { it.copy(query = value.take(80)) }
+    fun toggleActiveOnly() = _uiState.update { it.copy(activeOnly = !it.activeOnly) }
+
+    private fun loadTreatments(page: Int = 1, refresh: Boolean = false) {
         if (treatmentsRequest?.isActive == true) return
-        _uiState.update { it.copy(contentState = TreatmentsContentState.Loading) }
+        _uiState.update { state ->
+            when {
+                refresh -> state.copy(isRefreshing = true)
+                page > 1 -> state.copy(isLoadingMore = true)
+                else -> state.copy(contentState = TreatmentsContentState.Loading)
+            }
+        }
         treatmentsRequest = viewModelScope.launch {
-            getPatientTreatments()
+            getPatientTreatments(page = page, forceRefresh = refresh)
                 .onSuccess { page ->
                     _uiState.update {
-                        it.copy(contentState = TreatmentsContentState.Success(treatmentsMapper.map(page)))
+                        val mapped = treatmentsMapper.map(page)
+                        val previous = (it.contentState as? TreatmentsContentState.Success)?.content
+                        val content = if (page.meta.currentPage > 1 && previous != null) {
+                            mapped.copy(
+                                treatments = (previous.treatments + mapped.treatments).distinctBy(TreatmentUiModel::id)
+                            )
+                        } else mapped
+                        it.copy(
+                            contentState = TreatmentsContentState.Success(content),
+                            isRefreshing = false,
+                            isLoadingMore = false
+                        )
                     }
                 }
                 .onFailure {
                     _uiState.update {
-                        it.copy(
-                            contentState = TreatmentsContentState.Error(
-                                "No pudimos cargar tus medicamentos. Intenta de nuevo."
-                            )
+                        if (page > 1 || refresh) it.copy(isRefreshing = false, isLoadingMore = false)
+                        else it.copy(
+                            contentState = TreatmentsContentState.Error("No pudimos cargar tus medicamentos. Intenta de nuevo."),
+                            isRefreshing = false,
+                            isLoadingMore = false
                         )
                     }
                 }

@@ -19,7 +19,6 @@ import com.vitaltrace.app.feature.auth.presentation.components.LoginBrandHeader
 import com.vitaltrace.app.feature.auth.presentation.components.LoginForm
 import com.vitaltrace.app.feature.auth.presentation.components.LoginSupportNotice
 import com.vitaltrace.app.ui.theme.VitalTraceTheme
-import com.vitaltrace.app.ui.theme.VitalTraceWarmBackground
 
 @Composable
 fun LoginScreen(
@@ -52,6 +51,7 @@ fun LoginScreen(
         onEmailChange = viewModel::onEmailChange,
         onPasswordChange = viewModel::onPasswordChange,
         onPasswordVisibilityChange = viewModel::onPasswordVisibilityChange,
+        onRememberMeChange = viewModel::onRememberMeChange,
         onLoginClick = {
             focusManager.clearFocus()
             viewModel.login()
@@ -67,12 +67,13 @@ private fun LoginContent(
     onEmailChange: (String) -> Unit,
     onPasswordChange: (String) -> Unit,
     onPasswordVisibilityChange: () -> Unit,
+    onRememberMeChange: (Boolean) -> Unit,
     onLoginClick: () -> Unit,
     onForgotPasswordClick: () -> Unit,
     onFirstAccessClick: () -> Unit
 ) {
     Scaffold(
-        containerColor = VitalTraceWarmBackground
+        containerColor = androidx.compose.material3.MaterialTheme.colorScheme.background
     ) { innerPadding ->
         Column(
             modifier = Modifier
@@ -87,6 +88,7 @@ private fun LoginContent(
                 onEmailChange = onEmailChange,
                 onPasswordChange = onPasswordChange,
                 onPasswordVisibilityChange = onPasswordVisibilityChange,
+                onRememberMeChange = onRememberMeChange,
                 onLoginClick = onLoginClick,
                 onForgotPasswordClick = onForgotPasswordClick,
                 onFirstAccessClick = onFirstAccessClick
@@ -108,6 +110,7 @@ private fun LoginScreenPreview() {
             onEmailChange = {},
             onPasswordChange = {},
             onPasswordVisibilityChange = {},
+            onRememberMeChange = {},
             onLoginClick = {},
             onForgotPasswordClick = {},
             onFirstAccessClick = {}

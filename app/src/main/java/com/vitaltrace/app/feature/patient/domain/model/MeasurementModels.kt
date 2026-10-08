@@ -1,5 +1,8 @@
 package com.vitaltrace.app.feature.patient.domain.model
 
+import kotlinx.serialization.Serializable
+
+@Serializable
 data class Measurement(
     val id: Long,
     val patientId: Long,
@@ -18,12 +21,12 @@ data class Measurement(
     val measurementType: MeasurementType?
 )
 
-data class MeasurementReviewer(
+@Serializable data class MeasurementReviewer(
     val id: Long,
     val fullName: String?
 )
 
-data class MeasurementType(
+@Serializable data class MeasurementType(
     val id: Long,
     val name: String,
     val baseUnit: String,

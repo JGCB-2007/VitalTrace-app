@@ -10,6 +10,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Text
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -37,7 +38,7 @@ fun LatestMeasurementCard(
         onClick = onClick,
         modifier = modifier.fillMaxWidth(),
         shape = RoundedCornerShape(26.dp),
-        colors = CardDefaults.cardColors(containerColor = Color.White),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
         border = BorderStroke(2.dp, VitalTraceMint),
         elevation = CardDefaults.cardElevation(defaultElevation = 5.dp)
     ) {
@@ -52,7 +53,7 @@ fun LatestMeasurementCard(
             ) {
                 Text(
                     text = stringResource(R.string.measurements_latest),
-                    color = VitalTraceTeal,
+                    color = MaterialTheme.colorScheme.secondary,
                     fontSize = 15.sp,
                     fontWeight = FontWeight.ExtraBold,
                     letterSpacing = 0.5.sp
@@ -61,7 +62,7 @@ fun LatestMeasurementCard(
             }
             Text(
                 text = localizedMeasurementTypeLabel(measurement.typeName),
-                color = VitalTraceNavy,
+                color = MaterialTheme.colorScheme.onSurface,
                 fontSize = 18.sp,
                 fontWeight = FontWeight.Bold,
                 maxLines = 1,
@@ -70,7 +71,7 @@ fun LatestMeasurementCard(
             Row(verticalAlignment = Alignment.Bottom) {
                 Text(
                     text = measurement.value,
-                    color = VitalTraceNavy,
+                    color = MaterialTheme.colorScheme.onSurface,
                     fontFamily = FontFamily.Serif,
                     fontSize = 38.sp,
                     fontWeight = FontWeight.Bold,
@@ -80,13 +81,13 @@ fun LatestMeasurementCard(
                 Text(
                     text = measurement.unit,
                     modifier = Modifier.padding(start = 10.dp, bottom = 4.dp),
-                    color = Color(0xFF53636D),
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
                     fontSize = 20.sp
                 )
             }
             Text(
                 text = "${measurement.date} · ${measurement.time}",
-                color = Color(0xFF53636D),
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
                 fontSize = 16.sp,
                 maxLines = 2
             )

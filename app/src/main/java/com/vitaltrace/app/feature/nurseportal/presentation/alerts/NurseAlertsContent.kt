@@ -1,15 +1,19 @@
 package com.vitaltrace.app.feature.nurseportal.presentation
 
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.horizontalScroll
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.History
+import androidx.compose.material.icons.rounded.Search
 import androidx.compose.material.icons.rounded.Warning
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -20,9 +24,13 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.vitaltrace.app.core.presentation.components.ObservedPatientHeader
+<<<<<<< HEAD
 import com.vitaltrace.app.core.presentation.localization.EnumDisplayEs
 import com.vitaltrace.app.core.presentation.localization.SpanishDateTime
 import com.vitaltrace.app.feature.home.presentation.components.HomeErrorState
+=======
+import com.vitaltrace.app.core.presentation.formatClinicalDateTime
+>>>>>>> develop
 import com.vitaltrace.app.feature.measurements.presentation.form.components.MeasurementNoteField
 import com.vitaltrace.app.feature.nurseportal.domain.model.NurseAlert
 import com.vitaltrace.app.feature.nurseportal.domain.model.NurseAlertHistory
@@ -38,12 +46,62 @@ internal fun NurseAlertsContent(state: NursePortalUiState, viewModel: NursePorta
         NurseAlertsEmptyCard(modifier)
         return
     }
+    var query by rememberSaveable { mutableStateOf("") }
+    var selectedSeverity by rememberSaveable { mutableStateOf<String?>(null) }
+    val severities = remember(state.alerts) { state.alerts.map { it.severity.uppercase() }.distinct().sorted() }
+    val visibleAlerts = remember(state.alerts, query, selectedSeverity) {
+        state.alerts.filter { alert ->
+            (selectedSeverity == null || alert.severity.equals(selectedSeverity, ignoreCase = true)) &&
+                (query.isBlank() || listOf(
+                    alert.description,
+                    alert.type,
+                    state.patients.firstOrNull { it.id == alert.patientId }?.fullName.orEmpty()
+                ).any { it.contains(query.trim(), ignoreCase = true) })
+        }
+    }
     LazyColumn(
         modifier = modifier.fillMaxSize(),
         contentPadding = PaddingValues(start = 24.dp, top = 20.dp, end = 24.dp, bottom = 30.dp),
         verticalArrangement = Arrangement.spacedBy(14.dp)
     ) {
+<<<<<<< HEAD
         items(state.nurseAlerts, key = NurseAlert::id) { alert ->
+=======
+        item {
+            OutlinedTextField(
+                value = query,
+                onValueChange = { query = it },
+                modifier = Modifier.fillMaxWidth(),
+                leadingIcon = { Icon(Icons.Rounded.Search, null) },
+                placeholder = { Text("Buscar por paciente, tipo o descripción") },
+                singleLine = true,
+                shape = RoundedCornerShape(18.dp)
+            )
+        }
+        item {
+            Row(
+                Modifier.fillMaxWidth().horizontalScroll(rememberScrollState()),
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                FilterChip(
+                    selected = selectedSeverity == null,
+                    onClick = { selectedSeverity = null },
+                    label = { Text("Todas") }
+                )
+                severities.forEach { severity ->
+                    FilterChip(
+                        selected = selectedSeverity == severity,
+                        onClick = { selectedSeverity = severity },
+                        label = { Text(severityLabel(severity)) }
+                    )
+                }
+            }
+        }
+        if (visibleAlerts.isEmpty()) {
+            item { NurseInlineEmpty(Icons.Rounded.Search, "No encontramos alertas con estos filtros.") }
+        }
+        items(visibleAlerts, key = NurseAlert::id) { alert ->
+>>>>>>> develop
             NurseAlertCard(alert, state.patients.firstOrNull { it.id == alert.patientId }?.fullName) { viewModel.loadAlert(alert.id) }
         }
     }
@@ -105,13 +163,13 @@ private fun NurseAlertsEmptyCard(modifier: Modifier = Modifier) {
 @Composable
 internal fun NurseAlertCard(alert: NurseAlert, patientName: String? = null, onClick: () -> Unit) {
     val colors = severityColors(alert.severity)
-    Card(onClick = onClick, modifier = Modifier.fillMaxWidth(), shape = RoundedCornerShape(26.dp), colors = CardDefaults.cardColors(Color.White), elevation = CardDefaults.cardElevation(5.dp)) {
+    Card(onClick = onClick, modifier = Modifier.fillMaxWidth(), shape = RoundedCornerShape(26.dp), colors = CardDefaults.cardColors(MaterialTheme.colorScheme.surface), elevation = CardDefaults.cardElevation(5.dp)) {
         Column(Modifier.padding(22.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Surface(color = colors.first, shape = RoundedCornerShape(18.dp)) { Icon(Icons.Rounded.Warning, null, Modifier.padding(14.dp), tint = colors.second) }
                 Column(Modifier.weight(1f).padding(start = 14.dp)) {
-                    patientName?.let { Text(it, color = VitalTraceNavy, fontFamily = FontFamily.Serif, fontSize = 20.sp, fontWeight = FontWeight.Bold) }
-                    Text(alert.description, color = Color(0xFF53636D), maxLines = 2, overflow = TextOverflow.Ellipsis)
+                    patientName?.let { Text(it, color = MaterialTheme.colorScheme.onSurface, fontFamily = FontFamily.Serif, fontSize = 20.sp, fontWeight = FontWeight.Bold) }
+                    Text(alert.description, color = MaterialTheme.colorScheme.onSurfaceVariant, maxLines = 2, overflow = TextOverflow.Ellipsis)
                 }
             }
             Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween, verticalAlignment = Alignment.CenterVertically) {
@@ -119,7 +177,11 @@ internal fun NurseAlertCard(alert: NurseAlert, patientName: String? = null, onCl
                     NurseStatusChip(EnumDisplayEs.alertSeverity(alert.severity), colors.first, colors.second)
                     NurseStatusChip(EnumDisplayEs.alertStatus(alert.status), Color(0xFFDDF4F2), VitalTraceTeal)
                 }
+<<<<<<< HEAD
                 Text(spanishTimestamp(alert.generatedAt), color = Color(0xFF53636D), style = MaterialTheme.typography.bodySmall)
+=======
+                Text(formatClinicalDateTime(alert.generatedAt), color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodySmall)
+>>>>>>> develop
             }
         }
     }
@@ -131,7 +193,7 @@ internal fun NurseAlertDetailSheet(alert: NurseAlert, state: NursePortalUiState,
     var action by remember { mutableStateOf<String?>(null) }
     ModalBottomSheet(
         onDismissRequest = viewModel::dismissAlert,
-        containerColor = VitalTraceWarmBackground,
+        containerColor = MaterialTheme.colorScheme.background,
         scrimColor = Color(0x990C1C29),
         shape = RoundedCornerShape(topStart = 36.dp, topEnd = 36.dp)
     ) {
@@ -140,22 +202,28 @@ internal fun NurseAlertDetailSheet(alert: NurseAlert, state: NursePortalUiState,
             contentPadding = PaddingValues(start = 28.dp, end = 28.dp, bottom = 30.dp),
             verticalArrangement = Arrangement.spacedBy(18.dp)
         ) {
-            item { Text("Detalle de alerta", color = VitalTraceTeal, fontSize = 16.sp, fontWeight = FontWeight.ExtraBold, letterSpacing = 0.7.sp) }
+            item { Text("Detalle de alerta", color = MaterialTheme.colorScheme.secondary, fontSize = 16.sp, fontWeight = FontWeight.ExtraBold, letterSpacing = 0.7.sp) }
             item {
                 val patient = state.patients.firstOrNull { it.id == alert.patientId } ?: state.selectedPatient
                 ObservedPatientHeader(nurseGreeting(), state.summary?.nurse?.fullName.orEmpty(), patient?.fullName.orEmpty(), patient?.recordNumber, false, {})
             }
             item {
-                Card(Modifier.fillMaxWidth(), shape = RoundedCornerShape(24.dp), colors = CardDefaults.cardColors(Color.White), elevation = CardDefaults.cardElevation(4.dp)) {
+                Card(Modifier.fillMaxWidth(), shape = RoundedCornerShape(24.dp), colors = CardDefaults.cardColors(MaterialTheme.colorScheme.surface), elevation = CardDefaults.cardElevation(4.dp)) {
                     Column(Modifier.padding(22.dp), verticalArrangement = Arrangement.spacedBy(14.dp)) {
                         Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                             val colors = severityColors(alert.severity)
                             NurseStatusChip(EnumDisplayEs.alertSeverity(alert.severity), colors.first, colors.second)
                             NurseStatusChip(EnumDisplayEs.alertStatus(alert.status), Color(0xFFDDF4F2), VitalTraceTeal)
                         }
+<<<<<<< HEAD
                         Text(alert.description, color = VitalTraceNavy, fontFamily = FontFamily.Serif, fontSize = 21.sp, fontWeight = FontWeight.Bold)
                         NurseDetailRow("Tipo", EnumDisplayEs.alertType(alert.type))
                         NurseDetailRow("Fecha", spanishTimestamp(alert.generatedAt))
+=======
+                        Text(alert.description, color = MaterialTheme.colorScheme.onSurface, fontFamily = FontFamily.Serif, fontSize = 21.sp, fontWeight = FontWeight.Bold)
+                        NurseDetailRow("Tipo", alert.type)
+                        NurseDetailRow("Fecha", formatClinicalDateTime(alert.generatedAt))
+>>>>>>> develop
                         alert.measurementId?.let { NurseDetailRow("Medición asociada", "#$it") }
                     }
                 }
@@ -170,14 +238,14 @@ internal fun NurseAlertDetailSheet(alert: NurseAlert, state: NursePortalUiState,
                         onClick = { action = "CLASSIFY" },
                         modifier = Modifier.fillMaxWidth().height(64.dp),
                         shape = RoundedCornerShape(18.dp),
-                        colors = ButtonDefaults.buttonColors(containerColor = VitalTraceNavy)
+                        colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary)
                     ) { Text("Clasificar", fontFamily = FontFamily.Serif, fontSize = 20.sp, fontWeight = FontWeight.Bold) }
                     OutlinedButton(
                         onClick = { action = "ESCALATE" },
                         modifier = Modifier.fillMaxWidth().height(64.dp),
                         shape = RoundedCornerShape(18.dp),
-                        border = BorderStroke(1.dp, Color(0xFFE1DDD3)),
-                        colors = ButtonDefaults.outlinedButtonColors(contentColor = VitalTraceNavy)
+                        border = BorderStroke(1.dp, MaterialTheme.colorScheme.outline),
+                        colors = ButtonDefaults.outlinedButtonColors(contentColor = MaterialTheme.colorScheme.primary)
                     ) { Text("Escalar", fontFamily = FontFamily.Serif, fontSize = 20.sp, fontWeight = FontWeight.Bold) }
                 }
             }
@@ -202,18 +270,19 @@ private fun AlertActionDialog(title: String, message: String, confirmLabel: Stri
     var comment by remember { mutableStateOf("") }
     AlertDialog(
         onDismissRequest = onDismiss,
-        icon = { Icon(Icons.Rounded.Warning, null, tint = VitalTraceTeal) },
-        title = { Text(title, color = VitalTraceNavy, fontFamily = FontFamily.Serif, fontWeight = FontWeight.Bold) },
-        text = { Column(verticalArrangement = Arrangement.spacedBy(14.dp)) { Text(message, color = Color(0xFF53636D)); MeasurementNoteField(comment, { comment = it }) } },
-        confirmButton = { Button({ onConfirm(comment.takeIf(String::isNotBlank)) }, shape = RoundedCornerShape(16.dp), colors = ButtonDefaults.buttonColors(containerColor = VitalTraceNavy)) { Text(confirmLabel) } },
-        dismissButton = { TextButton(onDismiss) { Text("Cancelar", color = VitalTraceTeal, fontWeight = FontWeight.Bold) } }
+        icon = { Icon(Icons.Rounded.Warning, null, tint = MaterialTheme.colorScheme.secondary) },
+        title = { Text(title, color = MaterialTheme.colorScheme.onSurface, fontFamily = FontFamily.Serif, fontWeight = FontWeight.Bold) },
+        text = { Column(verticalArrangement = Arrangement.spacedBy(14.dp)) { Text(message, color = MaterialTheme.colorScheme.onSurfaceVariant); MeasurementNoteField(comment, { comment = it }) } },
+        confirmButton = { Button({ onConfirm(comment.takeIf(String::isNotBlank)) }, shape = RoundedCornerShape(16.dp), colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary)) { Text(confirmLabel) } },
+        dismissButton = { TextButton(onDismiss) { Text("Cancelar", color = MaterialTheme.colorScheme.secondary, fontWeight = FontWeight.Bold) } }
     )
 }
 
 @Composable
 private fun AlertHistoryCard(item: NurseAlertHistory) {
-    Card(Modifier.fillMaxWidth(), shape = RoundedCornerShape(20.dp), colors = CardDefaults.cardColors(Color.White), elevation = CardDefaults.cardElevation(3.dp)) {
+    Card(Modifier.fillMaxWidth(), shape = RoundedCornerShape(20.dp), colors = CardDefaults.cardColors(MaterialTheme.colorScheme.surface), elevation = CardDefaults.cardElevation(3.dp)) {
         Column(Modifier.padding(18.dp), verticalArrangement = Arrangement.spacedBy(6.dp)) {
+<<<<<<< HEAD
             Text(EnumDisplayEs.alertAction(item.action), color = VitalTraceNavy, fontWeight = FontWeight.Bold)
             Text(
                 listOfNotNull(item.previousStatus, item.newStatus)
@@ -223,6 +292,12 @@ private fun AlertHistoryCard(item: NurseAlertHistory) {
             )
             item.comment?.let { Text(it, color = Color(0xFF53636D)) }
             item.createdAt?.let { Text(spanishTimestamp(it), color = Color(0xFF53636D), style = MaterialTheme.typography.bodySmall) }
+=======
+            Text(item.action, color = MaterialTheme.colorScheme.onSurface, fontWeight = FontWeight.Bold)
+            Text(listOfNotNull(item.previousStatus, item.newStatus).joinToString(" → "), color = MaterialTheme.colorScheme.secondary)
+            item.comment?.let { Text(it, color = MaterialTheme.colorScheme.onSurfaceVariant) }
+            item.createdAt?.let { Text(it, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodySmall) }
+>>>>>>> develop
         }
     }
 }
@@ -239,4 +314,12 @@ private fun severityColors(value: String): Pair<Color, Color> = when (value.uppe
     "HIGH" -> Color(0xFFFFE8D4) to Color(0xFF9A4F11)
     "MODERATE" -> Color(0xFFFFF2CC) to Color(0xFF796000)
     else -> Color(0xFFDDF4F2) to VitalTraceTeal
+}
+
+private fun severityLabel(value: String): String = when (value.uppercase()) {
+    "CRITICAL" -> "Críticas"
+    "HIGH" -> "Altas"
+    "MODERATE" -> "Moderadas"
+    "LOW" -> "Bajas"
+    else -> value.lowercase().replaceFirstChar { it.titlecase() }
 }

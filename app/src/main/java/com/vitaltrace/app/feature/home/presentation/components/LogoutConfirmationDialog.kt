@@ -32,13 +32,13 @@ fun LogoutConfirmationDialog(
                 Icons.AutoMirrored.Rounded.ExitToApp,
                 contentDescription = null,
                 modifier = Modifier.size(28.dp),
-                tint = VitalTraceTeal
+                tint = MaterialTheme.colorScheme.secondary
             )
         },
         title = {
             Text(
                 "¿Cerrar sesión?",
-                color = VitalTraceNavy,
+                color = MaterialTheme.colorScheme.onSurface,
                 fontFamily = FontFamily.Serif,
                 fontWeight = FontWeight.Bold
             )
@@ -70,12 +70,12 @@ fun LogoutConfirmationDialog(
             TextButton(
                 onClick = onDismiss,
                 enabled = true,
-                colors = ButtonDefaults.textButtonColors(contentColor = VitalTraceTeal)
+                colors = ButtonDefaults.textButtonColors(contentColor = MaterialTheme.colorScheme.secondary)
             ) {
-                Text("Cancelar", color = VitalTraceTeal, fontWeight = FontWeight.Bold)
+                Text("Cancelar", color = MaterialTheme.colorScheme.secondary, fontWeight = FontWeight.Bold)
             }
         },
-        containerColor = Color.White,
+        containerColor = MaterialTheme.colorScheme.surface,
         shape = RoundedCornerShape(26.dp)
     )
 }
