@@ -1,38 +1,21 @@
-# Gradle and Kotlin
-.gradle/
-.kotlin/
-**/build/
-
-# Local Android configuration
-local.properties
-captures/
-.externalNativeBuild/
-.cxx/
-
-# Android Studio and IntelliJ local state
 *.iml
-/.idea/caches/
-/.idea/libraries/
+.gradle
+/local.properties
+/.idea/caches
+/.idea/libraries
 /.idea/modules.xml
 /.idea/workspace.xml
 /.idea/navEditor.xml
 /.idea/assetWizardSettings.xml
-/.idea/deviceManager.xml
-/.idea/deploymentTargetSelector.xml
-/.idea/markdown.xml
-/.idea/vcs.xml
-
-# Release signing material — never commit private keys or credentials
-*.jks
-*.keystore
-key.properties
-keystore.properties
-
-# Generated local artifacts
-/tmp/
-/output/
-/app/release/
-
-# Operating system files
 .DS_Store
-Thumbs.db
+/build
+/captures
+.externalNativeBuild
+.cxx
+local.properties
+vitaltrace-release.jks
+app/release/ 
+. i d e a / d e v i c e M a n a g e r . x m l
+
+ 
+ 
