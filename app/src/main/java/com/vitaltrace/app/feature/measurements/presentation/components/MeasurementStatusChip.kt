@@ -4,6 +4,7 @@ import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Check
@@ -29,6 +30,7 @@ import com.vitaltrace.app.ui.theme.VitalTraceTeal
 @Composable
 fun MeasurementStatusChip(
     status: MeasurementStatus,
+    compact: Boolean = false,
     modifier: Modifier = Modifier
 ) {
     val presentation = statusPresentation(status)
@@ -39,18 +41,21 @@ fun MeasurementStatusChip(
         shape = RoundedCornerShape(50)
     ) {
         Row(
-            modifier = Modifier.padding(horizontal = 14.dp, vertical = 8.dp),
-            horizontalArrangement = Arrangement.spacedBy(7.dp),
+            modifier = Modifier.padding(
+                horizontal = if (compact) 10.dp else 14.dp,
+                vertical = if (compact) 6.dp else 8.dp
+            ),
+            horizontalArrangement = Arrangement.spacedBy(if (compact) 5.dp else 7.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
             Icon(
                 imageVector = presentation.icon,
                 contentDescription = null,
-                modifier = Modifier.padding(1.dp)
+                modifier = Modifier.size(if (compact) 18.dp else 24.dp)
             )
             Text(
                 text = stringResource(presentation.label),
-                fontSize = 15.sp,
+                fontSize = if (compact) 13.sp else 15.sp,
                 fontWeight = FontWeight.Bold,
                 maxLines = 1
             )

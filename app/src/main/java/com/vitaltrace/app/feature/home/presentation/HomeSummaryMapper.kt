@@ -5,6 +5,7 @@ import com.vitaltrace.app.feature.patient.domain.model.Measurement
 import com.vitaltrace.app.feature.patient.domain.model.PatientSummary
 import com.vitaltrace.app.core.presentation.formatClinicalDateTime
 import java.math.RoundingMode
+import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime
 import java.time.format.DateTimeFormatter
@@ -107,8 +108,18 @@ class HomeSummaryMapper @Inject constructor() {
             MeasurementTrendPoint(
                 normalizedValue = if (range == 0f) 0.65f else 0.25f + ((value - minimum) / range) * 0.75f,
                 displayValue = measurement.formattedValue(),
-                dateLabel = measuredAt.substringBefore(" ").takeLast(5)
+                dateLabel = compactTrendDateLabel(measuredAt)
             )
+        }
+    }
+
+    private fun compactTrendDateLabel(value: String): String {
+        val rawDate = value.trim().substringBefore(" ")
+        return runCatching {
+            LocalDate.parse(rawDate, DateTimeFormatter.ISO_LOCAL_DATE)
+                .format(DateTimeFormatter.ofPattern("d/M", Locale.getDefault()))
+        }.getOrElse {
+            rawDate.takeLast(5).replace('-', '/').trimStart('0')
         }
     }
 

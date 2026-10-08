@@ -26,6 +26,7 @@ import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.vitaltrace.app.R
 import com.vitaltrace.app.feature.home.presentation.RecentMeasurementUiModel
@@ -68,39 +69,48 @@ fun RecentPressureCard(
                 )
                 return@Column
             }
+            Text(
+                text = measurement.typeName,
+                color = HomeSupportingText,
+                style = MaterialTheme.typography.titleMedium,
+                maxLines = 2,
+                overflow = TextOverflow.Ellipsis,
+                modifier = Modifier.padding(top = 8.dp)
+            )
             Row(
-                modifier = Modifier.padding(top = 8.dp),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 4.dp),
                 verticalAlignment = Alignment.Bottom
             ) {
-                Column(modifier = Modifier.weight(1f)) {
-                    Text(
-                        text = measurement.typeName,
-                        color = HomeSupportingText,
-                        style = MaterialTheme.typography.titleMedium
-                    )
-                    Row(verticalAlignment = Alignment.Bottom) {
-                        Text(
-                            text = measurement.value,
-                            color = HomeNavy,
-                            fontFamily = FontFamily.Serif,
-                            fontWeight = FontWeight.Bold,
-                            style = MaterialTheme.typography.displayMedium
-                        )
-                        Text(
-                            text = measurement.unit,
-                            color = HomeSupportingText,
-                            style = MaterialTheme.typography.titleMedium,
-                            modifier = Modifier.padding(start = 8.dp, bottom = 8.dp)
-                        )
-                    }
-                }
                 Text(
-                    text = measurement.date,
+                    text = measurement.value,
+                    color = HomeNavy,
+                    fontFamily = FontFamily.Serif,
+                    fontWeight = FontWeight.Bold,
+                    style = MaterialTheme.typography.displayMedium,
+                    maxLines = 1,
+                    softWrap = false,
+                    overflow = TextOverflow.Ellipsis,
+                    modifier = Modifier.weight(1f, fill = false)
+                )
+                Text(
+                    text = measurement.unit,
                     color = HomeSupportingText,
-                    style = MaterialTheme.typography.bodyMedium,
-                    modifier = Modifier.padding(bottom = 9.dp)
+                    style = MaterialTheme.typography.titleMedium,
+                    maxLines = 1,
+                    softWrap = false,
+                    modifier = Modifier.padding(start = 8.dp, bottom = 8.dp)
                 )
             }
+            Text(
+                text = measurement.date,
+                color = HomeSupportingText,
+                style = MaterialTheme.typography.bodyMedium,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+                modifier = Modifier.padding(top = 2.dp)
+            )
             if (measurement.trendPoints.isNotEmpty()) {
                 Text(
                     text = stringResource(R.string.home_measurement_trend, measurement.typeName),
@@ -174,6 +184,8 @@ private fun MeasurementBarChart(
                     text = point.dateLabel,
                     color = HomeSupportingText,
                     style = MaterialTheme.typography.labelSmall,
+                    maxLines = 1,
+                    softWrap = false,
                     modifier = Modifier.padding(top = 4.dp)
                 )
             }

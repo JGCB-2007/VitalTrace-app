@@ -62,6 +62,7 @@ class HomeViewModelTest {
             assertEquals("Confirmada", success.content.nextAppointment?.status)
             assertEquals("120", success.content.recentMeasurement?.value)
             assertEquals(listOf(0.65f), success.content.recentMeasurement?.trendPoints?.map { it.normalizedValue })
+            assertEquals(listOf("29/7"), success.content.recentMeasurement?.trendPoints?.map { it.dateLabel })
             assertEquals(null, success.content.followUpStatus)
         }
     }

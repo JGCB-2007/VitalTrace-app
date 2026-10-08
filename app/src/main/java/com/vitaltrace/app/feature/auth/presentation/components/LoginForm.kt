@@ -1,10 +1,13 @@
 package com.vitaltrace.app.feature.auth.presentation.components
 
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.selection.toggleable
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
@@ -36,6 +39,7 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
+import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.unit.dp
 import com.vitaltrace.app.R
 import com.vitaltrace.app.feature.auth.presentation.LoginUiState
@@ -149,35 +153,48 @@ fun LoginForm(
                 .padding(top = 14.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Checkbox(
-                checked = uiState.rememberMe,
-                onCheckedChange = onRememberMeChange,
-                enabled = !uiState.isLoading,
-                colors = CheckboxDefaults.colors(
-                    checkedColor = MaterialTheme.colorScheme.secondary,
-                    uncheckedColor = MaterialTheme.colorScheme.outline
+            Row(
+                modifier = Modifier.toggleable(
+                    value = uiState.rememberMe,
+                    enabled = !uiState.isLoading,
+                    role = Role.Checkbox,
+                    onValueChange = onRememberMeChange
+                ),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Checkbox(
+                    checked = uiState.rememberMe,
+                    onCheckedChange = null,
+                    enabled = !uiState.isLoading,
+                    colors = CheckboxDefaults.colors(
+                        checkedColor = MaterialTheme.colorScheme.secondary,
+                        uncheckedColor = MaterialTheme.colorScheme.outline
+                    )
                 )
-            )
 
-            Text(
-                text = stringResource(R.string.login_remember_me),
-                color = MaterialTheme.colorScheme.onBackground,
-                fontWeight = FontWeight.SemiBold,
-                style = MaterialTheme.typography.bodyLarge,
-                modifier = Modifier
-                    .weight(1f)
-                    .padding(start = 10.dp)
-            )
+                Text(
+                    text = stringResource(R.string.login_remember_me),
+                    color = MaterialTheme.colorScheme.onBackground,
+                    fontWeight = FontWeight.SemiBold,
+                    maxLines = 1,
+                    style = MaterialTheme.typography.bodyMedium,
+                    modifier = Modifier.padding(start = 2.dp)
+                )
+            }
+
+            Spacer(Modifier.weight(1f))
 
             TextButton(
                 onClick = onForgotPasswordClick,
-                enabled = !uiState.isLoading
+                enabled = !uiState.isLoading,
+                contentPadding = PaddingValues(horizontal = 4.dp, vertical = 0.dp)
             ) {
                 Text(
                     text = stringResource(R.string.login_forgot_password),
                     color = MaterialTheme.colorScheme.secondary,
                     fontWeight = FontWeight.Bold,
-                    style = MaterialTheme.typography.bodyLarge
+                    maxLines = 1,
+                    style = MaterialTheme.typography.bodyMedium
                 )
             }
         }

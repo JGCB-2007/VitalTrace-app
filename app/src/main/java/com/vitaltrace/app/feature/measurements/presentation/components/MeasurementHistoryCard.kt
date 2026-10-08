@@ -20,18 +20,15 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.vitaltrace.app.feature.measurements.presentation.MeasurementUiModel
-import com.vitaltrace.app.ui.theme.VitalTraceNavy
-import com.vitaltrace.app.ui.theme.VitalTraceTeal
 import com.vitaltrace.app.core.presentation.localizedMeasurementTypeLabel
-import androidx.compose.ui.text.style.TextOverflow
+import com.vitaltrace.app.feature.measurements.presentation.MeasurementUiModel
 
 @Composable
 fun MeasurementHistoryCard(
@@ -45,7 +42,7 @@ fun MeasurementHistoryCard(
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
         elevation = CardDefaults.cardElevation(defaultElevation = 5.dp)
     ) {
-        Column(modifier = Modifier.padding(horizontal = 24.dp, vertical = 12.dp)) {
+        Column(modifier = Modifier.padding(horizontal = 20.dp, vertical = 12.dp)) {
             measurements.forEachIndexed { index, measurement ->
                 MeasurementHistoryItem(
                     measurement = measurement,
@@ -73,12 +70,14 @@ private fun MeasurementHistoryItem(
             .clickable(onClick = onClick)
             .semantics { contentDescription = description },
         horizontalArrangement = Arrangement.spacedBy(12.dp),
-        verticalAlignment = Alignment.CenterVertically
+        verticalAlignment = Alignment.Top
     ) {
         Surface(
-            modifier = Modifier.size(52.dp),
+            modifier = Modifier
+                .padding(top = 2.dp)
+                .size(48.dp),
             color = MaterialTheme.colorScheme.secondaryContainer,
-            shape = RoundedCornerShape(18.dp)
+            shape = RoundedCornerShape(16.dp)
         ) {
             Icon(
                 imageVector = Icons.Rounded.MonitorHeart,
@@ -103,7 +102,7 @@ private fun MeasurementHistoryItem(
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 fontSize = 14.sp,
                 fontWeight = FontWeight.Bold,
-                maxLines = 1,
+                maxLines = 2,
                 overflow = TextOverflow.Ellipsis
             )
             Text(
@@ -113,7 +112,11 @@ private fun MeasurementHistoryItem(
                 maxLines = 2,
                 overflow = TextOverflow.Ellipsis
             )
+            MeasurementStatusChip(
+                status = measurement.status,
+                compact = true,
+                modifier = Modifier.padding(top = 8.dp)
+            )
         }
-        MeasurementStatusChip(status = measurement.status)
     }
 }
