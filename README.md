@@ -8,9 +8,11 @@
 
 <p>
   <img alt="Android" src="https://img.shields.io/badge/Android-Application-3DDC84?style=for-the-badge&logo=android&logoColor=white">
-  <img alt="Kotlin" src="https://img.shields.io/badge/Kotlin-2.2-7F52FF?style=for-the-badge&logo=kotlin&logoColor=white">
+  <img alt="Kotlin" src="https://img.shields.io/badge/Kotlin-2.2.10-7F52FF?style=for-the-badge&logo=kotlin&logoColor=white">
   <img alt="Jetpack Compose" src="https://img.shields.io/badge/Jetpack_Compose-Material_3-4285F4?style=for-the-badge">
   <img alt="Hilt" src="https://img.shields.io/badge/DI-Hilt-017D84?style=for-the-badge">
+  <img alt="Room" src="https://img.shields.io/badge/Database-Room-4285F4?style=for-the-badge">
+  <img alt="WorkManager" src="https://img.shields.io/badge/Background-WorkManager-3DDC84?style=for-the-badge">
 </p>
 
 <p>
@@ -43,6 +45,7 @@ La aplicación registra, consulta y presenta información para <strong>seguimien
 <td>
 
 <a href="#-sobre-el-proyecto">Sobre el proyecto</a><br>
+<a href="#-funcionalidades-implementadas">Funcionalidades implementadas</a><br>
 <a href="#-stack-tecnológico">Stack tecnológico</a><br>
 <a href="#-arquitectura">Arquitectura</a><br>
 <a href="#-estructura-de-la-aplicación">Estructura de la aplicación</a><br>
@@ -135,6 +138,69 @@ Toda la lógica clínica permanece centralizada en la <strong>VitalTrace REST AP
 
 <hr>
 
+<h2>✨ Funcionalidades implementadas</h2>
+
+<table>
+<thead>
+<tr>
+<th align="left">Área</th>
+<th align="left">Capacidades actuales</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Inicio y personalización</strong></td>
+<td>Onboarding inicial, tema claro/oscuro/sistema, texto ampliado, avatar local y protección opcional contra capturas de pantalla.</td>
+</tr>
+<tr>
+<td><strong>Autenticación</strong></td>
+<td>Inicio de sesión con opción de recordar, restauración y validación de sesión, cierre de sesión, primer acceso y recuperación de contraseña.</td>
+</tr>
+<tr>
+<td><strong>Experiencia multirrol</strong></td>
+<td>Portales móviles para paciente, familiar y enfermería; acceso directo cuando existe un solo rol y selector de portal cuando el usuario posee varios.</td>
+</tr>
+<tr>
+<td><strong>Panel del paciente</strong></td>
+<td>Resumen de salud, alertas, próxima cita, medición reciente con tendencia, tratamientos activos, accesos rápidos y actualización manual.</td>
+</tr>
+<tr>
+<td><strong>Mediciones</strong></td>
+<td>Registro y detalle, paginación, búsqueda, filtros por revisión/tipo/período/riesgo, gráficos e indicadores, preferencias recordadas y recordatorios diarios configurables con posposición.</td>
+</tr>
+<tr>
+<td><strong>Citas</strong></td>
+<td>Próximas citas e historial, búsqueda, detalle, paginación, apertura en el calendario del dispositivo y recordatorios a 10, 7, 5, 3 y 1 día.</td>
+</tr>
+<tr>
+<td><strong>Historia clínica</strong></td>
+<td>Diagnósticos, tratamientos, mediciones y evoluciones clínicas; línea de tiempo con búsqueda/filtros, educación de MedlinePlus y exportación del expediente a PDF.</td>
+</tr>
+<tr>
+<td><strong>Tratamientos y notificaciones</strong></td>
+<td>Listado y detalle de tratamientos con búsqueda/filtro de activos; centro de notificaciones, conteo de no leídas y acciones para marcar una o todas como leídas.</td>
+</tr>
+<tr>
+<td><strong>Familiares autorizados</strong></td>
+<td>El paciente puede autorizar o revocar accesos. El portal familiar permite seleccionar un paciente vinculado y consultar su resumen, citas, mediciones, tratamientos e historia clínica.</td>
+</tr>
+<tr>
+<td><strong>Portal de enfermería</strong></td>
+<td>Resumen operativo, búsqueda y selección de pacientes, perfil y resumen clínico, citas, mediciones y registro de nuevas mediciones, diagnósticos, tratamientos, historia clínica y gestión de alertas.</td>
+</tr>
+<tr>
+<td><strong>Modo offline</strong></td>
+<td>Caché en memoria y Room para citas, mediciones y tratamientos, con indicadores visuales cuando se presentan datos almacenados sin conexión.</td>
+</tr>
+<tr>
+<td><strong>Accesibilidad y calidad</strong></td>
+<td>Diseño adaptable, estados de carga tipo skeleton, descripciones semánticas, texto ampliado y pruebas instrumentadas de accesibilidad.</td>
+</tr>
+</tbody>
+</table>
+
+<hr>
+
 <h2>⚙️ Stack tecnológico</h2>
 
 <table>
@@ -159,7 +225,7 @@ Toda la lógica clínica permanece centralizada en la <strong>VitalTrace REST AP
 
 <td>Lenguaje</td>
 
-<td><strong>Kotlin 2.2</strong></td>
+<td><strong>Kotlin 2.2.10</strong></td>
 
 <td>Lenguaje principal de desarrollo</td>
 
@@ -169,7 +235,7 @@ Toda la lógica clínica permanece centralizada en la <strong>VitalTrace REST AP
 
 <td>UI</td>
 
-<td><strong>Jetpack Compose</strong></td>
+<td><strong>Jetpack Compose BOM 2026.02.01</strong></td>
 
 <td>Interfaz declarativa nativa</td>
 
@@ -199,7 +265,7 @@ Toda la lógica clínica permanece centralizada en la <strong>VitalTrace REST AP
 
 <td>Inyección de dependencias</td>
 
-<td><strong>Hilt</strong></td>
+<td><strong>Hilt 2.59.2</strong></td>
 
 <td>Administración centralizada de dependencias</td>
 
@@ -209,9 +275,9 @@ Toda la lógica clínica permanece centralizada en la <strong>VitalTrace REST AP
 
 <td>Cliente HTTP</td>
 
-<td><strong>Retrofit</strong></td>
+<td><strong>Retrofit 3.0.0 + OkHttp 5.1.0</strong></td>
 
-<td>Comunicación con la API REST</td>
+<td>Consumo de la API REST, autenticación, logging y medición de tiempos de red</td>
 
 </tr>
 
@@ -219,9 +285,9 @@ Toda la lógica clínica permanece centralizada en la <strong>VitalTrace REST AP
 
 <td>Serialización</td>
 
-<td><strong>Gson</strong></td>
+<td><strong>Kotlinx Serialization 1.9.0</strong></td>
 
-<td>Conversión entre JSON y objetos Kotlin</td>
+<td>Conversión tipada entre JSON y modelos Kotlin</td>
 
 </tr>
 
@@ -229,7 +295,7 @@ Toda la lógica clínica permanece centralizada en la <strong>VitalTrace REST AP
 
 <td>Procesos asíncronos</td>
 
-<td><strong>Kotlin Coroutines</strong></td>
+<td><strong>Kotlin Coroutines 1.10.2</strong></td>
 
 <td>Operaciones en segundo plano</td>
 
@@ -249,7 +315,7 @@ Toda la lógica clínica permanece centralizada en la <strong>VitalTrace REST AP
 
 <td>Navegación</td>
 
-<td><strong>Navigation Compose</strong></td>
+<td><strong>Navigation Compose 2.9.8</strong></td>
 
 <td>Navegación entre pantallas</td>
 
@@ -259,9 +325,29 @@ Toda la lógica clínica permanece centralizada en la <strong>VitalTrace REST AP
 
 <td>Persistencia local</td>
 
-<td><strong>DataStore</strong></td>
+<td><strong>Room 2.8.4 + DataStore 1.2.1</strong></td>
 
-<td>Almacenamiento seguro de preferencias y sesión</td>
+<td>Caché local de datos del paciente, preferencias y sesión</td>
+
+</tr>
+
+<tr>
+
+<td>Trabajo en segundo plano</td>
+
+<td><strong>WorkManager 2.11.2</strong></td>
+
+<td>Programación confiable de recordatorios de citas y mediciones</td>
+
+</tr>
+
+<tr>
+
+<td>Generación de código</td>
+
+<td><strong>KSP 2.3.10</strong></td>
+
+<td>Procesamiento de anotaciones para Hilt y Room</td>
 
 </tr>
 
@@ -285,9 +371,9 @@ Toda la lógica clínica permanece centralizada en la <strong>VitalTrace REST AP
 
 <p>
 
-La aplicación sigue una arquitectura <strong>MVVM</strong> con una separación estricta entre presentación, lógica de negocio y acceso a datos.
+La aplicación sigue una arquitectura <strong>MVVM</strong> por funcionalidades, con separación entre presentación, dominio y datos.
 
-Cada pantalla interactúa únicamente con su ViewModel correspondiente, mientras que la comunicación con la API se realiza mediante Repositories especializados y Retrofit.
+Cada pantalla interactúa con su ViewModel correspondiente. Los repositorios coordinan la API remota y, cuando aplica, el caché local de Room; Hilt proporciona las dependencias y DataStore conserva la sesión y las preferencias.
 
 </p>
 
@@ -313,7 +399,7 @@ Cada pantalla interactúa únicamente con su ViewModel correspondiente, mientras
         └───────────────────────┬────────────────────────┘
                                 │
         ┌───────────────────────▼───────────────────────┐
-        │              Retrofit + Gson                   │
+        │ Retrofit + OkHttp + Kotlinx Serialization     │
         │        Cliente HTTP y serialización JSON       │
         └───────────────────────┬────────────────────────┘
                                 │
@@ -323,6 +409,12 @@ Cada pantalla interactúa únicamente con su ViewModel correspondiente, mientras
         └───────────────────────────────────────────────┘
 
 </pre>
+
+<p>
+
+Room mantiene snapshots locales de citas, mediciones y tratamientos para mejorar la disponibilidad de la información. WorkManager ejecuta recordatorios de citas y mediciones incluso cuando la aplicación no está en primer plano.
+
+</p>
 
 <h3>📦 Contrato de comunicación</h3>
 
@@ -441,7 +533,7 @@ Cada módulo es independiente y contiene únicamente los componentes necesarios 
 
 <td><strong>Data</strong></td>
 
-<td>Implementaciones de repositorios, Retrofit, DTOs y servicios REST.</td>
+<td>Implementaciones de repositorios, Retrofit, DTOs, servicios REST y coordinación con caché local.</td>
 
 </tr>
 
@@ -449,7 +541,7 @@ Cada módulo es independiente y contiene únicamente los componentes necesarios 
 
 <td><strong>Core</strong></td>
 
-<td>Configuraciones globales, utilidades, constantes y componentes compartidos.</td>
+<td>Red, sesión, Room, DataStore, configuración global y componentes compartidos.</td>
 
 </tr>
 
@@ -467,7 +559,7 @@ Cada módulo es independiente y contiene únicamente los componentes necesarios 
 
 <p>
 
-Cada funcionalidad del sistema implementa la misma estructura interna para mantener consistencia durante el desarrollo.
+Las funcionalidades conectadas a la API siguen esta estructura por capas; las pantallas puramente locales utilizan solo los paquetes necesarios.
 
 </p>
 
@@ -516,6 +608,8 @@ feature/
 La aplicación adapta automáticamente la interfaz según el rol autenticado.
 
 Las autorizaciones reales siempre son verificadas por la API, por lo que la aplicación únicamente controla la navegación y la experiencia de usuario.
+
+Los roles móviles disponibles son <code>PATIENT</code>, <code>RELATIVE</code> y <code>NURSE</code>. Si una cuenta posee más de uno, se muestra un selector para elegir el portal; con un solo rol, la navegación es directa.
 
 </p>
 
@@ -597,6 +691,34 @@ Acceder sin autorización vigente.
 
 </tr>
 
+<tr>
+
+<td><code>NURSE</code></td>
+
+<td>
+
+Consultar pacientes asignados y su información clínica.<br>
+
+Registrar mediciones para un paciente.<br>
+
+Consultar citas, diagnósticos y tratamientos.<br>
+
+Clasificar y escalar alertas clínicas.
+
+</td>
+
+<td>
+
+Administrar usuarios o configuración del sistema.<br>
+
+Modificar tratamientos o diagnósticos.<br>
+
+Acceder a pacientes fuera de su asignación.
+
+</td>
+
+</tr>
+
 </tbody>
 
 </table>
@@ -607,9 +729,9 @@ Acceder sin autorización vigente.
 
 <p>
 
-La aplicación utiliza autenticación basada en sesiones mediante Laravel Sanctum.
+La aplicación utiliza tokens de acceso emitidos por la API de VitalTrace.
 
-Todas las solicitudes protegidas requieren una sesión válida establecida previamente por la API.
+OkHttp incorpora el token en las solicitudes protegidas mediante el encabezado <code>Authorization: Bearer &lt;token&gt;</code>. Al iniciar la aplicación, la sesión guardada se valida contra la API antes de abrir un portal protegido.
 
 </p>
 
@@ -619,9 +741,9 @@ Todas las solicitudes protegidas requieren una sesión válida establecida previ
 
 <td align="center"><strong>1</strong></td>
 
-<td><code>GET /sanctum/csrf-cookie</code></td>
+<td><code>POST /api/v1/auth/login</code></td>
 
-<td>Obtiene la cookie CSRF requerida por Sanctum.</td>
+<td>Valida las credenciales y devuelve el token junto con el usuario.</td>
 
 </tr>
 
@@ -629,9 +751,9 @@ Todas las solicitudes protegidas requieren una sesión válida establecida previ
 
 <td align="center"><strong>2</strong></td>
 
-<td><code>POST /api/v1/auth/login</code></td>
+<td><code>GET /api/v1/auth/me</code></td>
 
-<td>Autentica al usuario.</td>
+<td>Valida el token almacenado y obtiene el usuario autenticado.</td>
 
 </tr>
 
@@ -639,9 +761,9 @@ Todas las solicitudes protegidas requieren una sesión válida establecida previ
 
 <td align="center"><strong>3</strong></td>
 
-<td><code>GET /api/v1/auth/me</code></td>
+<td><code>POST /api/v1/auth/logout</code></td>
 
-<td>Obtiene el usuario autenticado.</td>
+<td>Invalida la sesión remota y limpia el estado local.</td>
 
 </tr>
 
@@ -659,7 +781,7 @@ La aplicación implementa un flujo específico para permitir el primer acceso si
 
 <ul>
 
-<li>✅ Activación mediante código temporal.</li>
+<li>✅ Verificación mediante código temporal y token de activación.</li>
 
 <li>✅ Código válido durante 24 horas.</li>
 
@@ -675,7 +797,7 @@ La aplicación implementa un flujo específico para permitir el primer acceso si
 
 <p>
 
-Una vez autenticado el usuario, la aplicación almacena únicamente la información necesaria para mantener la sesión activa utilizando DataStore.
+Una vez autenticado el usuario, la aplicación mantiene el token en memoria y solo lo conserva en DataStore cuando está activada la opción <strong>Recordarme</strong>. Al cerrar sesión se eliminan el token, el caché en memoria y los snapshots de Room.
 
 </p>
 
@@ -697,25 +819,25 @@ Una vez autenticado el usuario, la aplicación almacena únicamente la informaci
 
 <tr>
 
-<td>Usuario autenticado</td>
+<td>Token de acceso</td>
 
-<td>DataStore</td>
-
-</tr>
-
-<tr>
-
-<td>Rol</td>
-
-<td>DataStore</td>
+<td>Memoria y, si <strong>Recordarme</strong> está activo, DataStore</td>
 
 </tr>
 
 <tr>
 
-<td>Estado de autenticación</td>
+<td>Usuario y roles activos</td>
 
-<td>DataStore</td>
+<td>StateFlow en memoria</td>
+
+</tr>
+
+<tr>
+
+<td>Caché clínico</td>
+
+<td>Memoria + Room</td>
 
 </tr>
 
@@ -729,9 +851,9 @@ Una vez autenticado el usuario, la aplicación almacena únicamente la informaci
 
 <p>
 
-Todas las operaciones realizadas por la aplicación son procesadas por la API REST de VitalTrace.
+Las operaciones clínicas remotas son procesadas por la API REST de VitalTrace.
 
-La aplicación nunca accede directamente a la base de datos ni implementa reglas clínicas propias.
+La aplicación nunca accede directamente a la base de datos del servidor ni implementa reglas clínicas propias. Room se utiliza exclusivamente como caché local y DataStore para sesión y preferencias.
 
 </p>
 
@@ -744,8 +866,9 @@ La aplicación nunca accede directamente a la base de datos ni implementa reglas
 | POST | `/auth/login` | Inicio de sesión |
 | POST | `/auth/logout` | Cerrar sesión |
 | GET | `/auth/me` | Usuario autenticado |
-| POST | `/auth/activate-account` | Activación inicial |
-| POST | `/auth/resend-code` | Reenvío del código |
+| POST | `/auth/activation/verify-code` | Verificación del código de activación |
+| POST | `/auth/activation/resend-code` | Reenvío del código |
+| POST | `/auth/activation/set-password` | Creación de la contraseña inicial |
 | POST | `/auth/forgot-password` | Recuperación de contraseña |
 | POST | `/auth/reset-password` | Restablecimiento |
 
@@ -758,11 +881,12 @@ La aplicación nunca accede directamente a la base de datos ni implementa reglas
 | Recurso | Descripción |
 |----------|-------------|
 | Profile | Información personal |
-| Measurements | Registro y consulta de mediciones |
-| Treatments | Tratamientos activos |
-| Clinical History | Historial clínico |
-| Appointments | Citas médicas |
-| Notifications | Centro de notificaciones |
+| Measurements | Registro, consulta, filtros y paginación de mediciones |
+| Treatments | Consulta, búsqueda, detalle y paginación de tratamientos |
+| Clinical History | Historial clínico, línea de tiempo y exportación PDF |
+| Appointments | Consulta, búsqueda, paginación, calendario y recordatorios |
+| Relatives | Consulta, autorización y revocación de familiares |
+| Notifications | Centro de notificaciones y control de lectura |
 
 </details>
 
@@ -776,6 +900,22 @@ La aplicación nunca accede directamente a la base de datos ni implementa reglas
 | Measurements | Consulta de mediciones |
 | Treatments | Consulta de tratamientos |
 | Appointments | Consulta de citas |
+| Clinical History | Consulta del historial clínico permitido |
+
+</details>
+
+<details>
+
+<summary><strong>🩺 Enfermería</strong></summary>
+
+| Recurso | Descripción |
+|----------|-------------|
+| Summary | Resumen operativo y actividad pendiente |
+| Patients | Búsqueda, selección, perfil y resumen clínico |
+| Measurements | Consulta y registro de mediciones por paciente |
+| Appointments | Citas generales y por paciente |
+| Clinical Data | Diagnósticos, tratamientos e historia clínica |
+| Alerts | Consulta, filtros, clasificación y escalamiento |
 
 </details>
 
@@ -826,7 +966,7 @@ Siga los pasos descritos a continuación para ejecutar la aplicación Android en
 
 <td>Android Studio</td>
 
-<td>Koala o superior</td>
+<td>Versión compatible con Android Gradle Plugin 9.2.1</td>
 
 </tr>
 
@@ -842,7 +982,7 @@ Siga los pasos descritos a continuación para ejecutar la aplicación Android en
 
 <td>Android SDK</td>
 
-<td>API 35</td>
+<td>API 36 (compileSdk 36.1, targetSdk 36 y minSdk 26)</td>
 
 </tr>
 
@@ -850,7 +990,7 @@ Siga los pasos descritos a continuación para ejecutar la aplicación Android en
 
 <td>Gradle</td>
 
-<td>Incluido en el proyecto</td>
+<td>9.4.1, incluido mediante Gradle Wrapper</td>
 
 </tr>
 
@@ -882,23 +1022,32 @@ cd VitalTracea_App
 
 <p>
 
-Antes de ejecutar la aplicación es necesario configurar la dirección de la API dentro del proyecto.
+Las URL de la API se definen por tipo de compilación en <code>app/build.gradle.kts</code> y se exponen a la aplicación mediante <code>BuildConfig.BASE_URL</code>.
 
 </p>
 
 ```kotlin
-object NetworkConfig {
+buildTypes {
+    debug {
+        buildConfigField("String", "BASE_URL", "\"https://api.vitaltrace.lat/api/v1/\"")
+    }
 
-    const val BASE_URL = "http://TU_IP:8000/api/v1/"
+    create("local") {
+        initWith(getByName("debug"))
+        buildConfigField("String", "BASE_URL", "\"http://TU_IP:8000/api/v1/\"")
+    }
 
+    release {
+        buildConfigField("String", "BASE_URL", "\"https://api.vitaltrace.lat/api/v1/\"")
+    }
 }
 ```
 
 <p>
 
-En un dispositivo físico la dirección debe corresponder a la IP del servidor dentro de la misma red local.
+Para utilizar el backend local, sustituya <code>TU_IP</code> por la IP del servidor dentro de la misma red y ejecute la variante <strong>local</strong>.
 
-Para ambientes de producción únicamente deberá modificarse la URL base.
+Las variantes <strong>debug</strong> y <strong>release</strong> consumen la API oficial por defecto.
 
 </p>
 
@@ -910,7 +1059,23 @@ Para ambientes de producción únicamente deberá modificarse la URL base.
 ./gradlew assembleDebug
 ```
 
-o directamente desde Android Studio utilizando la configuración **app**.
+Para compilar la variante conectada al backend local:
+
+```bash
+./gradlew assembleLocal
+```
+
+También puede ejecutar la aplicación desde Android Studio seleccionando la variante <strong>debug</strong>, <strong>local</strong> o <strong>release</strong>.
+
+Para verificar el proyecto:
+
+```bash
+./gradlew testDebugUnitTest
+./gradlew lintDebug
+./gradlew connectedDebugAndroidTest
+```
+
+El último comando requiere un emulador o dispositivo conectado y ejecuta, entre otras, las pruebas instrumentadas de accesibilidad.
 
 <hr>
 
@@ -924,37 +1089,21 @@ La estructura del proyecto mantiene una separación por responsabilidades para f
 
 <pre>
 
-app/
+app/src/main/java/com/vitaltrace/app/
 
 ├── core/
-
-│
-
-├── data/
-
-│
-
-├── di/
-
-│
-
-├── domain/
-
-│
-
-├── features/
-
-│
-
-├── navigation/
-
-│
-
-├── ui/
-
-│
-
-└── MainActivity.kt
+│   ├── cache/          # Room y caché de snapshots
+│   ├── datastore/      # Persistencia de sesión
+│   ├── di/             # Módulos de Hilt
+│   ├── network/        # Retrofit, OkHttp e interceptores
+│   ├── session/        # Estado de autenticación
+│   └── settings/       # Preferencias de la aplicación
+├── feature/                # Funcionalidades por dominio
+├── navigation/             # Rutas y NavHost
+├── ui/theme/              # Tema Material 3
+├── MainActivity.kt
+├── VitalTraceApp.kt
+└── VitalTraceApplication.kt
 
 </pre>
 
@@ -964,7 +1113,7 @@ app/
 
 <p>
 
-Cada funcionalidad implementa la misma estructura interna.
+Cada funcionalidad utiliza las capas que necesita. Los módulos conectados a la API separan datos, dominio y presentación; las capacidades propias del dispositivo agregan paquetes especializados como <code>reminders</code> o <code>export</code>.
 
 </p>
 
@@ -1004,7 +1153,17 @@ feature/
 
     └── viewmodel/
 
+# Paquetes opcionales según la funcionalidad:
+├── reminders/     # WorkManager y notificaciones locales
+└── export/        # Generación de documentos PDF
+
 </pre>
+
+<p>
+
+Los módulos principales son <code>auth</code>, <code>home</code>, <code>appointments</code>, <code>measurements</code>, <code>treatments</code>, <code>clinicalhistory</code>, <code>timeline</code>, <code>notifications</code>, <code>profile</code>, <code>relatives</code>, <code>relativeportal</code>, <code>nurseportal</code>, <code>medlineplus</code>, <code>onboarding</code> y <code>portalselector</code>.
+
+</p>
 
 <hr>
 
@@ -1100,7 +1259,7 @@ Con el objetivo de mantener consistencia durante el desarrollo, el proyecto adop
 
 <td>Serialización</td>
 
-<td>Gson</td>
+<td>Kotlinx Serialization</td>
 
 </tr>
 
@@ -1178,9 +1337,9 @@ Con el objetivo de mantener consistencia durante el desarrollo, el proyecto adop
 
 <tr>
 
-<td>Gson</td>
+<td>Kotlinx Serialization</td>
 
-<td>Serialización JSON.</td>
+<td>Serialización JSON tipada e integrada con Kotlin.</td>
 
 </tr>
 
@@ -1194,9 +1353,9 @@ Con el objetivo de mantener consistencia durante el desarrollo, el proyecto adop
 
 <tr>
 
-<td>Coil</td>
+<td>Room</td>
 
-<td>Carga eficiente de imágenes.</td>
+<td>Caché persistente de citas, mediciones y tratamientos.</td>
 
 </tr>
 
@@ -1204,7 +1363,31 @@ Con el objetivo de mantener consistencia durante el desarrollo, el proyecto adop
 
 <td>DataStore</td>
 
-<td>Persistencia local.</td>
+<td>Persistencia de sesión, preferencias y configuración.</td>
+
+</tr>
+
+<tr>
+
+<td>WorkManager</td>
+
+<td>Recordatorios de citas y mediciones en segundo plano.</td>
+
+</tr>
+
+<tr>
+
+<td>Kotlin Coroutines y StateFlow</td>
+
+<td>Concurrencia estructurada y estado reactivo de la interfaz.</td>
+
+</tr>
+
+<tr>
+
+<td>KSP</td>
+
+<td>Generación de código para Room y Hilt.</td>
 
 </tr>
 
@@ -1312,6 +1495,12 @@ La aplicación centraliza el tratamiento de errores provenientes de la API para 
 
 <li>Persistencia de sesión utilizando DataStore.</li>
 
+<li>Caché persistente de datos del paciente mediante Room.</li>
+
+<li>Recordatorios de citas y mediciones programados con WorkManager.</li>
+
+<li>Serialización JSON tipada con Kotlinx Serialization.</li>
+
 <li>Manejo uniforme de respuestas de la API.</li>
 
 <li>Componentes reutilizables siguiendo Material Design 3.</li>
@@ -1323,7 +1512,7 @@ La aplicación centraliza el tratamiento de errores provenientes de la API para 
 
 <p>
 
-La aplicación puede ejecutarse tanto en entornos de desarrollo como de producción modificando únicamente la configuración correspondiente a la URL base de la API.
+La aplicación dispone de variantes de compilación para trabajar contra el backend local o la API desplegada.
 
 No es necesario realizar cambios en la lógica de negocio ni en la arquitectura del proyecto.
 
@@ -1349,7 +1538,7 @@ No es necesario realizar cambios en la lógica de negocio ni en la arquitectura 
 
 <td>Desarrollo</td>
 
-<td>Servidor local ejecutando la API de VitalTrace dentro de la misma red.</td>
+<td><strong>local</strong>: servidor de VitalTrace dentro de la misma red, con sufijo de aplicación <code>.local</code>.</td>
 
 </tr>
 
@@ -1357,7 +1546,7 @@ No es necesario realizar cambios en la lógica de negocio ni en la arquitectura 
 
 <td>Producción</td>
 
-<td>API desplegada en el servidor oficial del proyecto.</td>
+<td><strong>debug</strong> y <strong>release</strong>: API oficial desplegada en <code>api.vitaltrace.lat</code>.</td>
 
 </tr>
 
@@ -1367,7 +1556,7 @@ No es necesario realizar cambios en la lógica de negocio ni en la arquitectura 
 
 <p>
 
-La compilación para producción se realiza utilizando el tipo de compilación <strong>Release</strong>, mientras que durante el desarrollo se utiliza <strong>Debug</strong>.
+La compilación para producción utiliza <strong>release</strong>. Para desarrollo con servicios locales se utiliza <strong>local</strong>; <strong>debug</strong> permite depurar contra la API oficial e incorpora logging y medición de tiempos de red.
 
 </p>
 
@@ -1397,9 +1586,17 @@ La aplicación implementa únicamente las reglas correspondientes a la experienc
 
 <li>Consultar citas médicas.</li>
 
-<li>Actualizar información de perfil.</li>
+<li>Añadir citas al calendario y recibir recordatorios locales.</li>
+
+<li>Consultar su perfil y personalizar avatar, apariencia y accesibilidad.</li>
 
 <li>Consultar y administrar notificaciones.</li>
+
+<li>Configurar apariencia, accesibilidad, privacidad y recordatorios.</li>
+
+<li>Autorizar o revocar el acceso de familiares.</li>
+
+<li>Exportar su expediente clínico a PDF.</li>
 
 <li>Recuperar contraseña.</li>
 
@@ -1423,6 +1620,28 @@ La aplicación implementa únicamente las reglas correspondientes a la experienc
 
 <li>Consultar próximas citas.</li>
 
+<li>Cambiar entre pacientes vinculados con autorización vigente.</li>
+
+</ul>
+
+</details>
+
+<details>
+
+<summary><strong>🩺 Enfermería</strong></summary>
+
+<ul>
+
+<li>Consultar y buscar pacientes asignados.</li>
+
+<li>Revisar perfiles, resúmenes e historia clínica.</li>
+
+<li>Registrar mediciones y consultar su evolución.</li>
+
+<li>Consultar citas, diagnósticos y tratamientos.</li>
+
+<li>Filtrar, clasificar y escalar alertas.</li>
+
 </ul>
 
 </details>
@@ -1437,7 +1656,7 @@ La aplicación implementa únicamente las reglas correspondientes a la experienc
 
 <li>La sesión se valida antes de acceder a recursos protegidos.</li>
 
-<li>La aplicación elimina la información local al cerrar sesión.</li>
+<li>La aplicación elimina el token y el caché clínico al cerrar sesión.</li>
 
 <li>Los permisos dependen del rol autenticado.</li>
 
@@ -1448,10 +1667,6 @@ La aplicación implementa únicamente las reglas correspondientes a la experienc
 </details>
 
 <hr>
-
-</tbody>
-
-</table>
 
 <hr>
 
@@ -1483,7 +1698,15 @@ Durante el desarrollo del proyecto se aplicaron prácticas orientadas a mantener
 
 <li>Manejo centralizado de errores.</li>
 
-<li>Persistencia segura de sesión mediante DataStore.</li>
+<li>Persistencia opcional del token de sesión mediante DataStore.</li>
+
+<li>Caché local estructurado mediante Room.</li>
+
+<li>Tareas confiables en segundo plano mediante WorkManager.</li>
+
+<li>Pruebas unitarias para sesión, enrutamiento por roles, ViewModels, mapeos, filtros y planificación de recordatorios.</li>
+
+<li>Pruebas instrumentadas de accesibilidad para acciones principales y contenido clínico.</li>
 
 </ul>
 
