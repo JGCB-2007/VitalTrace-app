@@ -1,6 +1,7 @@
 package com.vitaltrace.app.feature.profile.presentation.components
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -19,6 +20,7 @@ import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.vitaltrace.app.R
@@ -82,27 +84,73 @@ private fun OptionalProfileInformationRow(label: String, value: String?) {
 
 @Composable
 private fun ProfileInformationRow(label: String, value: String) {
-    Row(
+    BoxWithConstraints(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(vertical = 17.dp),
-        horizontalArrangement = Arrangement.SpaceBetween,
-        verticalAlignment = Alignment.CenterVertically
+            .padding(vertical = 14.dp)
     ) {
-        Text(
-            text = label,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-            fontSize = 17.sp
-        )
-        Text(
-            text = value,
-            modifier = Modifier
-                .weight(1f)
-                .padding(start = 18.dp),
-            color = MaterialTheme.colorScheme.onSurface,
-            fontSize = 16.sp,
-            fontWeight = FontWeight.Bold,
-            textAlign = TextAlign.End
-        )
+        val useStackedLayout = maxWidth < 420.dp
+
+        if (useStackedLayout) {
+            Column(
+                modifier = Modifier.fillMaxWidth(),
+                verticalArrangement = Arrangement.spacedBy(4.dp)
+            ) {
+                ProfileInformationLabel(text = label)
+                ProfileInformationValue(
+                    text = value,
+                    textAlign = TextAlign.Start
+                )
+            }
+        } else {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(24.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                ProfileInformationLabel(
+                    text = label,
+                    modifier = Modifier.weight(0.42f)
+                )
+                ProfileInformationValue(
+                    text = value,
+                    modifier = Modifier.weight(0.58f),
+                    textAlign = TextAlign.End
+                )
+            }
+        }
     }
+}
+
+@Composable
+private fun ProfileInformationLabel(
+    text: String,
+    modifier: Modifier = Modifier
+) {
+    Text(
+        text = text,
+        modifier = modifier,
+        color = MaterialTheme.colorScheme.onSurfaceVariant,
+        fontSize = 14.sp,
+        fontWeight = FontWeight.Medium,
+        maxLines = 2,
+        overflow = TextOverflow.Ellipsis
+    )
+}
+
+@Composable
+private fun ProfileInformationValue(
+    text: String,
+    modifier: Modifier = Modifier,
+    textAlign: TextAlign
+) {
+    Text(
+        text = text,
+        modifier = modifier.fillMaxWidth(),
+        color = MaterialTheme.colorScheme.onSurface,
+        fontSize = 16.sp,
+        lineHeight = 22.sp,
+        fontWeight = FontWeight.SemiBold,
+        textAlign = textAlign
+    )
 }
