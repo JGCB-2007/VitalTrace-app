@@ -2,11 +2,8 @@ package com.vitaltrace.app.feature.auth.data.repository
 
 import com.vitaltrace.app.core.network.AuthInterceptor
 import com.vitaltrace.app.core.cache.PatientMemoryCache
-<<<<<<< HEAD
 import com.vitaltrace.app.core.presentation.localization.AuthMessagesEs
-=======
 import com.vitaltrace.app.core.cache.PatientDiskCache
->>>>>>> develop
 import com.vitaltrace.app.core.session.AuthenticatedUser
 import com.vitaltrace.app.core.session.TokenStore
 import com.vitaltrace.app.feature.auth.data.mapper.toAuthenticatedUser

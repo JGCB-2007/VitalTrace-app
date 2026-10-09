@@ -115,16 +115,11 @@ private fun TreatmentDetailsCard(treatment: TreatmentUiModel) {
                 DetailRow(stringResource(R.string.treatment_detail_prescriber), it)
             }
             treatment.professionalType?.takeIf(String::isNotBlank)?.let {
-<<<<<<< HEAD
                 HorizontalDivider(color = Color(0xFFE5E0D7))
                 DetailRow(
                     stringResource(R.string.treatment_detail_professional_type),
                     EnumDisplayEs.professionalType(it)
                 )
-=======
-                HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
-                DetailRow(stringResource(R.string.treatment_detail_professional_type), it)
->>>>>>> develop
             }
             treatment.specialtyName?.takeIf(String::isNotBlank)?.let {
                 HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)

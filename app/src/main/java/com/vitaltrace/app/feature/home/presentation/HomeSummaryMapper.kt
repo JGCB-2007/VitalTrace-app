@@ -7,12 +7,10 @@ import com.vitaltrace.app.feature.patient.domain.model.Measurement
 import com.vitaltrace.app.feature.patient.domain.model.PatientSummary
 import com.vitaltrace.app.core.presentation.formatClinicalDateTime
 import java.math.RoundingMode
-<<<<<<< HEAD
-=======
 import java.time.LocalDate
-import java.time.LocalDateTime
->>>>>>> develop
 import java.time.LocalTime
+import java.time.format.DateTimeFormatter
+import java.util.Locale
 import javax.inject.Inject
 
 class HomeSummaryMapper @Inject constructor() {
@@ -116,10 +114,6 @@ class HomeSummaryMapper @Inject constructor() {
         }
     }
 
-<<<<<<< HEAD
-    private fun formatAppointmentDateTime(value: String): Pair<String, String> =
-        SpanishDateTime.formatApiDateTime(value)
-=======
     private fun compactTrendDateLabel(value: String): String {
         val rawDate = value.trim().substringBefore(" ")
         return runCatching {
@@ -137,25 +131,8 @@ class HomeSummaryMapper @Inject constructor() {
         else -> this
     }
 
-    private fun formatAppointmentDateTime(value: String): Pair<String, String> {
-        val parsed = runCatching {
-            LocalDateTime.parse(value.trim(), API_DATE_TIME_FORMAT)
-        }.getOrNull() ?: return value.substringBefore(" ") to value.substringAfter(" ", "")
-        val locale = Locale.getDefault()
-        val date = parsed.format(DateTimeFormatter.ofPattern("d MMM uuuu", locale)).lowercase(locale)
-        val time = parsed.format(DateTimeFormatter.ofPattern("h:mm a", locale)).lowercase(locale)
-        return date to time
-    }
-
-    private fun appointmentStatusLabel(value: String): String = when (value.trim().uppercase()) {
-        "SCHEDULED" -> "Programada"
-        "CONFIRMED" -> "Confirmada"
-        "ATTENDED" -> "Atendida"
-        "NO_SHOW" -> "No asisti\u00f3"
-        "CANCELLED" -> "Cancelada"
-        else -> value
-    }
->>>>>>> develop
+    private fun formatAppointmentDateTime(value: String): Pair<String, String> =
+        SpanishDateTime.formatApiDateTime(value)
 
     private fun initialsFor(fullName: String?): String {
         return fullName

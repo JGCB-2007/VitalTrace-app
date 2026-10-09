@@ -46,13 +46,8 @@ fun ActivationCodeScreen(onBack: () -> Unit, onVerified: () -> Unit, viewModel: 
         Spacer(Modifier.height(24.dp))
         RecoveryTextField(state.code, viewModel::onCodeChange, "Código de acceso", Icons.Outlined.Key, !state.isLoading, keyboardType = KeyboardType.Number, imeAction = ImeAction.Done)
         ErrorText(state.error)
-<<<<<<< HEAD
         state.resendMessage?.let { Text(it, color = Color(0xFF1D6B4C), modifier = Modifier.padding(top = 10.dp)) }
         RecoveryPrimaryButton("Continuar", state.isLoading, viewModel::continueToPassword, Modifier.padding(top = 20.dp))
-=======
-        state.resendMessage?.let { Text(it, color = MaterialTheme.colorScheme.tertiary, modifier = Modifier.padding(top = 10.dp)) }
-        RecoveryPrimaryButton("Verificar código", state.isLoading, viewModel::verify, Modifier.padding(top = 20.dp))
->>>>>>> develop
         RecoverySecondaryButton("Reenviar código", viewModel::resend)
     }
 }

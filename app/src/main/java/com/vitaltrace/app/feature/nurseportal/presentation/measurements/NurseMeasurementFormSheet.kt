@@ -17,17 +17,15 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.vitaltrace.app.R
 import com.vitaltrace.app.core.presentation.localization.SpanishDateTime
+import com.vitaltrace.app.feature.measurements.presentation.form.LocalMeasurementTypeCatalog
 import com.vitaltrace.app.feature.measurements.presentation.form.MeasurementFieldError
 import com.vitaltrace.app.feature.measurements.presentation.form.MeasurementTypeOption
 import com.vitaltrace.app.feature.measurements.presentation.form.components.MeasurementFormActions
 import com.vitaltrace.app.feature.measurements.presentation.form.components.MeasurementInformationCard
 import com.vitaltrace.app.feature.measurements.presentation.form.components.MeasurementNoteField
-<<<<<<< HEAD
 import com.vitaltrace.app.feature.measurements.presentation.form.components.MeasurementValueFields
 import com.vitaltrace.app.feature.nurseportal.domain.model.NurseMeasurementType
 import com.vitaltrace.app.ui.theme.*
-=======
->>>>>>> develop
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -65,7 +63,6 @@ internal fun NurseMeasurementFormSheet(
             Modifier.fillMaxWidth().navigationBarsPadding().padding(start = 24.dp, end = 24.dp, bottom = 28.dp),
             verticalArrangement = Arrangement.spacedBy(22.dp)
         ) {
-<<<<<<< HEAD
             Column {
                 Text(
                     text = stringResource(R.string.measurement_form_title),
@@ -79,21 +76,6 @@ internal fun NurseMeasurementFormSheet(
                     color = VitalTraceTeal,
                     fontSize = 18.sp,
                     fontWeight = FontWeight.Bold
-=======
-            Text("Registrar medición", color = MaterialTheme.colorScheme.onBackground, fontFamily = FontFamily.Serif, fontSize = 27.sp, fontWeight = FontWeight.Bold)
-            Text(state.selectedPatient?.fullName.orEmpty(), color = MaterialTheme.colorScheme.secondary, fontWeight = FontWeight.Bold)
-            MeasurementInformationCard()
-            ExposedDropdownMenuBox(expanded = expanded, onExpandedChange = { expanded = !expanded }) {
-                OutlinedTextField(
-                    value = selected?.name.orEmpty(),
-                    onValueChange = {},
-                    modifier = Modifier.menuAnchor(ExposedDropdownMenuAnchorType.PrimaryNotEditable, true).fillMaxWidth(),
-                    readOnly = true,
-                    label = { Text("Tipo de medición") },
-                    trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded) },
-                    shape = RoundedCornerShape(18.dp),
-                    colors = nurseFieldColors()
->>>>>>> develop
                 )
             }
             MeasurementInformationCard()
@@ -140,7 +122,6 @@ internal fun NurseMeasurementFormSheet(
 }
 
 @Composable
-<<<<<<< HEAD
 private fun NurseMeasuredAtField(text: String) {
     Column {
         com.vitaltrace.app.feature.measurements.presentation.form.components.FieldLabel(
@@ -170,16 +151,14 @@ private fun NurseMeasuredAtField(text: String) {
     }
 }
 
-private fun NurseMeasurementType.toMeasurementTypeOption() = MeasurementTypeOption(
-    id = id,
-    name = name,
-    unit = unit,
-    decimals = decimals
-=======
-private fun nurseFieldColors() = OutlinedTextFieldDefaults.colors(
-    focusedContainerColor = MaterialTheme.colorScheme.surface,
-    unfocusedContainerColor = MaterialTheme.colorScheme.surface,
-    focusedBorderColor = MaterialTheme.colorScheme.secondary,
-    unfocusedBorderColor = MaterialTheme.colorScheme.outline
->>>>>>> develop
-)
+private fun NurseMeasurementType.toMeasurementTypeOption(): MeasurementTypeOption {
+    val catalogType = LocalMeasurementTypeCatalog.types.firstOrNull { it.id == id }
+    return MeasurementTypeOption(
+        id = id,
+        name = name,
+        unit = unit,
+        decimals = decimals,
+        minimumValue = catalogType?.minimumValue ?: 0.0,
+        maximumValue = catalogType?.maximumValue ?: Double.MAX_VALUE
+    )
+}

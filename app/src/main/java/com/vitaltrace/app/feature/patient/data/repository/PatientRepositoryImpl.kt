@@ -1,11 +1,8 @@
 package com.vitaltrace.app.feature.patient.data.repository
 
 import com.vitaltrace.app.core.cache.PatientMemoryCache
-<<<<<<< HEAD
-import com.vitaltrace.app.core.presentation.localization.HttpMessagesEs
-=======
 import com.vitaltrace.app.core.cache.PatientDiskCache
->>>>>>> develop
+import com.vitaltrace.app.core.presentation.localization.HttpMessagesEs
 import com.vitaltrace.app.feature.patient.data.dto.measurements.CreateMeasurementRequestDto
 import com.vitaltrace.app.feature.patient.data.mapper.toDomain
 import com.vitaltrace.app.feature.patient.data.remote.PatientPortalApiService
