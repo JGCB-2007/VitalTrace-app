@@ -2,6 +2,8 @@ package com.vitaltrace.app.feature.timeline.presentation
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.vitaltrace.app.core.presentation.formatClinicalDate
+import com.vitaltrace.app.core.presentation.formatClinicalDateTime
 import com.vitaltrace.app.feature.patient.domain.model.Appointment
 import com.vitaltrace.app.feature.patient.domain.model.Measurement
 import com.vitaltrace.app.feature.patient.domain.model.Treatment
@@ -61,7 +63,7 @@ class HealthTimelineViewModel @Inject constructor(
         type = TimelineEventType.APPOINTMENT,
         title = reason.ifBlank { "Cita médica" },
         subtitle = professional?.fullName.orEmpty().ifBlank { "Profesional de salud" },
-        date = scheduledAt.replace(" ", " · "),
+        date = formatClinicalDateTime(scheduledAt),
         sortValue = scheduledAt,
         status = when (status.uppercase()) {
             "SCHEDULED" -> "Programada"; "CONFIRMED" -> "Confirmada"; "ATTENDED" -> "Realizada"
@@ -74,7 +76,7 @@ class HealthTimelineViewModel @Inject constructor(
         type = TimelineEventType.MEASUREMENT,
         title = measurementType?.name?.localizedName() ?: "Medición",
         subtitle = "$value $unit" + observation?.takeIf(String::isNotBlank)?.let { " · $it" }.orEmpty(),
-        date = measuredAt.replace(" ", " · "),
+        date = formatClinicalDateTime(measuredAt),
         sortValue = measuredAt,
         status = if (reviewStatus.uppercase() == "REVIEWED") "Revisada" else "Pendiente"
     )
@@ -84,7 +86,7 @@ class HealthTimelineViewModel @Inject constructor(
         type = TimelineEventType.TREATMENT,
         title = diagnosis?.description?.takeIf(String::isNotBlank) ?: "Tratamiento",
         subtitle = indications,
-        date = startDate,
+        date = formatClinicalDate(startDate),
         sortValue = startDate,
         status = when (status.uppercase()) {
             "ACTIVE" -> "Activo"; "FINISHED", "COMPLETED" -> "Finalizado"

@@ -3,6 +3,7 @@ package com.vitaltrace.app.feature.timeline.presentation
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -44,6 +45,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -101,15 +103,10 @@ fun HealthTimelineScreen(
                         )
                     }
                     item {
-                        Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                            TimelineEventType.entries.forEach { type ->
-                                FilterChip(
-                                    selected = state.selectedType == type,
-                                    onClick = { viewModel.selectType(type) },
-                                    label = { Text(type.label()) }
-                                )
-                            }
-                        }
+                        TimelineFilters(
+                            selectedType = state.selectedType,
+                            onTypeSelected = viewModel::selectType
+                        )
                     }
                     if (state.visibleEvents.isEmpty()) {
                         item {
@@ -123,6 +120,41 @@ fun HealthTimelineScreen(
                         items(state.visibleEvents, key = TimelineEventUiModel::id) { event ->
                             TimelineEventCard(event)
                         }
+                    }
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun TimelineFilters(
+    selectedType: TimelineEventType,
+    onTypeSelected: (TimelineEventType) -> Unit,
+    modifier: Modifier = Modifier
+) {
+    BoxWithConstraints(modifier = modifier.fillMaxWidth()) {
+        val columns = if (maxWidth < 520.dp) 2 else 4
+        Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+            TimelineEventType.entries.chunked(columns).forEach { rowTypes ->
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    rowTypes.forEach { type ->
+                        FilterChip(
+                            selected = selectedType == type,
+                            onClick = { onTypeSelected(type) },
+                            label = {
+                                Text(
+                                    text = type.label(),
+                                    modifier = Modifier.fillMaxWidth(),
+                                    maxLines = 1,
+                                    textAlign = TextAlign.Center
+                                )
+                            },
+                            modifier = Modifier.weight(1f)
+                        )
                     }
                 }
             }
