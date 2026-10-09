@@ -22,12 +22,12 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import com.vitaltrace.app.ui.theme.SoraFontFamily
 import com.vitaltrace.app.R
 import com.vitaltrace.app.feature.home.presentation.HomeBottomDestination
 import com.vitaltrace.app.feature.home.presentation.components.HomeBottomBar
@@ -181,7 +181,7 @@ private fun ProfileBody(
             Text(
                 text = stringResource(R.string.profile_title),
                 color = MaterialTheme.colorScheme.onBackground,
-                fontFamily = FontFamily.Serif,
+                fontFamily = SoraFontFamily,
                 fontSize = 34.sp,
                 fontWeight = FontWeight.Bold
             )

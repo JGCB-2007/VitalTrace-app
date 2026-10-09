@@ -28,13 +28,13 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import com.vitaltrace.app.ui.theme.SoraFontFamily
 import com.vitaltrace.app.R
 import com.vitaltrace.app.feature.appointments.presentation.components.AppointmentSection
 import com.vitaltrace.app.feature.appointments.presentation.components.AppointmentsErrorState
@@ -165,7 +165,7 @@ private fun AppointmentsBody(
             Text(
                 text = stringResource(R.string.appointments_title),
                 color = MaterialTheme.colorScheme.onBackground,
-                fontFamily = FontFamily.Serif,
+                fontFamily = SoraFontFamily,
                 fontSize = 34.sp,
                 fontWeight = FontWeight.Bold
             )

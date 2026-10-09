@@ -7,11 +7,11 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.vitaltrace.app.ui.theme.SoraFontFamily
 
 @Composable
 fun ObservedPatientHeader(
@@ -34,7 +34,7 @@ fun ObservedPatientHeader(
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Column(Modifier.weight(1f)) {
                     Text(greeting, color = MaterialTheme.colorScheme.onSurfaceVariant, fontWeight = FontWeight.SemiBold)
-                    Text(displayedName, color = MaterialTheme.colorScheme.onSurface, fontFamily = FontFamily.Serif, fontSize = 25.sp, fontWeight = FontWeight.Bold)
+                    Text(displayedName, color = MaterialTheme.colorScheme.onSurface, fontFamily = SoraFontFamily, fontSize = 25.sp, fontWeight = FontWeight.ExtraBold)
                 }
                 Surface(modifier = Modifier.size(50.dp), shape = CircleShape, color = MaterialTheme.colorScheme.secondary) {
                     Box(contentAlignment = Alignment.Center) {
@@ -46,7 +46,7 @@ fun ObservedPatientHeader(
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Column(Modifier.weight(1f)) {
                     Text("Estás viendo a", color = MaterialTheme.colorScheme.secondary, fontWeight = FontWeight.Bold)
-                    Text(patientName, color = MaterialTheme.colorScheme.onSurface, fontFamily = FontFamily.Serif, fontSize = 22.sp, fontWeight = FontWeight.Bold, maxLines = 2, overflow = TextOverflow.Ellipsis)
+                    Text(patientName, color = MaterialTheme.colorScheme.onSurface, fontFamily = SoraFontFamily, fontSize = 22.sp, fontWeight = FontWeight.ExtraBold, maxLines = 2, overflow = TextOverflow.Ellipsis)
                     patientRecordNumber?.takeIf(String::isNotBlank)?.let { Text(it, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodyMedium) }
                 }
                 if (canChange) TextButton(onClick = onChange) { Text("Cambiar", fontWeight = FontWeight.Bold) }

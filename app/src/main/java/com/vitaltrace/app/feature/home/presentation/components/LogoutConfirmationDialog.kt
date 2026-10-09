@@ -14,9 +14,9 @@ import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.vitaltrace.app.ui.theme.SoraFontFamily
 import com.vitaltrace.app.ui.theme.VitalTraceNavy
 import com.vitaltrace.app.ui.theme.VitalTraceTeal
 
@@ -39,7 +39,7 @@ fun LogoutConfirmationDialog(
             Text(
                 "¿Cerrar sesión?",
                 color = MaterialTheme.colorScheme.onSurface,
-                fontFamily = FontFamily.Serif,
+                fontFamily = SoraFontFamily,
                 fontWeight = FontWeight.Bold
             )
         },

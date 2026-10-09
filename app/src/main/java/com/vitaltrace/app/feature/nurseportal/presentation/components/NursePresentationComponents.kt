@@ -8,12 +8,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.vitaltrace.app.ui.theme.SoraFontFamily
 
 @Composable
 internal fun NurseStatusChip(text: String, background: Color, content: Color) {
@@ -26,7 +26,7 @@ internal fun NurseStatusChip(text: String, background: Color, content: Color) {
 internal fun NurseSectionHeader(icon: ImageVector, title: String) {
     Row(horizontalArrangement = Arrangement.spacedBy(10.dp), verticalAlignment = Alignment.CenterVertically) {
         Icon(icon, null, tint = MaterialTheme.colorScheme.secondary)
-        Text(title, color = MaterialTheme.colorScheme.onBackground, fontFamily = FontFamily.Serif, fontSize = 23.sp, fontWeight = FontWeight.Bold)
+        Text(title, color = MaterialTheme.colorScheme.onBackground, fontFamily = SoraFontFamily, fontSize = 23.sp, fontWeight = FontWeight.Bold)
     }
 }
 
@@ -52,7 +52,7 @@ internal fun NurseInlineEmpty(icon: ImageVector, message: String) {
 internal fun NurseCenteredEmpty(icon: ImageVector, title: String, description: String, modifier: Modifier) {
     Column(modifier.padding(32.dp), horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.Center) {
         Icon(icon, null, Modifier.size(72.dp), tint = MaterialTheme.colorScheme.tertiary)
-        Text(title, Modifier.padding(top = 22.dp), color = MaterialTheme.colorScheme.onBackground, fontFamily = FontFamily.Serif, fontSize = 26.sp, fontWeight = FontWeight.Bold, textAlign = TextAlign.Center)
+        Text(title, Modifier.padding(top = 22.dp), color = MaterialTheme.colorScheme.onBackground, fontFamily = SoraFontFamily, fontSize = 26.sp, fontWeight = FontWeight.Bold, textAlign = TextAlign.Center)
         Text(description, Modifier.padding(top = 12.dp), color = MaterialTheme.colorScheme.onSurfaceVariant, textAlign = TextAlign.Center)
     }
 }

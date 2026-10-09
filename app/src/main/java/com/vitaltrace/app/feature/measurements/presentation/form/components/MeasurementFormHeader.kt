@@ -17,10 +17,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.vitaltrace.app.ui.theme.SoraFontFamily
 import com.vitaltrace.app.R
 import com.vitaltrace.app.ui.theme.VitalTraceNavy
 
@@ -48,7 +48,7 @@ fun MeasurementFormHeader(
             Text(
                 text = stringResource(R.string.measurement_form_title),
                 color = MaterialTheme.colorScheme.onBackground,
-                fontFamily = FontFamily.Serif,
+                fontFamily = SoraFontFamily,
                 fontSize = 31.sp,
                 fontWeight = FontWeight.Bold
             )

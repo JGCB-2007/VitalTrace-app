@@ -20,10 +20,10 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
-import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.vitaltrace.app.ui.theme.SoraFontFamily
 import com.vitaltrace.app.R
 import com.vitaltrace.app.feature.appointments.presentation.AppointmentUiModel
 import com.vitaltrace.app.ui.theme.VitalTraceMint
@@ -76,7 +76,7 @@ fun FeaturedAppointmentCard(
             Text(
                 text = appointment.professionalName,
                 color = Color.White,
-                fontFamily = FontFamily.Serif,
+                fontFamily = SoraFontFamily,
                 fontSize = 29.sp,
                 fontWeight = FontWeight.Bold
             )

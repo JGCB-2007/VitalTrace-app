@@ -22,11 +22,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.vitaltrace.app.ui.theme.SoraFontFamily
 import com.vitaltrace.app.R
 import com.vitaltrace.app.feature.measurements.presentation.MeasurementDetailUiModel
 import com.vitaltrace.app.feature.measurements.presentation.components.MeasurementStatusChip
@@ -59,7 +59,7 @@ fun MeasurementDetailContent(
             Text(
                 text = detail.value,
                 color = MaterialTheme.colorScheme.onSurface,
-                fontFamily = FontFamily.Serif,
+                fontFamily = SoraFontFamily,
                 fontSize = 49.sp,
                 fontWeight = FontWeight.Bold
             )
@@ -80,7 +80,7 @@ fun MeasurementDetailContent(
         ) {
             Text(
                 text = stringResource(R.string.measurement_detail_close),
-                fontFamily = FontFamily.Serif,
+                fontFamily = SoraFontFamily,
                 fontSize = 21.sp,
                 fontWeight = FontWeight.Bold
             )

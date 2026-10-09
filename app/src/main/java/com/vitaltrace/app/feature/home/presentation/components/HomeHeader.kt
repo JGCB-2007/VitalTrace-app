@@ -31,10 +31,10 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
-import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.vitaltrace.app.ui.theme.SoraFontFamily
 import com.vitaltrace.app.R
 
 @Composable
@@ -68,8 +68,8 @@ fun HomeHeader(
             Text(
                 text = patientName,
                 color = HomeNavy,
-                fontFamily = FontFamily.Serif,
-                fontWeight = FontWeight.Bold,
+                fontFamily = SoraFontFamily,
+                fontWeight = FontWeight.ExtraBold,
                 style = MaterialTheme.typography.headlineLarge,
                 modifier = Modifier.padding(top = 2.dp)
             )
@@ -126,7 +126,7 @@ fun HomeHeader(
                         Text(
                             text = patientInitials,
                             color = Color.White,
-                            fontFamily = FontFamily.Serif,
+                            fontFamily = SoraFontFamily,
                             fontWeight = FontWeight.Bold,
                             style = MaterialTheme.typography.titleLarge
                         )

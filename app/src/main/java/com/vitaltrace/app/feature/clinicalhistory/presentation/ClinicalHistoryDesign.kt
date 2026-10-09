@@ -23,12 +23,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.vitaltrace.app.ui.theme.SoraFontFamily
 import com.vitaltrace.app.feature.patient.domain.model.*
 import com.vitaltrace.app.feature.clinicalhistory.export.ClinicalHistoryPdfExporter
 import com.vitaltrace.app.ui.theme.*
@@ -52,7 +52,7 @@ internal fun ClinicalHistoryDesign(
                 title = {
                     Text(
                         "Historial clínico",
-                        fontFamily = FontFamily.Serif,
+                        fontFamily = SoraFontFamily,
                         fontSize = 25.sp,
                         fontWeight = FontWeight.Bold
                     )
@@ -207,7 +207,7 @@ private fun HistoryOverviewCard(
                     Text(
                         "Resumen del historial",
                         style = MaterialTheme.typography.titleLarge,
-                        fontFamily = FontFamily.Serif,
+                        fontFamily = SoraFontFamily,
                         fontWeight = FontWeight.Bold
                     )
                     Text(
@@ -319,7 +319,7 @@ private fun ClinicalSectionHeader(icon: ImageVector, title: String) {
         Text(
             title,
             color = MaterialTheme.colorScheme.onBackground,
-            fontFamily = FontFamily.Serif,
+            fontFamily = SoraFontFamily,
             fontSize = 23.sp,
             fontWeight = FontWeight.Bold
         )
@@ -332,7 +332,7 @@ private fun DiagnosisCard(
     onEducationClick: (String, String) -> Unit,
     showEducationAction: Boolean
 ) = VitalTraceClinicalCard {
-    Text(item.description, color = MaterialTheme.colorScheme.onSurface, fontFamily = FontFamily.Serif, fontSize = 21.sp, fontWeight = FontWeight.Bold)
+    Text(item.description, color = MaterialTheme.colorScheme.onSurface, fontFamily = SoraFontFamily, fontSize = 21.sp, fontWeight = FontWeight.Bold)
     Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween, verticalAlignment = Alignment.CenterVertically) {
         item.cieCode?.takeIf(String::isNotBlank)?.let { DetailLabel("Código CIE", it) }
         ClinicalStatusChip(item.status)
@@ -363,7 +363,7 @@ private fun EvolutionCard(item: ClinicalEvolution) {
         Text(
             item.clinicalSummary,
             color = MaterialTheme.colorScheme.onSurface,
-            fontFamily = FontFamily.Serif,
+            fontFamily = SoraFontFamily,
             fontSize = 19.sp,
             fontWeight = FontWeight.Bold,
             maxLines = if (expanded) Int.MAX_VALUE else 4,
@@ -390,7 +390,7 @@ private fun ClinicalTreatmentCard(item: ClinicalTreatment) = VitalTraceClinicalC
             Icon(Icons.Rounded.Medication, null, Modifier.padding(14.dp), tint = MaterialTheme.colorScheme.onSecondaryContainer)
         }
         Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(6.dp)) {
-            Text(item.indications, color = MaterialTheme.colorScheme.onSurface, fontFamily = FontFamily.Serif, fontSize = 19.sp, fontWeight = FontWeight.Bold)
+            Text(item.indications, color = MaterialTheme.colorScheme.onSurface, fontFamily = SoraFontFamily, fontSize = 19.sp, fontWeight = FontWeight.Bold)
             Text(listOfNotNull(item.startDate, item.endDate).joinToString("  ·  "), color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 15.sp)
         }
         ClinicalStatusChip(item.status)
@@ -418,7 +418,7 @@ private fun ClinicalMeasurementsCard(items: List<ClinicalMeasurement>) {
                     }
                     Column(Modifier.weight(1f)) {
                         Text(item.measurementType?.name ?: "Medición", color = MaterialTheme.colorScheme.onSurface, fontWeight = FontWeight.Bold)
-                        Text("${item.value} ${item.unit}", color = MaterialTheme.colorScheme.onSurface, fontFamily = FontFamily.Serif, fontSize = 21.sp, fontWeight = FontWeight.Bold)
+                        Text("${item.value} ${item.unit}", color = MaterialTheme.colorScheme.onSurface, fontFamily = SoraFontFamily, fontSize = 21.sp, fontWeight = FontWeight.Bold)
                         Text(item.measuredAt, color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 14.sp)
                     }
                 }
@@ -474,7 +474,7 @@ private fun ClinicalStatusChip(status: String) {
     modifier.fillMaxSize().padding(32.dp), horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.Center
 ) {
     Icon(Icons.Rounded.FolderShared, null, Modifier.size(72.dp), tint = VitalTraceMint)
-    Text("Aún no existe información clínica registrada.", Modifier.padding(top = 22.dp), color = MaterialTheme.colorScheme.onBackground, fontFamily = FontFamily.Serif, fontSize = 25.sp, fontWeight = FontWeight.Bold, textAlign = TextAlign.Center)
+    Text("Aún no existe información clínica registrada.", Modifier.padding(top = 22.dp), color = MaterialTheme.colorScheme.onBackground, fontFamily = SoraFontFamily, fontSize = 25.sp, fontWeight = FontWeight.Bold, textAlign = TextAlign.Center)
 }
 
 @Composable private fun ClinicalError(message: String, onRetry: () -> Unit, modifier: Modifier) = Column(
@@ -487,7 +487,7 @@ private fun ClinicalStatusChip(status: String) {
         modifier = Modifier.fillMaxWidth().padding(top = 22.dp).height(56.dp),
         shape = RoundedCornerShape(18.dp),
         colors = ButtonDefaults.buttonColors()
-    ) { Text("Reintentar", fontFamily = FontFamily.Serif, fontSize = 19.sp, fontWeight = FontWeight.Bold) }
+    ) { Text("Reintentar", fontFamily = SoraFontFamily, fontSize = 19.sp, fontWeight = FontWeight.Bold) }
 }
 
 private fun professionalName(value: ClinicalProfessional?) = value?.fullName?.takeIf(String::isNotBlank)

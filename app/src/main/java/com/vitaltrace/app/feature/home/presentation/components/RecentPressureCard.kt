@@ -24,10 +24,10 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
-import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import com.vitaltrace.app.ui.theme.SoraFontFamily
 import com.vitaltrace.app.R
 import com.vitaltrace.app.feature.home.presentation.RecentMeasurementUiModel
 import com.vitaltrace.app.feature.home.presentation.MeasurementTrendPoint
@@ -86,7 +86,7 @@ fun RecentPressureCard(
                 Text(
                     text = measurement.value,
                     color = HomeNavy,
-                    fontFamily = FontFamily.Serif,
+                    fontFamily = SoraFontFamily,
                     fontWeight = FontWeight.Bold,
                     style = MaterialTheme.typography.displayMedium,
                     maxLines = 1,

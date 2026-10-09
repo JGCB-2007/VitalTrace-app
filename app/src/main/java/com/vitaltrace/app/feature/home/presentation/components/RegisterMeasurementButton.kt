@@ -11,11 +11,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
+import com.vitaltrace.app.ui.theme.SoraFontFamily
 import com.vitaltrace.app.R
 
 @Composable
@@ -39,7 +39,7 @@ fun RegisterMeasurementButton(
     ) {
         Text(
             text = stringResource(R.string.home_register_measurement),
-            fontFamily = FontFamily.Serif,
+            fontFamily = SoraFontFamily,
             fontWeight = FontWeight.Bold,
             style = MaterialTheme.typography.titleLarge
         )

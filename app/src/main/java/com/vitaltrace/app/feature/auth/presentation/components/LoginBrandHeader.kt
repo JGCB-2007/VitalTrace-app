@@ -19,9 +19,9 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.vitaltrace.app.ui.theme.SoraFontFamily
 import com.vitaltrace.app.R
 import com.vitaltrace.app.ui.theme.VitalTraceNavy
 
@@ -66,7 +66,7 @@ fun LoginBrandHeader(
         Text(
             text = stringResource(R.string.login_welcome_title),
             color = Color.White,
-            fontFamily = FontFamily.Serif,
+            fontFamily = SoraFontFamily,
             fontWeight = FontWeight.Bold,
             style = MaterialTheme.typography.displaySmall,
             modifier = Modifier.padding(top = 42.dp)

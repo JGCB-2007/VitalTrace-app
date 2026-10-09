@@ -15,12 +15,12 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.vitaltrace.app.ui.theme.SoraFontFamily
 import com.vitaltrace.app.AppShellViewModel
 import com.vitaltrace.app.core.presentation.components.PortalBottomDestination
 import com.vitaltrace.app.core.presentation.components.ThemePreferenceCard
@@ -75,7 +75,7 @@ fun NursePortalScreen(
                 Text(
                     "Apariencia",
                     color = MaterialTheme.colorScheme.onSurface,
-                    fontFamily = FontFamily.Serif,
+                    fontFamily = SoraFontFamily,
                     fontSize = 25.sp,
                     fontWeight = FontWeight.Bold
                 )
@@ -93,7 +93,7 @@ fun NursePortalScreen(
         snackbarHost = { SnackbarHost(snackbarHostState) },
         topBar = {
             TopAppBar(
-                title = { Text(state.section.title, fontFamily = FontFamily.Serif, fontSize = 25.sp, fontWeight = FontWeight.Bold) },
+                title = { Text(state.section.title, fontFamily = SoraFontFamily, fontSize = 25.sp, fontWeight = FontWeight.Bold) },
                 navigationIcon = {
                     if (state.section == NurseSection.PATIENTS && state.selectedPatient != null) {
                         IconButton(viewModel::clearPatient) { Icon(Icons.AutoMirrored.Rounded.ArrowBack, "Volver a pacientes") }

@@ -35,11 +35,11 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
-import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.vitaltrace.app.ui.theme.SoraFontFamily
 import com.vitaltrace.app.R
 import com.vitaltrace.app.feature.profile.presentation.ProfileUserUiModel
 import com.vitaltrace.app.ui.theme.VitalTraceNavy
@@ -109,7 +109,7 @@ fun ProfileIdentityCard(
                     Text(
                         text = user.initials,
                         color = Color.White,
-                        fontFamily = FontFamily.Serif,
+                        fontFamily = SoraFontFamily,
                         fontSize = 35.sp,
                         fontWeight = FontWeight.Bold,
                         textAlign = TextAlign.Center
@@ -137,7 +137,7 @@ fun ProfileIdentityCard(
                 Text(
                     text = user.fullName,
                     color = MaterialTheme.colorScheme.onSurface,
-                    fontFamily = FontFamily.Serif,
+                    fontFamily = SoraFontFamily,
                     fontSize = 27.sp,
                     fontWeight = FontWeight.Bold,
                     lineHeight = 30.sp

@@ -36,12 +36,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.vitaltrace.app.ui.theme.SoraFontFamily
 import com.vitaltrace.app.core.session.PortalTarget
 import com.vitaltrace.app.feature.home.presentation.components.LogoutConfirmationDialog
 
@@ -77,7 +77,7 @@ fun PortalSelectorScreen(
                 title = {
                     Text(
                         "VitalTrace",
-                        fontFamily = FontFamily.Serif,
+                        fontFamily = SoraFontFamily,
                         fontSize = 25.sp,
                         fontWeight = FontWeight.Bold
                     )
@@ -105,7 +105,7 @@ fun PortalSelectorScreen(
             Text(
                 "¿Cómo deseas continuar?",
                 color = androidx.compose.material3.MaterialTheme.colorScheme.onBackground,
-                fontFamily = FontFamily.Serif,
+                fontFamily = SoraFontFamily,
                 fontSize = 26.sp,
                 fontWeight = FontWeight.Bold
             )

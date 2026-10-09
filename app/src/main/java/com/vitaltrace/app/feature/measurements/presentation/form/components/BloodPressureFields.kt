@@ -29,12 +29,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.vitaltrace.app.ui.theme.SoraFontFamily
 import com.vitaltrace.app.feature.measurements.presentation.form.MeasurementFieldError
 import com.vitaltrace.app.feature.measurements.presentation.form.MeasurementTypeOption
 import com.vitaltrace.app.R
@@ -67,7 +67,7 @@ fun MeasurementValueFields(
                         .menuAnchor(ExposedDropdownMenuAnchorType.PrimaryNotEditable),
                     textStyle = TextStyle(
                         color = MaterialTheme.colorScheme.onSurface,
-                        fontFamily = FontFamily.Serif,
+                        fontFamily = SoraFontFamily,
                         fontSize = 20.sp,
                         fontWeight = FontWeight.Bold
                     ),
@@ -105,7 +105,7 @@ fun MeasurementValueFields(
                         .height(if (valueError == null) 82.dp else 106.dp),
                     textStyle = TextStyle(
                         color = MaterialTheme.colorScheme.onSurface,
-                        fontFamily = FontFamily.Serif,
+                        fontFamily = SoraFontFamily,
                         fontSize = 34.sp,
                         fontWeight = FontWeight.Bold,
                         textAlign = TextAlign.Center
@@ -144,7 +144,7 @@ fun MeasurementValueFields(
                         text = selectedType?.unit.orEmpty(),
                         modifier = Modifier.padding(top = 27.dp),
                         color = MaterialTheme.colorScheme.onSurface,
-                        fontFamily = FontFamily.Serif,
+                        fontFamily = SoraFontFamily,
                         fontSize = 18.sp,
                         fontWeight = FontWeight.Bold,
                         textAlign = TextAlign.Center

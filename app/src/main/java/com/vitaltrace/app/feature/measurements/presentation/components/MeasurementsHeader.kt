@@ -15,10 +15,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.vitaltrace.app.ui.theme.SoraFontFamily
 import com.vitaltrace.app.R
 
 @Composable
@@ -34,7 +34,7 @@ fun MeasurementsHeader(
         Text(
             text = stringResource(R.string.measurements_title),
             color = MaterialTheme.colorScheme.onBackground,
-            fontFamily = FontFamily.Serif,
+            fontFamily = SoraFontFamily,
             fontSize = 34.sp,
             fontWeight = FontWeight.Bold
         )

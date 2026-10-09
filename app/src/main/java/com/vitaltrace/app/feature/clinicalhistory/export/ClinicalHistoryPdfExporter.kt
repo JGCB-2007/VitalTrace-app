@@ -9,6 +9,8 @@ import android.graphics.RectF
 import android.graphics.Typeface
 import android.graphics.pdf.PdfDocument
 import android.net.Uri
+import androidx.core.content.res.ResourcesCompat
+import com.vitaltrace.app.R
 import com.vitaltrace.app.core.presentation.localization.EnumDisplayEs
 import com.vitaltrace.app.core.presentation.localization.SpanishDateTime
 import com.vitaltrace.app.feature.patient.domain.model.ClinicalHistory
@@ -23,10 +25,18 @@ object ClinicalHistoryPdfExporter {
     ): Result<Unit> = runCatching {
         val safeName = clean(patientName).ifBlank { "Paciente" }
         val safeRecord = clean(history.recordNumber)
-        val totalPages = measurePages(safeName, safeRecord, history)
+        val soraTypeface = ResourcesCompat.getFont(context, R.font.sora_variable)
+            ?: Typeface.DEFAULT
+        val totalPages = measurePages(safeName, safeRecord, history, soraTypeface)
         val document = PdfDocument()
         try {
-            val template = ClinicalHistoryTemplate(document, safeName, safeRecord, totalPages)
+            val template = ClinicalHistoryTemplate(
+                document,
+                safeName,
+                safeRecord,
+                totalPages,
+                soraTypeface
+            )
             render(template, history)
             template.finish()
             context.contentResolver.openOutputStream(uri)?.use(document::writeTo)
@@ -36,10 +46,15 @@ object ClinicalHistoryPdfExporter {
         }
     }
 
-    private fun measurePages(name: String, record: String, history: ClinicalHistory): Int {
+    private fun measurePages(
+        name: String,
+        record: String,
+        history: ClinicalHistory,
+        soraTypeface: Typeface
+    ): Int {
         val draft = PdfDocument()
         return try {
-            val template = ClinicalHistoryTemplate(draft, name, record, null)
+            val template = ClinicalHistoryTemplate(draft, name, record, null, soraTypeface)
             render(template, history)
             template.finish()
             template.pageCount
@@ -127,7 +142,8 @@ private class ClinicalHistoryTemplate(
     private val document: PdfDocument,
     private val patientName: String,
     private val recordNumber: String,
-    private val totalPages: Int?
+    private val totalPages: Int?,
+    private val soraTypeface: Typeface
 ) {
     private val pageWidth = 595
     private val pageHeight = 842
@@ -155,10 +171,10 @@ private class ClinicalHistoryTemplate(
     private val green = Color.rgb(35, 128, 95)
     private val greenSoft = Color.rgb(221, 241, 231)
 
-    private val brandPaint = textPaint(navy, 20f, true, Typeface.SERIF)
-    private val reportPaint = textPaint(navy, 16f, true, Typeface.SERIF)
-    private val patientPaint = textPaint(navy, 22f, true, Typeface.SERIF)
-    private val sectionPaint = textPaint(navy, 15f, true, Typeface.SERIF)
+    private val brandPaint = textPaint(navy, 20f, true)
+    private val reportPaint = textPaint(navy, 16f, true)
+    private val patientPaint = textPaint(navy, 22f, true)
+    private val sectionPaint = textPaint(navy, 15f, true)
     private val bodyPaint = textPaint(navy, 9.5f)
     private val bodyBoldPaint = textPaint(navy, 10f, true)
     private val labelPaint = textPaint(muted, 8f)
@@ -452,7 +468,12 @@ private class ClinicalHistoryTemplate(
         .joinToString("")
         .ifBlank { "VT" }
 
-    private fun textPaint(color: Int, size: Float, bold: Boolean = false, family: Typeface = Typeface.DEFAULT) =
+    private fun textPaint(
+        color: Int,
+        size: Float,
+        bold: Boolean = false,
+        family: Typeface = soraTypeface
+    ) =
         Paint(Paint.ANTI_ALIAS_FLAG).apply {
             this.color = color
             textSize = size

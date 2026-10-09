@@ -16,10 +16,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.vitaltrace.app.ui.theme.SoraFontFamily
 import com.vitaltrace.app.feature.appointments.presentation.detail.AppointmentDetailSheet
 import com.vitaltrace.app.feature.home.presentation.NextAppointmentUiModel
 import com.vitaltrace.app.feature.home.presentation.components.HomeHeader
@@ -119,7 +119,7 @@ private fun NursePriorityQueueCard(
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Column(Modifier.weight(1f)) {
                     Text("PRIORIDADES DE HOY", color = MaterialTheme.colorScheme.secondary, style = MaterialTheme.typography.labelLarge, fontWeight = FontWeight.ExtraBold)
-                    Text("Pacientes que requieren seguimiento", fontFamily = FontFamily.Serif, style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.Bold)
+                    Text("Pacientes que requieren seguimiento", fontFamily = SoraFontFamily, style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.Bold)
                 }
                 if (priorities.isNotEmpty()) TextButton(onClick = onViewAllAlerts) { Text("Ver alertas", fontWeight = FontWeight.Bold) }
             }
@@ -178,7 +178,7 @@ private fun NurseHomeAccessCard(icon: ImageVector, title: String, description: S
                 Icon(icon, null, Modifier.padding(14.dp), tint = MaterialTheme.colorScheme.secondary)
             }
             Column(Modifier.weight(1f)) {
-                Text(title, color = MaterialTheme.colorScheme.onSurface, fontFamily = FontFamily.Serif, fontSize = 21.sp, fontWeight = FontWeight.Bold)
+                Text(title, color = MaterialTheme.colorScheme.onSurface, fontFamily = SoraFontFamily, fontSize = 21.sp, fontWeight = FontWeight.Bold)
                 Text(description, color = MaterialTheme.colorScheme.onSurfaceVariant, modifier = Modifier.padding(top = 4.dp))
             }
             Icon(Icons.Rounded.ChevronRight, null, tint = MaterialTheme.colorScheme.secondary)
@@ -223,7 +223,7 @@ private fun NurseDashboardOverviewCard(
                     Text(
                         if (requiresAttention) "Prioridad clínica" else "Resumen de seguimiento",
                         style = MaterialTheme.typography.titleLarge,
-                        fontFamily = FontFamily.Serif,
+                        fontFamily = SoraFontFamily,
                         fontWeight = FontWeight.Bold
                     )
                     Text(

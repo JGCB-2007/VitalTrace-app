@@ -17,12 +17,12 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.vitaltrace.app.ui.theme.SoraFontFamily
 import com.vitaltrace.app.core.presentation.components.ObservedPatientHeader
 import com.vitaltrace.app.core.presentation.localization.EnumDisplayEs
 import com.vitaltrace.app.core.presentation.localization.SpanishDateTime
@@ -139,7 +139,7 @@ private fun NurseAlertsEmptyCard(modifier: Modifier = Modifier) {
                 Text(
                     "Sin alertas",
                     color = VitalTraceNavy,
-                    fontFamily = FontFamily.Serif,
+                    fontFamily = SoraFontFamily,
                     fontSize = 22.sp,
                     fontWeight = FontWeight.Bold,
                     textAlign = TextAlign.Center
@@ -162,7 +162,7 @@ internal fun NurseAlertCard(alert: NurseAlert, patientName: String? = null, onCl
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Surface(color = colors.first, shape = RoundedCornerShape(18.dp)) { Icon(Icons.Rounded.Warning, null, Modifier.padding(14.dp), tint = colors.second) }
                 Column(Modifier.weight(1f).padding(start = 14.dp)) {
-                    patientName?.let { Text(it, color = MaterialTheme.colorScheme.onSurface, fontFamily = FontFamily.Serif, fontSize = 20.sp, fontWeight = FontWeight.Bold) }
+                    patientName?.let { Text(it, color = MaterialTheme.colorScheme.onSurface, fontFamily = SoraFontFamily, fontSize = 20.sp, fontWeight = FontWeight.Bold) }
                     Text(alert.description, color = MaterialTheme.colorScheme.onSurfaceVariant, maxLines = 2, overflow = TextOverflow.Ellipsis)
                 }
             }
@@ -205,7 +205,7 @@ internal fun NurseAlertDetailSheet(alert: NurseAlert, state: NursePortalUiState,
                             NurseStatusChip(EnumDisplayEs.alertSeverity(alert.severity), colors.first, colors.second)
                             NurseStatusChip(EnumDisplayEs.alertStatus(alert.status), Color(0xFFDDF4F2), VitalTraceTeal)
                         }
-                        Text(alert.description, color = VitalTraceNavy, fontFamily = FontFamily.Serif, fontSize = 21.sp, fontWeight = FontWeight.Bold)
+                        Text(alert.description, color = VitalTraceNavy, fontFamily = SoraFontFamily, fontSize = 21.sp, fontWeight = FontWeight.Bold)
                         NurseDetailRow("Tipo", EnumDisplayEs.alertType(alert.type))
                         NurseDetailRow("Fecha", spanishTimestamp(alert.generatedAt))
                         alert.measurementId?.let { NurseDetailRow("Medición asociada", "#$it") }
@@ -223,14 +223,14 @@ internal fun NurseAlertDetailSheet(alert: NurseAlert, state: NursePortalUiState,
                         modifier = Modifier.fillMaxWidth().height(64.dp),
                         shape = RoundedCornerShape(18.dp),
                         colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary)
-                    ) { Text("Clasificar", fontFamily = FontFamily.Serif, fontSize = 20.sp, fontWeight = FontWeight.Bold) }
+                    ) { Text("Clasificar", fontFamily = SoraFontFamily, fontSize = 20.sp, fontWeight = FontWeight.Bold) }
                     OutlinedButton(
                         onClick = { action = "ESCALATE" },
                         modifier = Modifier.fillMaxWidth().height(64.dp),
                         shape = RoundedCornerShape(18.dp),
                         border = BorderStroke(1.dp, MaterialTheme.colorScheme.outline),
                         colors = ButtonDefaults.outlinedButtonColors(contentColor = MaterialTheme.colorScheme.primary)
-                    ) { Text("Escalar", fontFamily = FontFamily.Serif, fontSize = 20.sp, fontWeight = FontWeight.Bold) }
+                    ) { Text("Escalar", fontFamily = SoraFontFamily, fontSize = 20.sp, fontWeight = FontWeight.Bold) }
                 }
             }
         }
@@ -255,7 +255,7 @@ private fun AlertActionDialog(title: String, message: String, confirmLabel: Stri
     AlertDialog(
         onDismissRequest = onDismiss,
         icon = { Icon(Icons.Rounded.Warning, null, tint = MaterialTheme.colorScheme.secondary) },
-        title = { Text(title, color = MaterialTheme.colorScheme.onSurface, fontFamily = FontFamily.Serif, fontWeight = FontWeight.Bold) },
+        title = { Text(title, color = MaterialTheme.colorScheme.onSurface, fontFamily = SoraFontFamily, fontWeight = FontWeight.Bold) },
         text = { Column(verticalArrangement = Arrangement.spacedBy(14.dp)) { Text(message, color = MaterialTheme.colorScheme.onSurfaceVariant); MeasurementNoteField(comment, { comment = it }) } },
         confirmButton = { Button({ onConfirm(comment.takeIf(String::isNotBlank)) }, shape = RoundedCornerShape(16.dp), colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary)) { Text(confirmLabel) } },
         dismissButton = { TextButton(onDismiss) { Text("Cancelar", color = MaterialTheme.colorScheme.secondary, fontWeight = FontWeight.Bold) } }

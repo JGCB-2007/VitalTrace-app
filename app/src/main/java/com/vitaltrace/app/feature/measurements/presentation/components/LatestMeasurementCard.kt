@@ -16,7 +16,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -27,6 +26,7 @@ import com.vitaltrace.app.ui.theme.VitalTraceNavy
 import com.vitaltrace.app.ui.theme.VitalTraceTeal
 import com.vitaltrace.app.core.presentation.localizedMeasurementTypeLabel
 import androidx.compose.ui.text.style.TextOverflow
+import com.vitaltrace.app.ui.theme.SoraFontFamily
 
 @Composable
 fun LatestMeasurementCard(
@@ -72,7 +72,7 @@ fun LatestMeasurementCard(
                 Text(
                     text = measurement.value,
                     color = MaterialTheme.colorScheme.onSurface,
-                    fontFamily = FontFamily.Serif,
+                    fontFamily = SoraFontFamily,
                     fontSize = 38.sp,
                     fontWeight = FontWeight.Bold,
                     maxLines = 1,

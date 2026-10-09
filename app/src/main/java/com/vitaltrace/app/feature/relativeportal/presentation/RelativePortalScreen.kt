@@ -55,13 +55,13 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.vitaltrace.app.ui.theme.SoraFontFamily
 import com.vitaltrace.app.AppShellViewModel
 import com.vitaltrace.app.core.presentation.components.ObservedPatientHeader
 import com.vitaltrace.app.core.presentation.components.OfflineStatusBanner
@@ -133,7 +133,7 @@ fun RelativePortalScreen(
                 Text(
                     "Apariencia",
                     color = MaterialTheme.colorScheme.onSurface,
-                    fontFamily = FontFamily.Serif,
+                    fontFamily = SoraFontFamily,
                     fontSize = 25.sp,
                     fontWeight = FontWeight.Bold
                 )
@@ -152,7 +152,7 @@ fun RelativePortalScreen(
                 title = {
                     Text(
                         text = content?.section?.title ?: "Portal familiar",
-                        fontFamily = FontFamily.Serif,
+                        fontFamily = SoraFontFamily,
                         fontSize = 25.sp,
                         fontWeight = FontWeight.Bold
                     )
@@ -577,7 +577,7 @@ private fun PatientSelectorSheet(
             Text(
                 "Seleccionar paciente",
                 color = MaterialTheme.colorScheme.onSurface,
-                fontFamily = FontFamily.Serif,
+                fontFamily = SoraFontFamily,
                 fontSize = 25.sp,
                 fontWeight = FontWeight.Bold
             )
@@ -620,7 +620,7 @@ private fun PatientSelectorSheet(
 private fun SectionTitle(icon: ImageVector, title: String) {
     Row(horizontalArrangement = Arrangement.spacedBy(10.dp), verticalAlignment = Alignment.CenterVertically) {
         Icon(icon, null, tint = MaterialTheme.colorScheme.secondary)
-        Text(title, color = MaterialTheme.colorScheme.onBackground, fontFamily = FontFamily.Serif, fontSize = 23.sp, fontWeight = FontWeight.Bold)
+        Text(title, color = MaterialTheme.colorScheme.onBackground, fontFamily = SoraFontFamily, fontSize = 23.sp, fontWeight = FontWeight.Bold)
     }
 }
 
@@ -653,7 +653,7 @@ private fun RelativeEmptyState(
             title,
             Modifier.padding(top = 22.dp),
             color = MaterialTheme.colorScheme.onBackground,
-            fontFamily = FontFamily.Serif,
+            fontFamily = SoraFontFamily,
             fontSize = 26.sp,
             fontWeight = FontWeight.Bold,
             textAlign = TextAlign.Center

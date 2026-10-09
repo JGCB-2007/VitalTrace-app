@@ -34,12 +34,12 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
-import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.vitaltrace.app.ui.theme.SoraFontFamily
 import com.vitaltrace.app.R
 import com.vitaltrace.app.feature.appointments.presentation.AppointmentDetailUiModel
 import com.vitaltrace.app.feature.appointments.presentation.AppointmentStatus
@@ -108,7 +108,7 @@ fun AppointmentDetailContent(
         ) {
             Text(
                 text = stringResource(R.string.appointment_detail_close),
-                fontFamily = FontFamily.Serif,
+                fontFamily = SoraFontFamily,
                 fontSize = 21.sp,
                 fontWeight = FontWeight.Bold
             )
@@ -176,7 +176,7 @@ private fun AppointmentProfessional(detail: AppointmentDetailUiModel) {
             Text(
                 text = detail.professionalInitials,
                 modifier = Modifier.padding(top = 22.dp),
-                fontFamily = FontFamily.Serif,
+                fontFamily = SoraFontFamily,
                 fontSize = 25.sp,
                 fontWeight = FontWeight.Bold,
                 textAlign = TextAlign.Center
@@ -186,7 +186,7 @@ private fun AppointmentProfessional(detail: AppointmentDetailUiModel) {
             Text(
                 text = detail.professionalName,
                 color = MaterialTheme.colorScheme.onSurface,
-                fontFamily = FontFamily.Serif,
+                fontFamily = SoraFontFamily,
                 fontSize = 27.sp,
                 fontWeight = FontWeight.Bold,
                 lineHeight = 30.sp

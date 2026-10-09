@@ -25,9 +25,9 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
-import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.vitaltrace.app.ui.theme.SoraFontFamily
 import com.vitaltrace.app.R
 import com.vitaltrace.app.core.presentation.localization.SpanishDateTime
 import com.vitaltrace.app.ui.theme.VitalTraceNavy
@@ -116,7 +116,7 @@ private fun DateTimeField(
                 Text(
                     text = value,
                     color = MaterialTheme.colorScheme.onSurface,
-                    fontFamily = FontFamily.Serif,
+                    fontFamily = SoraFontFamily,
                     fontSize = 17.sp,
                     maxLines = 1
                 )

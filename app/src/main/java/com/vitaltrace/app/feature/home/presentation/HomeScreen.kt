@@ -176,7 +176,7 @@ private fun HomeBody(
                 onAppointmentClick = {
                     content.nextAppointment?.let { onAppointmentDetailClick(it.id) }
                 },
-                modifier = Modifier.padding(top = 18.dp)
+                modifier = Modifier.padding(top = 18 .dp)
             )
         }
         item {

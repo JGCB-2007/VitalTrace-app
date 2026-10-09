@@ -20,13 +20,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalUriHandler
-import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.vitaltrace.app.ui.theme.SoraFontFamily
 import com.vitaltrace.app.feature.medlineplus.domain.model.DiagnosisEducation
 import com.vitaltrace.app.ui.theme.*
 
@@ -41,7 +41,7 @@ fun DiagnosisEducationScreen(
         containerColor = MaterialTheme.colorScheme.background,
         topBar = {
             TopAppBar(
-                title = { Text("Información educativa", fontFamily = FontFamily.Serif, fontWeight = FontWeight.Bold) },
+                title = { Text("Información educativa", fontFamily = SoraFontFamily, fontWeight = FontWeight.Bold) },
                 navigationIcon = { IconButton(onClick = onNavigateBack) { Icon(Icons.AutoMirrored.Rounded.ArrowBack, "Volver") } },
                 colors = TopAppBarDefaults.topAppBarColors(
                     containerColor = MaterialTheme.colorScheme.background,
@@ -86,7 +86,7 @@ private fun EducationContent(education: DiagnosisEducation, modifier: Modifier) 
 
 @Composable
 private fun EducationHeader(education: DiagnosisEducation) = Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
-    Text(education.diagnosisName, color = MaterialTheme.colorScheme.onBackground, fontFamily = FontFamily.Serif, fontSize = 28.sp, fontWeight = FontWeight.Bold)
+    Text(education.diagnosisName, color = MaterialTheme.colorScheme.onBackground, fontFamily = SoraFontFamily, fontSize = 28.sp, fontWeight = FontWeight.Bold)
     education.cieCode?.takeIf(String::isNotBlank)?.let { Text("Código CIE: $it", color = MaterialTheme.colorScheme.onSurfaceVariant) }
     Surface(color = MaterialTheme.colorScheme.secondaryContainer, contentColor = MaterialTheme.colorScheme.onSecondaryContainer, shape = RoundedCornerShape(50)) {
         Row(Modifier.padding(horizontal = 10.dp, vertical = 5.dp), horizontalArrangement = Arrangement.spacedBy(6.dp), verticalAlignment = Alignment.CenterVertically) {
@@ -121,7 +121,7 @@ private fun EducationArticleCard(title: String, summary: String, onOpen: () -> U
                 Surface(color = MaterialTheme.colorScheme.secondaryContainer, shape = RoundedCornerShape(14.dp)) {
                     Icon(Icons.AutoMirrored.Rounded.MenuBook, null, Modifier.padding(10.dp).size(20.dp), tint = MaterialTheme.colorScheme.onSecondaryContainer)
                 }
-                Text(title, Modifier.weight(1f), color = MaterialTheme.colorScheme.onSurface, fontFamily = FontFamily.Serif, fontSize = 21.sp, fontWeight = FontWeight.Bold)
+                Text(title, Modifier.weight(1f), color = MaterialTheme.colorScheme.onSurface, fontFamily = SoraFontFamily, fontSize = 21.sp, fontWeight = FontWeight.Bold)
             }
             HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
             Text(
@@ -161,7 +161,7 @@ private fun EducationEmpty(education: DiagnosisEducation, modifier: Modifier) = 
     verticalArrangement = Arrangement.Center
 ) {
     Icon(Icons.AutoMirrored.Rounded.MenuBook, null, Modifier.size(72.dp), tint = VitalTraceMint)
-    Text(education.diagnosisName, Modifier.padding(top = 18.dp), color = MaterialTheme.colorScheme.onBackground, fontFamily = FontFamily.Serif, fontSize = 23.sp, fontWeight = FontWeight.Bold, textAlign = TextAlign.Center)
+    Text(education.diagnosisName, Modifier.padding(top = 18.dp), color = MaterialTheme.colorScheme.onBackground, fontFamily = SoraFontFamily, fontSize = 23.sp, fontWeight = FontWeight.Bold, textAlign = TextAlign.Center)
     Text("No se encontró información educativa para este diagnóstico.", Modifier.padding(top = 12.dp), color = MaterialTheme.colorScheme.onSurfaceVariant, textAlign = TextAlign.Center)
 }
 

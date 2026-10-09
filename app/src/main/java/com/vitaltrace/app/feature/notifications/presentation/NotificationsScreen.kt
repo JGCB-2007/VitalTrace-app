@@ -1,4 +1,4 @@
-﻿package com.vitaltrace.app.feature.notifications.presentation
+package com.vitaltrace.app.feature.notifications.presentation
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.Crossfade
@@ -58,13 +58,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.vitaltrace.app.ui.theme.SoraFontFamily
 import com.vitaltrace.app.R
 import com.vitaltrace.app.feature.patient.domain.model.PatientNotification
 import com.vitaltrace.app.ui.theme.VitalTraceNavy
@@ -161,7 +161,7 @@ private fun NotificationsHeader(
             Text(
                 text = stringResource(R.string.notifications_screen_title),
                 color = MaterialTheme.colorScheme.onBackground,
-                fontFamily = FontFamily.Serif,
+                fontFamily = SoraFontFamily,
                 style = MaterialTheme.typography.headlineSmall,
                 fontWeight = FontWeight.Bold
             )
@@ -518,7 +518,7 @@ private fun NotificationsEmptyState(onRefresh: () -> Unit) {
             text = stringResource(R.string.notifications_empty_title),
             modifier = Modifier.padding(top = 20.dp),
             color = MaterialTheme.colorScheme.onBackground,
-            fontFamily = FontFamily.Serif,
+            fontFamily = SoraFontFamily,
             style = MaterialTheme.typography.headlineSmall,
             fontWeight = FontWeight.Bold,
             textAlign = TextAlign.Center
@@ -552,7 +552,7 @@ private fun NotificationsErrorState(onRetry: () -> Unit) {
             text = stringResource(R.string.notifications_error_title),
             modifier = Modifier.padding(top = 20.dp),
             color = MaterialTheme.colorScheme.onBackground,
-            fontFamily = FontFamily.Serif,
+            fontFamily = SoraFontFamily,
             style = MaterialTheme.typography.headlineSmall,
             fontWeight = FontWeight.Bold,
             textAlign = TextAlign.Center

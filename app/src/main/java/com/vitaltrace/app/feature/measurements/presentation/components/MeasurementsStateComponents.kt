@@ -24,11 +24,11 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.PathEffect
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.vitaltrace.app.ui.theme.SoraFontFamily
 import com.vitaltrace.app.R
 import com.vitaltrace.app.ui.theme.VitalTraceMint
 import com.vitaltrace.app.ui.theme.VitalTraceNavy
@@ -72,7 +72,7 @@ fun MeasurementsEmptyState(
             text = stringResource(R.string.measurements_empty_title),
             modifier = Modifier.padding(top = 24.dp),
             color = MaterialTheme.colorScheme.onBackground,
-            fontFamily = FontFamily.Serif,
+            fontFamily = SoraFontFamily,
             fontSize = 27.sp,
             fontWeight = FontWeight.Bold,
             textAlign = TextAlign.Center
@@ -96,7 +96,7 @@ fun MeasurementsEmptyState(
         ) {
             Text(
                 text = stringResource(R.string.measurements_empty_action),
-                fontFamily = FontFamily.Serif,
+                fontFamily = SoraFontFamily,
                 fontSize = 21.sp,
                 fontWeight = FontWeight.Bold
             )

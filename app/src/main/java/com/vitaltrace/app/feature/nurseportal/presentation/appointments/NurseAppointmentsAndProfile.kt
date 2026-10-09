@@ -10,11 +10,11 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.vitaltrace.app.ui.theme.SoraFontFamily
 import com.vitaltrace.app.core.presentation.components.ThemePreferenceCard
 import com.vitaltrace.app.core.settings.ThemePreference
 import com.vitaltrace.app.feature.appointments.presentation.AppointmentUiModel
@@ -115,7 +115,7 @@ internal fun NurseProfileContent(
                 border = BorderStroke(1.dp, MaterialTheme.colorScheme.outline),
                 colors = ButtonDefaults.outlinedButtonColors(contentColor = MaterialTheme.colorScheme.primary)
             ) {
-                Text("Cerrar sesión", fontFamily = FontFamily.Serif, fontSize = 20.sp, fontWeight = FontWeight.Bold)
+                Text("Cerrar sesión", fontFamily = SoraFontFamily, fontSize = 20.sp, fontWeight = FontWeight.Bold)
             }
         }
     }

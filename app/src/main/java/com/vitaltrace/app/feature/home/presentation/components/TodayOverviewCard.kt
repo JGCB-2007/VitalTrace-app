@@ -25,9 +25,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.vitaltrace.app.ui.theme.SoraFontFamily
 import com.vitaltrace.app.feature.home.presentation.NextAppointmentUiModel
 import com.vitaltrace.app.feature.home.presentation.RecentMeasurementUiModel
 
@@ -57,7 +57,7 @@ fun TodayOverviewCard(
                 Text(
                     "Lo importante, en un solo lugar",
                     color = MaterialTheme.colorScheme.onSurface,
-                    fontFamily = FontFamily.Serif,
+                    fontFamily = SoraFontFamily,
                     style = MaterialTheme.typography.titleLarge,
                     fontWeight = FontWeight.Bold
                 )
