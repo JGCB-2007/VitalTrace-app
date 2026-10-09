@@ -152,7 +152,7 @@ private fun HomeBody(
             start = 24.dp,
             top = 30.dp,
             end = 24.dp,
-            bottom = 28.dp
+            bottom = 30.dp
         )
     )  {
         item { OfflineStatusBanner() }
@@ -197,7 +197,7 @@ private fun HomeBody(
             NextAppointmentCard(
                 appointment = content.nextAppointment,
                 onDetailClick = { content.nextAppointment?.let { onAppointmentDetailClick(it.id) } },
-                modifier = Modifier.padding(top = 18.dp)
+                modifier = Modifier.padding(top = 30.dp)
             )
         }
         item {
