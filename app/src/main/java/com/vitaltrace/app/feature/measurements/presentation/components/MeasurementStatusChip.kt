@@ -30,8 +30,8 @@ import com.vitaltrace.app.ui.theme.VitalTraceTeal
 @Composable
 fun MeasurementStatusChip(
     status: MeasurementStatus,
-    compact: Boolean = false,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    compact: Boolean = false
 ) {
     val presentation = statusPresentation(status)
     Surface(

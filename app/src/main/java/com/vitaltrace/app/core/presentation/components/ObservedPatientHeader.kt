@@ -18,10 +18,10 @@ fun ObservedPatientHeader(
     greeting: String,
     authenticatedName: String,
     patientName: String,
+    modifier: Modifier = Modifier,
     patientRecordNumber: String? = null,
     canChange: Boolean,
-    onChange: () -> Unit,
-    modifier: Modifier = Modifier
+    onChange: () -> Unit
 ) {
     val displayedName = authenticatedName.ifBlank { "Usuario" }
     Card(

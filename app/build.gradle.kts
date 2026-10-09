@@ -6,6 +6,17 @@ plugins {
     alias(libs.plugins.hilt)
 }
 
+val releaseKeystorePath = providers.environmentVariable("VITALTRACE_KEYSTORE_PATH").orNull
+val releaseKeystorePassword = providers.environmentVariable("VITALTRACE_KEYSTORE_PASSWORD").orNull
+val releaseKeyAlias = providers.environmentVariable("VITALTRACE_KEY_ALIAS").orNull
+val releaseKeyPassword = providers.environmentVariable("VITALTRACE_KEY_PASSWORD").orNull
+val hasReleaseSigning = listOf(
+    releaseKeystorePath,
+    releaseKeystorePassword,
+    releaseKeyAlias,
+    releaseKeyPassword
+).all { !it.isNullOrBlank() }
+
 android {
     namespace = "com.vitaltrace.app"
 
@@ -26,6 +37,17 @@ android {
         testInstrumentationRunner =
             "androidx.test.runner.AndroidJUnitRunner"
 
+    }
+
+    signingConfigs {
+        if (hasReleaseSigning) {
+            create("release") {
+                storeFile = file(requireNotNull(releaseKeystorePath))
+                storePassword = requireNotNull(releaseKeystorePassword)
+                keyAlias = requireNotNull(releaseKeyAlias)
+                keyPassword = requireNotNull(releaseKeyPassword)
+            }
+        }
     }
 
     buildTypes {
@@ -51,8 +73,15 @@ android {
         }
 
         release {
-            optimization {
-                enable = false
+            isMinifyEnabled = true
+            isShrinkResources = true
+            proguardFiles(
+                getDefaultProguardFile("proguard-android-optimize.txt"),
+                "proguard-rules.pro"
+            )
+
+            if (hasReleaseSigning) {
+                signingConfig = signingConfigs.getByName("release")
             }
 
             buildConfigField(

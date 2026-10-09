@@ -195,7 +195,14 @@ internal fun NurseAlertDetailSheet(alert: NurseAlert, state: NursePortalUiState,
             item { Text("Detalle de alerta", color = MaterialTheme.colorScheme.secondary, fontSize = 16.sp, fontWeight = FontWeight.ExtraBold, letterSpacing = 0.7.sp) }
             item {
                 val patient = state.patients.firstOrNull { it.id == alert.patientId } ?: state.selectedPatient
-                ObservedPatientHeader(nurseGreeting(), state.summary?.nurse?.fullName.orEmpty(), patient?.fullName.orEmpty(), patient?.recordNumber, false, {})
+                ObservedPatientHeader(
+                    greeting = nurseGreeting(),
+                    authenticatedName = state.summary?.nurse?.fullName.orEmpty(),
+                    patientName = patient?.fullName.orEmpty(),
+                    patientRecordNumber = patient?.recordNumber,
+                    canChange = false,
+                    onChange = {}
+                )
             }
             item {
                 Card(Modifier.fillMaxWidth(), shape = RoundedCornerShape(24.dp), colors = CardDefaults.cardColors(MaterialTheme.colorScheme.surface), elevation = CardDefaults.cardElevation(4.dp)) {

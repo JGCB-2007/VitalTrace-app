@@ -8,8 +8,8 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.ArrowBack
 import androidx.compose.material.icons.automirrored.rounded.MenuBook
+import androidx.compose.material.icons.automirrored.rounded.OpenInNew
 import androidx.compose.material.icons.rounded.Info
-import androidx.compose.material.icons.rounded.OpenInNew
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -147,7 +147,7 @@ private fun EducationArticleCard(title: String, summary: String, onOpen: () -> U
                 shape = RoundedCornerShape(16.dp),
                 contentPadding = PaddingValues(vertical = 13.dp)
             ) {
-                Icon(Icons.Rounded.OpenInNew, null, Modifier.size(18.dp))
+                Icon(Icons.AutoMirrored.Rounded.OpenInNew, null, Modifier.size(18.dp))
                 Text("Leer artículo completo", Modifier.padding(start = 8.dp), fontWeight = FontWeight.Bold)
             }
         }

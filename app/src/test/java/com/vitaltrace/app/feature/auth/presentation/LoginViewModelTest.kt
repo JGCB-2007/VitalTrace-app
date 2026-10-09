@@ -17,6 +17,7 @@ import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
 import org.junit.Test
 
 @OptIn(ExperimentalCoroutinesApi::class)
@@ -54,8 +55,28 @@ class LoginViewModelTest {
     }
 
     @Test
-    fun `non-mobile roles keep the existing home fallback`() = runTest {
-        assertEquals(LoginUiEffect.NavigateToHome, firstEffect(setOf(UserRole.DOCTOR)))
+    fun `non-mobile roles show an access error`() = runTest {
+        Dispatchers.setMain(StandardTestDispatcher(testScheduler))
+        try {
+            val session = SessionManager(
+                FakeAuthRepository(testUser(setOf(UserRole.DOCTOR))),
+                FakeTokenStore(null)
+            )
+            val viewModel = LoginViewModel(LoginUseCase(session), AccountActivationSession(), session)
+            viewModel.onEmailChange("ana@example.com")
+            viewModel.onPasswordChange("secret123")
+
+            viewModel.login()
+            advanceUntilIdle()
+
+            assertFalse(viewModel.uiState.value.isLoading)
+            assertEquals(
+                "Este usuario no tiene acceso a ningún portal de la aplicación móvil.",
+                viewModel.uiState.value.errorMessage
+            )
+        } finally {
+            Dispatchers.resetMain()
+        }
     }
 
     private suspend fun TestScope.firstEffect(roles: Set<UserRole>): LoginUiEffect {

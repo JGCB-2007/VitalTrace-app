@@ -49,6 +49,7 @@ class SessionManagerTest {
         val fixture = fixture(token = null)
         fixture.repository.loginResult = Result.success(user())
         fixture.repository.tokenSavedByLogin = "new-token"
+        fixture.repository.currentUserResult = Result.success(user())
 
         val result = fixture.manager.login("ana@example.com", "secret")
 
@@ -62,6 +63,7 @@ class SessionManagerTest {
         val fixture = fixture(token = null)
         fixture.repository.loginResult = Result.success(user())
         fixture.repository.tokenSavedByLogin = "temporary-token"
+        fixture.repository.currentUserResult = Result.success(user())
 
         val result = fixture.manager.login(
             "ana@example.com",

@@ -1,6 +1,7 @@
 package com.vitaltrace.app.feature.appointments.reminders
 
 import android.content.Context
+import androidx.core.content.edit
 import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -21,9 +22,9 @@ class AppointmentReminderStore @Inject constructor(
     @Synchronized
     fun updateKnownAppointmentIds(ids: Set<Long>, replace: Boolean) {
         val updated = if (replace) ids else knownAppointmentIds() + ids
-        preferences.edit()
-            .putStringSet(KEY_KNOWN_APPOINTMENTS, updated.map(Long::toString).toSet())
-            .apply()
+        preferences.edit {
+            putStringSet(KEY_KNOWN_APPOINTMENTS, updated.map(Long::toString).toSet())
+        }
     }
 
     @Synchronized
@@ -31,7 +32,7 @@ class AppointmentReminderStore @Inject constructor(
         val activeWork = preferences.getStringSet(KEY_ACTIVE_WORK, emptySet()).orEmpty().toMutableSet()
         activeWork.removeAll { it.startsWith("$workName|") }
         if (scheduledAt != null) activeWork.add("$workName|$scheduledAt")
-        preferences.edit().putStringSet(KEY_ACTIVE_WORK, activeWork).apply()
+        preferences.edit { putStringSet(KEY_ACTIVE_WORK, activeWork) }
     }
 
     @Synchronized
@@ -42,7 +43,7 @@ class AppointmentReminderStore @Inject constructor(
 
     @Synchronized
     fun clear() {
-        preferences.edit().clear().apply()
+        preferences.edit { clear() }
     }
 
     private companion object {

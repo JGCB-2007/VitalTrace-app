@@ -1,6 +1,7 @@
 package com.vitaltrace.app.feature.relativeportal.domain.selection
 
 import android.content.Context
+import androidx.core.content.edit
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -15,12 +16,12 @@ class RelativePatientSelection @Inject constructor(@ApplicationContext context: 
     val selectedId: StateFlow<Long?> = mutableSelectedId.asStateFlow()
 
     fun select(patientId: Long) {
-        preferences.edit().putLong(KEY_ID, patientId).apply()
+        preferences.edit { putLong(KEY_ID, patientId) }
         mutableSelectedId.value = patientId
     }
 
     fun clear() {
-        preferences.edit().remove(KEY_ID).apply()
+        preferences.edit { remove(KEY_ID) }
         mutableSelectedId.value = null
     }
 

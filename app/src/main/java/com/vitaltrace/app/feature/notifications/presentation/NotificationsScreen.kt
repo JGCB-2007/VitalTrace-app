@@ -53,6 +53,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
@@ -166,7 +167,11 @@ private fun NotificationsHeader(
                 fontWeight = FontWeight.Bold
             )
             Text(
-                text = if (unreadCount == 1) stringResource(R.string.notifications_unread_one) else stringResource(R.string.notifications_unread_count, unreadCount),
+                text = pluralStringResource(
+                    R.plurals.notifications_unread_count,
+                    unreadCount,
+                    unreadCount
+                ),
                 color = MaterialTheme.colorScheme.secondary,
                 style = MaterialTheme.typography.labelLarge,
                 fontWeight = FontWeight.Medium

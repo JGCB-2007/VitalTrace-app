@@ -15,6 +15,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -55,7 +56,7 @@ fun ProfileInformationCard(
             )
             OptionalProfileInformationRow(
                 stringResource(R.string.profile_age),
-                user.age?.let { stringResource(R.string.profile_age_value, it) }
+                user.age?.let { pluralStringResource(R.plurals.profile_age_value, it, it) }
             )
             OptionalProfileInformationRow(stringResource(R.string.profile_gender), user.gender)
             OptionalProfileInformationRow(stringResource(R.string.profile_address), user.address)

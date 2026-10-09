@@ -154,7 +154,7 @@ private fun HomeBody(
             end = 24.dp,
             bottom = 28.dp
         )
-    ) {
+    )  {
         item { OfflineStatusBanner() }
         item {
             HomeHeader(
@@ -176,7 +176,7 @@ private fun HomeBody(
                 onAppointmentClick = {
                     content.nextAppointment?.let { onAppointmentDetailClick(it.id) }
                 },
-                modifier = Modifier.padding(top = 18 .dp)
+                modifier = Modifier.padding(top = 18.dp)
             )
         }
         item {

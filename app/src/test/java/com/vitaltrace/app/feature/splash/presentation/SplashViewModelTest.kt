@@ -52,8 +52,8 @@ class SplashViewModelTest {
     }
 
     @Test
-    fun `non-mobile roles fall back to home`() = runTest {
-        assertEquals(SplashUiEffect.NavigateToHome, firstEffect(setOf(UserRole.DOCTOR)))
+    fun `non-mobile roles are rejected and navigate to login`() = runTest {
+        assertEquals(SplashUiEffect.NavigateToLogin, firstEffect(setOf(UserRole.DOCTOR)))
     }
 
     @Test

@@ -1,7 +1,6 @@
 package com.vitaltrace.app.feature.profile.presentation.components
 
 import android.graphics.BitmapFactory
-import android.net.Uri
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.background
@@ -39,6 +38,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.net.toUri
 import com.vitaltrace.app.ui.theme.SoraFontFamily
 import com.vitaltrace.app.R
 import com.vitaltrace.app.feature.profile.presentation.ProfileUserUiModel
@@ -50,10 +50,10 @@ import kotlinx.coroutines.withContext
 @Composable
 fun ProfileIdentityCard(
     user: ProfileUserUiModel,
+    modifier: Modifier = Modifier,
     roleLabel: String? = null,
     avatarUri: String? = null,
-    onAvatarClick: (() -> Unit)? = null,
-    modifier: Modifier = Modifier
+    onAvatarClick: (() -> Unit)? = null
 ) {
     val role = roleLabel ?: stringResource(R.string.profile_role_patient)
     val description = stringResource(
@@ -66,7 +66,7 @@ fun ProfileIdentityCard(
         value = avatarUri?.let { value ->
             withContext(Dispatchers.IO) {
                 runCatching {
-                    context.contentResolver.openInputStream(Uri.parse(value))?.use {
+                    context.contentResolver.openInputStream(value.toUri())?.use {
                         BitmapFactory.decodeStream(it)?.asImageBitmap()
                     }
                 }.getOrNull()

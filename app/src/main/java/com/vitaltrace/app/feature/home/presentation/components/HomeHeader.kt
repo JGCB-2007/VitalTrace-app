@@ -46,9 +46,9 @@ fun HomeHeader(
     onLogoutClick: () -> Unit,
     unreadNotificationsCount: Int,
     onNotificationsClick: () -> Unit,
+    modifier: Modifier = Modifier,
     subtitle: String? = null,
-    showNotifications: Boolean = true,
-    modifier: Modifier = Modifier
+    showNotifications: Boolean = true
 ) {
     var isMenuExpanded by remember { mutableStateOf(false) }
     var showLogoutConfirmation by remember { mutableStateOf(false) }

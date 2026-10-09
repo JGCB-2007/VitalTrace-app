@@ -14,8 +14,7 @@
 .cxx
 local.properties
 vitaltrace-release.jks
-app/release/ 
-. i d e a / d e v i c e M a n a g e r . x m l
-
- 
- 
+app/release/
+hs_err_pid*.log
+replay_pid*.log
+/.idea/deviceManager.xml

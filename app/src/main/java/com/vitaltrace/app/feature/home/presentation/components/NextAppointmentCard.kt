@@ -27,8 +27,8 @@ import com.vitaltrace.app.feature.home.presentation.NextAppointmentUiModel
 fun NextAppointmentCard(
     appointment: NextAppointmentUiModel?,
     onDetailClick: () -> Unit,
-    showDetailAction: Boolean = true,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    showDetailAction: Boolean = true
 ) {
     Card(
         modifier = modifier.fillMaxWidth().clickable(enabled = appointment != null, onClick = onDetailClick),

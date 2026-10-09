@@ -15,7 +15,7 @@ import javax.inject.Singleton
 
 @Singleton
 class AppointmentReminderScheduler @Inject constructor(
-    @ApplicationContext private val context: Context,
+    @param:ApplicationContext private val context: Context,
     private val store: AppointmentReminderStore
 ) {
     private val workManager: WorkManager

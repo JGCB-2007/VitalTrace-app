@@ -1560,6 +1560,25 @@ La compilación para producción utiliza <strong>release</strong>. Para desarrol
 
 </p>
 
+<h3>Firma y paquete de producción</h3>
+
+<p>La configuración de firma nunca guarda credenciales en Git. Antes de generar el paquete final, define estas variables de entorno:</p>
+
+<ul>
+<li><code>VITALTRACE_KEYSTORE_PATH</code>: ruta absoluta del keystore.</li>
+<li><code>VITALTRACE_KEYSTORE_PASSWORD</code>: contraseña del keystore.</li>
+<li><code>VITALTRACE_KEY_ALIAS</code>: alias de la clave.</li>
+<li><code>VITALTRACE_KEY_PASSWORD</code>: contraseña de la clave.</li>
+</ul>
+
+<p>Verifica calidad y genera el Android App Bundle firmado con:</p>
+
+<pre>
+.\gradlew.bat :app:testDebugUnitTest :app:lintRelease :app:bundleRelease
+</pre>
+
+<p>El paquete publicable queda en <code>app/build/outputs/bundle/release/</code>. Si falta alguna variable, Gradle permite compilar localmente un artefacto release sin firmar, pero ese archivo no debe distribuirse.</p>
+
 <hr>
 
 <h2>📖 Reglas de negocio</h2>

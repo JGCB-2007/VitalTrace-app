@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
     <string name="app_name">VitalTrace</string>
     <string name="login_logo_description">Logo de VitalTrace</string>
     <string name="login_welcome_title">Hola de nuevo</string>
@@ -42,7 +42,6 @@
     <string name="home_no_appointments">No hay citas próximas</string>
     <string name="home_no_measurements">No hay mediciones registradas</string>
     <string name="home_appointment_summary">%1$s &#183; %2$s &#183; %3$s</string>
-    <string name="home_measurement_summary">%1$s · %2$s</string>
     <string name="home_bottom_home">Inicio</string>
     <string name="home_bottom_measurements">Mediciones</string>
     <string name="home_bottom_appointments">Citas</string>
@@ -53,13 +52,9 @@
     <string name="measurements_filter_pending">Pendientes</string>
     <string name="measurements_filter_reviewed">Revisadas</string>
     <string name="measurements_latest">MÁS RECIENTE</string>
-    <string name="measurements_status_registered">Registrada</string>
     <string name="measurements_status_pending">Pendiente</string>
-    <string name="measurements_status_in_review">En revisión</string>
     <string name="measurements_status_reviewed">Revisada</string>
     <string name="measurements_status_unknown">Estado no disponible</string>
-    <string name="measurements_pressure_unit">mmHg</string>
-    <string name="measurements_item_description">Medición de presión arterial: %1$s %2$s, %3$s, estado %4$s</string>
     <string name="measurements_loading">Cargando mediciones</string>
     <string name="measurements_error">No se pudieron cargar las mediciones</string>
     <string name="measurements_retry">Intentar de nuevo</string>
@@ -71,10 +66,7 @@
     <string name="measurement_form_type">Tipo de medición</string>
     <string name="measurement_form_value">Valor</string>
     <string name="measurement_form_back">Volver</string>
-    <string name="measurement_form_systolic">Sistólica</string>
-    <string name="measurement_form_diastolic">Diastólica</string>
     <string name="measurement_form_unit">Unidad</string>
-    <string name="measurement_form_pressure_unit">mmHg</string>
     <string name="measurement_form_date">Fecha</string>
     <string name="measurement_form_time">Hora</string>
     <string name="measurement_form_note">Observación (opcional)</string>
@@ -97,9 +89,7 @@
     <string name="measurement_detail_reviewer">Revisado por</string>
     <string name="measurement_detail_reviewed_at">Fecha de revisión</string>
     <string name="measurement_detail_review_observation">Observación de revisión</string>
-    <string name="measurement_detail_follow_up">SEGUIMIENTO REGISTRADO</string>
     <string name="measurement_detail_close">Cerrar</string>
-    <string name="measurement_detail_value_description">Presión arterial: %1$s %2$s</string>
     <string name="appointments_title">Mis citas</string>
     <string name="appointments_next">PRÓXIMA CITA</string>
     <string name="appointments_upcoming">PRÓXIMAS</string>
@@ -134,7 +124,10 @@
     <string name="profile_identification">Identificación</string>
     <string name="profile_birth_date">Fecha de nacimiento</string>
     <string name="profile_age">Edad</string>
-    <string name="profile_age_value">%1$d años</string>
+    <plurals name="profile_age_value">
+        <item quantity="one">%1$d año</item>
+        <item quantity="other">%1$d años</item>
+    </plurals>
     <string name="profile_gender">Género</string>
     <string name="profile_address">Dirección</string>
     <string name="profile_emergency_contact">Contacto de emergencia</string>
@@ -142,11 +135,10 @@
     <string name="profile_notifications">NOTIFICACIONES</string>
     <string name="profile_measurement_reminders">Recordatorios de medición</string>
     <string name="profile_appointment_notifications">Avisos de citas</string>
-    <string name="profile_email_updates">Actualizaciones por correo</string>
     <string name="profile_notifications_local_note">Estas preferencias se guardan únicamente en este dispositivo.</string>
     <string name="measurement_reminder_channel_name">Recordatorios de medición</string>
     <string name="measurement_reminder_channel_description">Avisos locales para registrar tus mediciones.</string>
-    <string name="measurement_reminder_title">Es momento de registrar tu medición</string>
+    <string name="measurement_reminder_title" tools:ignore="Typos">Es momento de registrar tu medición</string>
     <string name="measurement_reminder_message">Abre VitalTrace para guardar tu medición de hoy.</string>
     <string name="measurement_reminder_snooze">Recordar después</string>
     <string name="notification_permission_title">Mantente al día con tu seguimiento</string>
@@ -184,29 +176,27 @@
     <string name="relatives_description">Administra las personas que tienen autorización para consultar tu información médica.</string>
     <string name="relatives_back">Volver al perfil</string>
     <string name="relatives_linked_relative">Familiar vinculado</string>
-    <string name="relatives_status_authorized">Acceso autorizado</string>
     <string name="relatives_status_not_authorized">Acceso no autorizado</string>
     <string name="relatives_status_active">Activo</string>
     <string name="relatives_status_pending">Pendiente</string>
     <string name="relatives_status_revoked">Revocado</string>
     <string name="relatives_status_expired">Expirado</string>
     <string name="relatives_authorize">Autorizar acceso</string>
-    <string name="relatives_revoke">Revocar acceso</string>
     <string name="relatives_empty">Todavía no tienes familiares vinculados.</string>
     <string name="relatives_empty_title">Tu red de apoyo aparecerá aquí</string>
     <string name="relatives_loading">Cargando familiares autorizados</string>
     <string name="relatives_error_title">No pudimos cargar esta información</string>
     <string name="relatives_retry">Intentar de nuevo</string>
     <string name="relatives_authorize_title">Autorizar familiar</string>
-    <string name="relatives_revoke_title">Revocar acceso</string>
     <string name="relatives_authorize_confirmation">¿Deseas autorizar a este familiar para consultar tu información permitida?</string>
-    <string name="relatives_revoke_confirmation">¿Deseas revocar el acceso de este familiar?</string>
     <string name="relatives_cancel">Cancelar</string>
     <string name="clinical_history_title">Historial clínico</string>
     <string name="notifications_screen_title">Notificaciones</string>
     <string name="notifications_back">Volver</string>
-    <string name="notifications_unread_one">1 sin leer</string>
-    <string name="notifications_unread_count">%1$d sin leer</string>
+    <plurals name="notifications_unread_count">
+        <item quantity="one">%1$d sin leer</item>
+        <item quantity="other">%1$d sin leer</item>
+    </plurals>
     <string name="notifications_mark_all">Marcar todas</string>
     <string name="notifications_filter_all">Todas</string>
     <string name="notifications_filter_unread">No le&#237;das</string>

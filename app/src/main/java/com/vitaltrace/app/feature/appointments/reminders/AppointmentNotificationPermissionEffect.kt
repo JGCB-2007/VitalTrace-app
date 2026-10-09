@@ -14,6 +14,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.LocalContext
 import androidx.core.content.ContextCompat
+import androidx.core.content.edit
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.compose.material3.AlertDialog
@@ -55,21 +56,21 @@ fun AppointmentNotificationPermissionEffect(
     if (showRationale) {
         AlertDialog(
             onDismissRequest = {
-                preferences.edit().putBoolean(KEY_PERMISSION_REQUESTED, true).apply()
+                preferences.edit { putBoolean(KEY_PERMISSION_REQUESTED, true) }
                 showRationale = false
             },
             title = { Text(stringResource(R.string.notification_permission_title)) },
             text = { Text(stringResource(R.string.notification_permission_description)) },
             confirmButton = {
                 TextButton(onClick = {
-                    preferences.edit().putBoolean(KEY_PERMISSION_REQUESTED, true).apply()
+                    preferences.edit { putBoolean(KEY_PERMISSION_REQUESTED, true) }
                     showRationale = false
                     launcher.launch(Manifest.permission.POST_NOTIFICATIONS)
                 }) { Text(stringResource(R.string.notification_permission_enable)) }
             },
             dismissButton = {
                 TextButton(onClick = {
-                    preferences.edit().putBoolean(KEY_PERMISSION_REQUESTED, true).apply()
+                    preferences.edit { putBoolean(KEY_PERMISSION_REQUESTED, true) }
                     showRationale = false
                 }) { Text(stringResource(R.string.notification_permission_later)) }
             }
