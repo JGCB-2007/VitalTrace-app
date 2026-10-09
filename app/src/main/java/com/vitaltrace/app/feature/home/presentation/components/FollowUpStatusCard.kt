@@ -1,9 +1,11 @@
 package com.vitaltrace.app.feature.home.presentation.components
 
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Schedule
@@ -29,28 +31,36 @@ fun FollowUpStatusCard(
     status: FollowUpStatusUiModel?,
     modifier: Modifier = Modifier
 ) {
+    val cardContentColor = MaterialTheme.colorScheme.onPrimary
+
     Card(
         modifier = modifier.fillMaxWidth(),
         shape = RoundedCornerShape(26.dp),
-        colors = CardDefaults.cardColors(containerColor = HomeNavy),
+        colors = CardDefaults.cardColors(
+            containerColor = HomeNavy,
+            contentColor = cardContentColor
+        ),
         elevation = CardDefaults.cardElevation(defaultElevation = 8.dp)
     ) {
         if (status == null) {
             Text(
                 text = stringResource(R.string.home_no_follow_up),
-                color = Color.White,
+                color = cardContentColor,
                 modifier = Modifier.padding(24.dp)
             )
             return@Card
         }
 
         Column(modifier = Modifier.padding(24.dp)) {
-            Row(verticalAlignment = Alignment.CenterVertically) {
+            Row(
+                horizontalArrangement = Arrangement.spacedBy(12.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
                 Text(
                     text = stringResource(R.string.home_follow_up_label),
-                    color = HomeMint,
+                    color = cardContentColor.copy(alpha = 0.72f),
                     fontWeight = FontWeight.Bold,
-                    style = MaterialTheme.typography.labelLarge,
+                    style = MaterialTheme.typography.labelMedium,
                     modifier = Modifier.weight(1f)
                 )
                 Surface(
@@ -67,12 +77,14 @@ fun FollowUpStatusCard(
                         Icon(
                             imageVector = Icons.Outlined.Schedule,
                             contentDescription = null,
-                            tint = Color.White
+                            tint = Color.White,
+                            modifier = Modifier.size(20.dp)
                         )
                         Text(
                             text = status.status,
                             color = Color.White,
                             fontWeight = FontWeight.Bold,
+                            style = MaterialTheme.typography.bodyMedium,
                             modifier = Modifier.padding(start = 8.dp)
                         )
                     }
@@ -80,7 +92,7 @@ fun FollowUpStatusCard(
             }
             Text(
                 text = status.title,
-                color = Color.White,
+                color = cardContentColor,
                 fontFamily = SoraFontFamily,
                 fontWeight = FontWeight.Bold,
                 style = MaterialTheme.typography.headlineSmall,
@@ -88,7 +100,7 @@ fun FollowUpStatusCard(
             )
             Text(
                 text = status.description,
-                color = Color.White.copy(alpha = 0.82f),
+                color = cardContentColor.copy(alpha = 0.78f),
                 style = MaterialTheme.typography.bodyLarge,
                 modifier = Modifier.padding(top = 12.dp)
             )
