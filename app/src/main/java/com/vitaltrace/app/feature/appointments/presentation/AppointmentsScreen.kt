@@ -77,8 +77,11 @@ fun AppointmentsScreen(
         onMeasurementsClick = onMeasurementsClick,
         onAppointmentClick = viewModel::showAppointmentDetail,
         onDismissAppointmentDetail = {
-            viewModel.dismissAppointmentDetail()
-            if (initialAppointmentId != null) onInitialDetailDismiss()
+            if (initialAppointmentId != null) {
+                onInitialDetailDismiss()
+            } else {
+                viewModel.dismissAppointmentDetail()
+            }
         },
         onProfileClick = onProfileClick
     )

@@ -280,7 +280,12 @@ fun AppNavHost(
                     navController.navigateToPatientTab(AppRoute.Profile.route)
                 },
                 onAppointmentDetailClick = { appointmentId ->
-                    navController.navigate(AppRoute.AppointmentDetail.create(appointmentId)) {
+                    navController.navigate(
+                        AppRoute.AppointmentDetail.create(
+                            appointmentId = appointmentId,
+                            returnToHome = true
+                        )
+                    ) {
                         launchSingleTop = true
                     }
                 },
@@ -436,15 +441,44 @@ fun AppNavHost(
 
         composable(
             route = AppRoute.AppointmentDetail.route,
-            arguments = listOf(navArgument("appointmentId") { type = NavType.LongType }),
+            arguments = listOf(
+                navArgument("appointmentId") { type = NavType.LongType },
+                navArgument("returnToHome") {
+                    type = NavType.BoolType
+                    defaultValue = false
+                }
+            ),
             deepLinks = listOf(navDeepLink { uriPattern = "vitaltrace://appointments/{appointmentId}" })
         ) { backStackEntry ->
+            val returnToHome = backStackEntry.arguments?.getBoolean("returnToHome") == true
             AppointmentsScreen(
                 onHomeClick = { navController.navigateToPatientTab(AppRoute.Home.route) },
                 onMeasurementsClick = { navController.navigateToPatientTab(AppRoute.Measurements.route) },
                 onProfileClick = { navController.navigateToPatientTab(AppRoute.Profile.route) },
                 initialAppointmentId = backStackEntry.arguments?.getLong("appointmentId"),
-                onInitialDetailDismiss = { navController.popBackStack() }
+                onInitialDetailDismiss = {
+                    val isDetailDestination =
+                        navController.currentBackStackEntry?.destination?.route ==
+                            AppRoute.AppointmentDetail.route
+                    if (!isDetailDestination) {
+                        return@AppointmentsScreen
+                    }
+                    if (returnToHome) {
+                        val returnedHome = navController.popBackStack(
+                            route = AppRoute.Home.route,
+                            inclusive = false
+                        )
+                        if (!returnedHome) {
+                            navController.navigate(AppRoute.Home.route) {
+                                launchSingleTop = true
+                            }
+                        }
+                    } else if (!navController.popBackStack()) {
+                        navController.navigate(AppRoute.Home.route) {
+                            launchSingleTop = true
+                        }
+                    }
+                }
             )
         }
 

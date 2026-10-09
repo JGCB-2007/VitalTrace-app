@@ -17,11 +17,13 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Info
 import androidx.compose.material.icons.rounded.CalendarMonth
+import androidx.compose.material.icons.rounded.Close
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Surface
@@ -65,19 +67,37 @@ fun AppointmentDetailContent(
         modifier = modifier,
         verticalArrangement = Arrangement.spacedBy(20.dp)
     ) {
-        Row(
+        Column(
             modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
+            verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            Text(
-                text = stringResource(R.string.appointment_detail_title),
-                color = MaterialTheme.colorScheme.secondary,
-                fontSize = 16.sp,
-                fontWeight = FontWeight.ExtraBold,
-                letterSpacing = 0.7.sp
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    text = stringResource(R.string.appointment_detail_title),
+                    color = MaterialTheme.colorScheme.secondary,
+                    fontSize = 16.sp,
+                    fontWeight = FontWeight.ExtraBold,
+                    letterSpacing = 0.7.sp
+                )
+                IconButton(
+                    onClick = onCloseClick,
+                    modifier = Modifier.size(40.dp)
+                ) {
+                    Icon(
+                        imageVector = Icons.Rounded.Close,
+                        contentDescription = stringResource(R.string.appointment_detail_close),
+                        tint = MaterialTheme.colorScheme.onBackground
+                    )
+                }
+            }
+            AppointmentStatusChip(
+                status = detail.status,
+                modifier = Modifier.align(Alignment.End)
             )
-            AppointmentStatusChip(status = detail.status)
         }
         AppointmentProfessional(detail = detail)
         AppointmentInformationCard(detail = detail)
